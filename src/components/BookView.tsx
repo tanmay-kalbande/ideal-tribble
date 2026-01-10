@@ -1061,8 +1061,8 @@ const HomeView = ({
   localIsGenerating: boolean;
   onOpenSettings: () => void;
 }) => (
-  <div className="flex-1 flex flex-col items-center justify-center p-6 md:p-8 text-center relative overflow-y-auto">
-    <div className="relative z-10 w-full max-w-xl mx-auto animate-fade-in-up">
+  <div className="flex-1 flex flex-col items-center justify-start p-6 md:p-8 pt-20 text-center relative overflow-y-auto">
+    <div className="relative z-10 w-full max-w-xl mx-auto my-auto animate-fade-in-up">
       {/* Simplified Hero */}
       <h1 className="text-3xl md:text-4xl font-bold mb-3 text-[var(--color-text-primary)] tracking-tight leading-snug">
         What would you like to
