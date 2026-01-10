@@ -1061,34 +1061,38 @@ const HomeView = ({
   localIsGenerating: boolean;
   onOpenSettings: () => void;
 }) => (
-  <div className="flex-1 flex flex-col items-center justify-center p-6 md:p-8 text-center relative overflow-hidden">
-    {/* Enhanced Animated Background */}
-    {/* Main gradient glow - pulsing */}
-    <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-gradient-to-br from-orange-500/25 to-amber-500/15 blur-[150px] rounded-full pointer-events-none animate-pulse-slow" />
+  <div className="flex-1 flex flex-col items-center justify-start p-6 md:p-8 text-center relative overflow-y-auto">
+    {/* Enhanced Glowing Background Effect */}
+    {/* Main center glow - soft pulsing ambient light */}
+    <div className="fixed inset-0 pointer-events-none z-0">
+      {/* Primary glow - warm amber center */}
+      <div
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full animate-glow-pulse"
+        style={{
+          background: 'radial-gradient(circle, rgba(249, 115, 22, 0.15) 0%, rgba(251, 191, 36, 0.08) 40%, transparent 70%)',
+        }}
+      />
 
-    {/* Floating orbs */}
-    <div className="absolute top-1/4 left-1/4 w-[200px] h-[200px] bg-gradient-to-br from-orange-400/20 to-transparent blur-[80px] rounded-full pointer-events-none animate-float-slow" />
-    <div className="absolute bottom-1/4 right-1/4 w-[250px] h-[250px] bg-gradient-to-br from-amber-500/15 to-transparent blur-[100px] rounded-full pointer-events-none animate-float-slower" />
-    <div className="absolute top-1/2 right-1/3 w-[150px] h-[150px] bg-gradient-to-br from-yellow-400/10 to-transparent blur-[60px] rounded-full pointer-events-none animate-float-medium" />
+      {/* Secondary glow - bottom warm glow */}
+      <div
+        className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[1200px] h-[600px] animate-glow-pulse-slow"
+        style={{
+          background: 'radial-gradient(ellipse at center bottom, rgba(234, 88, 12, 0.2) 0%, rgba(251, 191, 36, 0.1) 30%, transparent 60%)',
+        }}
+      />
 
-    {/* Scattered particles */}
-    <div className="absolute inset-0 pointer-events-none overflow-hidden">
-      {/* Particle layer 1 */}
-      <div className="particle-container">
-        <div className="particle particle-1" />
-        <div className="particle particle-2" />
-        <div className="particle particle-3" />
-        <div className="particle particle-4" />
-        <div className="particle particle-5" />
-        <div className="particle particle-6" />
-        <div className="particle particle-7" />
-        <div className="particle particle-8" />
-      </div>
+      {/* Subtle top accent */}
+      <div
+        className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] opacity-50"
+        style={{
+          background: 'radial-gradient(ellipse at center top, rgba(249, 115, 22, 0.08) 0%, transparent 50%)',
+        }}
+      />
     </div>
 
-    {/* Bottom gradient fade */}
+    {/* Bottom fade for dark theme */}
     {theme === 'dark' && (
-      <div className="absolute bottom-0 left-0 right-0 h-[250px] bg-gradient-to-t from-[#0a0a0f] via-[#0a0a0f]/50 to-transparent pointer-events-none" />
+      <div className="fixed bottom-0 left-0 right-0 h-[150px] bg-gradient-to-t from-[#0a0a0f] to-transparent pointer-events-none z-0" />
     )}
 
     <div className="relative z-10 w-full max-w-xl mx-auto animate-fade-in-up">
