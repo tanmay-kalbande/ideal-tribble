@@ -452,14 +452,15 @@
   /* --- Enhanced Home View Background --- */
   .home-view-container {
     position: relative;
-    overflow: hidden;
+    isolation: isolate;
+    /* Creates new stacking context */
   }
 
   .home-view-container::before {
     content: '';
     position: fixed;
     inset: 0;
-    z-index: -1;
+    z-index: 0;
     background:
       radial-gradient(circle at 20% 50%, rgba(249, 115, 22, 0.15) 0%, transparent 50%),
       radial-gradient(circle at 80% 50%, rgba(251, 191, 36, 0.12) 0%, transparent 50%),
@@ -487,7 +488,7 @@
     content: '';
     position: fixed;
     inset: 0;
-    z-index: -1;
+    z-index: 1;
     background-image:
       radial-gradient(circle, rgba(249, 115, 22, 0.3) 1px, transparent 1px),
       radial-gradient(circle, rgba(251, 191, 36, 0.2) 1px, transparent 1px);
@@ -511,7 +512,7 @@
   .home-view-glow {
     position: fixed;
     pointer-events: none;
-    z-index: -1;
+    z-index: 1;
     inset: 0;
   }
 
