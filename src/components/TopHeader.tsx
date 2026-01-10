@@ -288,5 +288,6 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
 
                 </div>
             </header>
-            );
+        </>
+    );
 };
