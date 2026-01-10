@@ -1,6 +1,6 @@
 // src/components/SettingsModal.tsx
 import React from 'react';
-import { X, Shield, Database, Download, Upload, Trash2, HelpCircle, Key, Settings, ExternalLink, Eye, EyeOff, User, Zap, Globe, Cpu, BookOpen, AlertTriangle, Plus, BookMarked } from 'lucide-react';
+import { X, Shield, Database, Download, Upload, Trash2, HelpCircle, Key, Settings, ExternalLink, Eye, EyeOff, User, Zap, Globe, Cpu, BookOpen, AlertTriangle, Plus, BookMarked, CreditCard, Star, Check } from 'lucide-react';
 import { APISettings } from '../types';
 import { storageUtils } from '../utils/storage';
 import { DisclaimerPage } from './DisclaimerPage';
@@ -19,9 +19,14 @@ interface SettingsModalProps {
     cancelText?: string;
     onConfirm?: () => void;
   }) => void;
+  // New props for subscription management
+  userProfile?: any;
+  credits?: number;
+  onBuyCredits?: () => void;
+  onUpgradePlan?: () => void;
 }
 
-type ActiveTab = 'keys' | 'data' | 'about';
+type ActiveTab = 'keys' | 'data' | 'about' | 'subscription';
 
 interface ImportPreview {
   books: any[];
@@ -32,7 +37,7 @@ interface ImportPreview {
   };
 }
 
-export function SettingsModal({ isOpen, onClose, settings, onSaveSettings, showAlertDialog }: SettingsModalProps) {
+export function SettingsModal({ isOpen, onClose, settings, onSaveSettings, showAlertDialog, userProfile, credits = 0, onBuyCredits, onUpgradePlan }: SettingsModalProps) {
   const [localSettings, setLocalSettings] = React.useState<APISettings>(settings);
   const [activeTab, setActiveTab] = React.useState<ActiveTab>('keys');
   const [visibleApis, setVisibleApis] = React.useState<Record<string, boolean>>({});
@@ -245,8 +250,9 @@ export function SettingsModal({ isOpen, onClose, settings, onSaveSettings, showA
           </div>
 
           {/* Tabs */}
-          <div className="p-2 grid grid-cols-3 gap-2 border-b border-white/5">
+          <div className="p-2 grid grid-cols-4 gap-2 border-b border-white/5">
             <TabButton id="keys" label="API Keys" Icon={Shield} />
+            <TabButton id="subscription" label="Plan & Credits" Icon={CreditCard} />
             <TabButton id="data" label="Data" Icon={Database} />
             <TabButton id="about" label="About" Icon={HelpCircle} />
           </div>
@@ -320,6 +326,103 @@ export function SettingsModal({ isOpen, onClose, settings, onSaveSettings, showA
                       </div>
                     );
                   })}
+                </div>
+              </div>
+            )}
+
+
+
+            {/* Subscription Tab */}
+            {activeTab === 'subscription' && (
+              <div className="space-y-6 animate-fade-in">
+                <div className="text-center mb-6">
+                  <div className="w-16 h-16 mx-auto bg-gradient-to-br from-orange-500 to-pink-500 rounded-2xl flex items-center justify-center mb-3 shadow-lg shadow-orange-500/20">
+                    <Star className="text-white w-8 h-8 fill-current" />
+                  </div>
+                  <h3 className="text-xl font-bold text-[var(--color-text-primary)] mb-1">
+                    {userProfile?.plan !== 'free' ? 'Pro Plan' : 'Free Plan'}
+                  </h3>
+                  <p className="text-sm text-[var(--color-text-secondary)]">
+                    {userProfile?.plan !== 'free'
+                      ? 'You have access to all premium features'
+                      : 'Upgrade to unlock unlimited power'}
+                  </p>
+                </div>
+
+                {/* Credit Balance Card */}
+                <div className="bg-gradient-to-br from-[#1a1a24] to-[#13131a] border border-white/10 rounded-xl p-6 relative overflow-hidden group">
+                  <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <Zap size={100} />
+                  </div>
+                  <div className="relative z-10">
+                    <p className="text-sm text-gray-400 mb-1 font-medium uppercase tracking-wider">Available Credits</p>
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-4xl font-bold text-white">{credits}</span>
+                      <span className="text-sm text-gray-500">credits</span>
+                    </div>
+                    <div className="mt-4 flex gap-3">
+                      <button
+                        onClick={onBuyCredits}
+                        className="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2.5 px-4 rounded-lg transition-all shadow-lg hover:shadow-orange-500/20 flex items-center justify-center gap-2"
+                      >
+                        <Plus size={18} />
+                        Buy Credits
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Plan Details */}
+                <div className="bg-white/5 border border-white/5 rounded-xl p-5">
+                  <div className="flex items-center justify-between mb-4">
+                    <h4 className="font-semibold text-[var(--color-text-primary)]">Plan Features</h4>
+                    {userProfile?.plan === 'free' && (
+                      <button
+                        onClick={onUpgradePlan}
+                        className="text-xs font-bold text-orange-400 hover:text-orange-300 uppercase tracking-wide"
+                      >
+                        Upgrade to Pro
+                      </button>
+                    )}
+                  </div>
+                  <ul className="space-y-3">
+                    <li className="flex items-start gap-3 text-sm">
+                      <div className="mt-0.5 p-0.5 bg-green-500/20 rounded-full">
+                        <Check size={12} className="text-green-400" />
+                      </div>
+                      <span className="text-gray-300">Access to basic models</span>
+                    </li>
+                    <li className="flex items-start gap-3 text-sm">
+                      <div className="mt-0.5 p-0.5 bg-green-500/20 rounded-full">
+                        <Check size={12} className="text-green-400" />
+                      </div>
+                      <span className="text-gray-300">PDF Export</span>
+                    </li>
+                    <li className="flex items-start gap-3 text-sm">
+                      <div className={`mt-0.5 p-0.5 rounded-full ${userProfile?.plan !== 'free' ? 'bg-green-500/20' : 'bg-white/10'}`}>
+                        {userProfile?.plan !== 'free' ? <Check size={12} className="text-green-400" /> : <Shield size={12} className="text-gray-600" />}
+                      </div>
+                      <span className={userProfile?.plan !== 'free' ? 'text-gray-300' : 'text-gray-500'}>
+                        Premium models (Pro only)
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-3 text-sm">
+                      <div className={`mt-0.5 p-0.5 rounded-full ${userProfile?.plan !== 'free' ? 'bg-green-500/20' : 'bg-white/10'}`}>
+                        {userProfile?.plan !== 'free' ? <Check size={12} className="text-green-400" /> : <Database size={12} className="text-gray-600" />}
+                      </div>
+                      <span className={userProfile?.plan !== 'free' ? 'text-gray-300' : 'text-gray-500'}>
+                        Unlimited Cloud Storage (Pro only)
+                      </span>
+                    </li>
+                  </ul>
+                  {userProfile?.plan === 'free' && (
+                    <button
+                      onClick={onUpgradePlan}
+                      className="mt-5 w-full btn bg-white/5 hover:bg-white/10 text-white border border-white/10"
+                    >
+                      View All Plans
+                    </button>
+                  )}
                 </div>
               </div>
             )}

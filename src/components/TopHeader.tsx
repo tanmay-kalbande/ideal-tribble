@@ -59,10 +59,10 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
 
     const displayName = userProfile?.full_name || user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User';
 
-    // Seamless, gradual fade effect (Solid -> Transparent)
+    // Simplified gradient to match Landing Page style
     const headerGradient = theme === 'light'
-        ? 'linear-gradient(to bottom, rgba(255,255,255,1) 0%, rgba(255,255,255,0.98) 20%, rgba(255,255,255,0.9) 40%, rgba(255,255,255,0.6) 60%, rgba(255,255,255,0.25) 80%, rgba(255,255,255,0) 100%)'
-        : 'linear-gradient(to bottom, rgba(10,10,15,1) 0%, rgba(10,10,15,0.98) 20%, rgba(10,10,15,0.9) 40%, rgba(10,10,15,0.6) 60%, rgba(10,10,15,0.25) 80%, rgba(10,10,15,0) 100%)';
+        ? 'linear-gradient(to bottom, #ffffff, rgba(255,255,255,0.95), transparent)'
+        : 'linear-gradient(to bottom, #0a0a0f, rgba(10,10,15,0.95), transparent)';
 
     // Check if provider has API key configured
     const isProviderEnabled = (provider: ModelProvider) => {
