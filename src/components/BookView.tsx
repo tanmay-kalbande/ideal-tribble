@@ -1061,39 +1061,9 @@ const HomeView = ({
   localIsGenerating: boolean;
   onOpenSettings: () => void;
 }) => (
-  <div className="flex-1 flex flex-col items-center justify-start p-6 md:p-8 text-center relative overflow-y-auto">
-    {/* Enhanced Glowing Background Effect */}
-    {/* Main center glow - soft pulsing ambient light */}
-    <div className="fixed inset-0 pointer-events-none z-0">
-      {/* Primary glow - warm amber center */}
-      <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full animate-glow-pulse"
-        style={{
-          background: 'radial-gradient(circle, rgba(249, 115, 22, 0.15) 0%, rgba(251, 191, 36, 0.08) 40%, transparent 70%)',
-        }}
-      />
-
-      {/* Secondary glow - bottom warm glow */}
-      <div
-        className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[1200px] h-[600px] animate-glow-pulse-slow"
-        style={{
-          background: 'radial-gradient(ellipse at center bottom, rgba(234, 88, 12, 0.2) 0%, rgba(251, 191, 36, 0.1) 30%, transparent 60%)',
-        }}
-      />
-
-      {/* Subtle top accent */}
-      <div
-        className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] opacity-50"
-        style={{
-          background: 'radial-gradient(ellipse at center top, rgba(249, 115, 22, 0.08) 0%, transparent 50%)',
-        }}
-      />
-    </div>
-
-    {/* Bottom fade for dark theme */}
-    {theme === 'dark' && (
-      <div className="fixed bottom-0 left-0 right-0 h-[150px] bg-gradient-to-t from-[#0a0a0f] to-transparent pointer-events-none z-0" />
-    )}
+  <div className="home-view-container flex-1 flex flex-col items-center justify-start p-6 md:p-8 text-center relative overflow-y-auto">
+    {/* Glow orbs - handled by CSS ::before and ::after */}
+    <div className="home-view-glow" />
 
     <div className="relative z-10 w-full max-w-xl mx-auto animate-fade-in-up">
       {/* Simplified Hero */}

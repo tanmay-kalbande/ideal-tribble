@@ -449,112 +449,140 @@
     animation: pulseSlow 6s ease-in-out infinite;
   }
 
-  /* --- Glow Pulse Animations --- */
-  @keyframes glowPulse {
+  /* --- Enhanced Home View Background --- */
+  .home-view-container {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .home-view-container::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(circle at 20% 50%, rgba(249, 115, 22, 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 80% 50%, rgba(251, 191, 36, 0.12) 0%, transparent 50%),
+      radial-gradient(circle at 50% 100%, rgba(234, 88, 12, 0.1) 0%, transparent 60%),
+      linear-gradient(180deg, #0a0a0f 0%, #050505 100%);
+    animation: gradient-shift 20s ease-in-out infinite;
+  }
+
+  @keyframes gradient-shift {
 
     0%,
     100% {
-      transform: translate(-50%, -50%) scale(1);
       opacity: 1;
+      transform: scale(1);
     }
 
     50% {
-      transform: translate(-50%, -50%) scale(1.05);
-      opacity: 0.8;
+      opacity: 0.9;
+      transform: scale(1.05);
     }
   }
 
-  @keyframes glowPulseSlow {
+  /* Animated particles overlay */
+  .home-view-container::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background-image:
+      radial-gradient(circle, rgba(249, 115, 22, 0.3) 1px, transparent 1px),
+      radial-gradient(circle, rgba(251, 191, 36, 0.2) 1px, transparent 1px);
+    background-size: 50px 50px, 80px 80px;
+    background-position: 0 0, 40px 40px;
+    animation: particle-float 30s linear infinite;
+    opacity: 0.4;
+  }
+
+  @keyframes particle-float {
+    from {
+      transform: translateY(0);
+    }
+
+    to {
+      transform: translateY(-80px);
+    }
+  }
+
+  /* Add subtle glow orbs */
+  .home-view-glow {
+    position: fixed;
+    pointer-events: none;
+    z-index: -1;
+    inset: 0;
+  }
+
+  .home-view-glow::before,
+  .home-view-glow::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    animation: float-orb 15s ease-in-out infinite;
+  }
+
+  .home-view-glow::before {
+    top: 20%;
+    left: 15%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(249, 115, 22, 0.2) 0%, transparent 70%);
+    animation-delay: 0s;
+  }
+
+  .home-view-glow::after {
+    bottom: 20%;
+    right: 15%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(251, 191, 36, 0.15) 0%, transparent 70%);
+    animation-delay: 7.5s;
+  }
+
+  @keyframes float-orb {
 
     0%,
     100% {
-      transform: translateX(-50%) scale(1);
-      opacity: 1;
+      transform: translate(0, 0) scale(1);
+      opacity: 0.6;
     }
 
-    50% {
-      transform: translateX(-50%) scale(1.03);
+    33% {
+      transform: translate(30px, -30px) scale(1.1);
+      opacity: 0.8;
+    }
+
+    66% {
+      transform: translate(-30px, 30px) scale(0.9);
       opacity: 0.7;
     }
   }
 
-  .animate-glow-pulse {
-    animation: glowPulse 8s ease-in-out infinite;
+  /* Light theme background */
+  .light .home-view-container::before {
+    background:
+      radial-gradient(circle at 20% 50%, rgba(249, 115, 22, 0.08) 0%, transparent 50%),
+      radial-gradient(circle at 80% 50%, rgba(251, 191, 36, 0.06) 0%, transparent 50%),
+      radial-gradient(circle at 50% 100%, rgba(234, 88, 12, 0.05) 0%, transparent 60%),
+      linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%);
   }
 
-  .animate-glow-pulse-slow {
-    animation: glowPulseSlow 12s ease-in-out infinite;
+  .light .home-view-container::after {
+    opacity: 0.2;
+    background-image:
+      radial-gradient(circle, rgba(249, 115, 22, 0.4) 1px, transparent 1px),
+      radial-gradient(circle, rgba(251, 191, 36, 0.3) 1px, transparent 1px);
   }
 
-  .particle-container {
-    position: absolute;
-    inset: 0;
-    overflow: hidden;
+  .light .home-view-glow::before {
+    background: radial-gradient(circle, rgba(249, 115, 22, 0.12) 0%, transparent 70%);
   }
 
-  .particle {
-    position: absolute;
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background: rgba(249, 115, 22, 0.6);
-    animation: particleFloat 10s ease-in-out infinite;
-  }
-
-  .particle-1 {
-    top: 20%;
-    left: 15%;
-    animation-delay: 0s;
-    background: rgba(249, 115, 22, 0.5);
-  }
-
-  .particle-2 {
-    top: 40%;
-    left: 80%;
-    animation-delay: 1.5s;
-    background: rgba(251, 191, 36, 0.6);
-  }
-
-  .particle-3 {
-    top: 60%;
-    left: 25%;
-    animation-delay: 3s;
-    background: rgba(234, 88, 12, 0.4);
-  }
-
-  .particle-4 {
-    top: 25%;
-    left: 65%;
-    animation-delay: 4.5s;
-    background: rgba(245, 158, 11, 0.5);
-  }
-
-  .particle-5 {
-    top: 75%;
-    left: 45%;
-    animation-delay: 2s;
-    background: rgba(249, 115, 22, 0.6);
-  }
-
-  .particle-6 {
-    top: 35%;
-    left: 35%;
-    animation-delay: 5.5s;
-    background: rgba(251, 191, 36, 0.4);
-  }
-
-  .particle-7 {
-    top: 55%;
-    left: 75%;
-    animation-delay: 7s;
-    background: rgba(234, 88, 12, 0.5);
-  }
-
-  .particle-8 {
-    top: 15%;
-    left: 50%;
-    animation-delay: 8.5s;
-    background: rgba(245, 158, 11, 0.6);
+  .light .home-view-glow::after {
+    background: radial-gradient(circle, rgba(251, 191, 36, 0.1) 0%, transparent 70%);
   }
 
   /* --- Layout & Backgrounds --- */
