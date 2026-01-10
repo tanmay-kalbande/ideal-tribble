@@ -1,0 +1,534 @@
+// src/components/SettingsModal.tsx
+import React from 'react';
+import { X, Shield, Database, Download, Upload, Trash2, HelpCircle, Key, Settings, ExternalLink, Eye, EyeOff, User, Zap, Globe, Cpu, BookOpen, AlertTriangle, Plus, BookMarked } from 'lucide-react';
+import { APISettings } from '../types';
+import { storageUtils } from '../utils/storage';
+import { DisclaimerPage } from './DisclaimerPage';
+import { APIKeyGuide } from './APIKeyGuide';
+
+interface SettingsModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  settings: APISettings;
+  onSaveSettings: (settings: APISettings) => void;
+  showAlertDialog: (props: {
+    type: 'info' | 'warning' | 'error' | 'success' | 'confirm';
+    title: string;
+    message: string | React.ReactNode;
+    confirmText?: string;
+    cancelText?: string;
+    onConfirm?: () => void;
+  }) => void;
+}
+
+type ActiveTab = 'keys' | 'data' | 'about';
+
+interface ImportPreview {
+  books: any[];
+  settings: APISettings;
+  conflicts: {
+    duplicateBooks: number;
+    settingsConflict: boolean;
+  };
+}
+
+export function SettingsModal({ isOpen, onClose, settings, onSaveSettings, showAlertDialog }: SettingsModalProps) {
+  const [localSettings, setLocalSettings] = React.useState<APISettings>(settings);
+  const [activeTab, setActiveTab] = React.useState<ActiveTab>('keys');
+  const [visibleApis, setVisibleApis] = React.useState<Record<string, boolean>>({});
+  const [importPreview, setImportPreview] = React.useState<ImportPreview | null>(null);
+  const [showImportModal, setShowImportModal] = React.useState(false);
+  const [showDisclaimer, setShowDisclaimer] = React.useState(false);
+  const [showAPIGuide, setShowAPIGuide] = React.useState(false);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  React.useEffect(() => setLocalSettings(settings), [settings, isOpen]);
+
+  const handleSave = () => {
+    onSaveSettings(localSettings);
+    onClose();
+  };
+
+  const handleExportData = () => {
+    const data = {
+      books: storageUtils.getBooks(),
+      settings: storageUtils.getSettings(),
+      exportDate: new Date().toISOString(),
+      version: '1.0.0'
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `pustakam-backup-${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleImportPreview = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const importData = JSON.parse(e.target?.result as string);
+        const existingBooks = storageUtils.getBooks();
+        const existingSettings = storageUtils.getSettings();
+
+        const duplicateBooks = importData.books ?
+          importData.books.filter((importBook: any) =>
+            existingBooks.some(existingBook => existingBook.id === importBook.id)
+          ).length : 0;
+
+        const settingsConflict = importData.settings &&
+          JSON.stringify(existingSettings) !== JSON.stringify(importData.settings);
+
+        setImportPreview({
+          books: importData.books || [],
+          settings: importData.settings || existingSettings,
+          conflicts: {
+            duplicateBooks,
+            settingsConflict
+          }
+        });
+        setShowImportModal(true);
+      } catch (error) {
+        showAlertDialog({
+          type: 'error',
+          title: 'Invalid File',
+          message: 'Failed to read import file. Please check the file format.',
+          confirmText: 'OK'
+        });
+      }
+    };
+    reader.readAsText(file);
+    event.target.value = '';
+  };
+
+  const executeImport = (mode: 'merge' | 'replace') => {
+    if (!importPreview) return;
+
+    try {
+      if (mode === 'replace') {
+        storageUtils.saveBooks(importPreview.books);
+        if (importPreview.settings) {
+          setLocalSettings(importPreview.settings);
+          storageUtils.saveSettings(importPreview.settings);
+        }
+      } else {
+        const existingBooks = storageUtils.getBooks();
+        const existingSettings = storageUtils.getSettings();
+
+        const mergedBooks = [...existingBooks];
+        importPreview.books.forEach(importBook => {
+          const exists = mergedBooks.some(existing => existing.id === importBook.id);
+          if (!exists) {
+            mergedBooks.push(importBook);
+          }
+        });
+        storageUtils.saveBooks(mergedBooks);
+
+        const mergedSettings = { ...importPreview.settings };
+        Object.keys(existingSettings).forEach(key => {
+          if (existingSettings[key as keyof APISettings] &&
+            key.includes('ApiKey') &&
+            existingSettings[key as keyof APISettings] !== '') {
+            mergedSettings[key as keyof APISettings] = existingSettings[key as keyof APISettings];
+          }
+        });
+        setLocalSettings(mergedSettings);
+        storageUtils.saveSettings(mergedSettings);
+      }
+
+      setShowImportModal(false);
+      setImportPreview(null);
+      showAlertDialog({
+        type: 'success',
+        title: 'Import Successful',
+        message: `Data imported successfully using ${mode} mode! The app will now reload.`,
+        confirmText: 'OK',
+        onConfirm: () => window.location.reload()
+      });
+    } catch (error) {
+      console.error('Import failed:', error);
+      let message = 'Failed to import data. Please check the file and try again.';
+      if (error instanceof DOMException && error.name === 'QuotaExceededError') {
+        message = 'Import failed: Your browser storage is full. Please clear some space and try again.';
+      }
+      showAlertDialog({
+        type: 'error',
+        title: 'Import Failed',
+        message,
+        confirmText: 'Dismiss'
+      });
+    }
+  };
+
+  const handleClearData = () => {
+    showAlertDialog({
+      type: 'confirm',
+      title: 'Confirm Data Deletion',
+      message: 'This will permanently delete all books and settings. This action cannot be undone. Are you sure?',
+      confirmText: 'Yes, Delete All',
+      cancelText: 'Cancel',
+      onConfirm: () => {
+        storageUtils.clearAllData();
+        showAlertDialog({
+          type: 'success',
+          title: 'Data Cleared',
+          message: 'All data has been cleared. The app will now reload.',
+          confirmText: 'OK',
+          onConfirm: () => window.location.reload()
+        });
+      }
+    });
+  };
+
+  if (!isOpen) return null;
+
+  const TabButton = ({ id, label, Icon }: { id: ActiveTab; label: string; Icon: React.ElementType; }) => (
+    <button
+      onClick={() => setActiveTab(id)}
+      className={`flex-1 flex items-center justify-center gap-2 p-3 text-sm font-medium transition-colors rounded-lg ${activeTab === id
+        ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20'
+        : 'text-gray-400 hover:bg-white/5 hover:text-white border border-transparent'
+        }`}
+    >
+      <Icon size={16} />
+      {label}
+    </button>
+  );
+
+  const apiConfigs = [
+    {
+      id: 'googleApiKey' as keyof APISettings,
+      name: 'Google AI',
+      url: 'https://aistudio.google.com/app/apikey',
+      description: 'For Gemini models (recommended for most users)'
+    },
+    {
+      id: 'mistralApiKey' as keyof APISettings,
+      name: 'Mistral AI',
+      url: 'https://console.mistral.ai/api-keys',
+      description: 'For Mistral models'
+    },
+    {
+      id: 'groqApiKey' as keyof APISettings,
+      name: 'Groq',
+      url: 'https://console.groq.com/keys',
+      description: 'For Llama and Kimi models'
+    },
+    {
+      id: 'cerebrasApiKey' as keyof APISettings,
+      name: 'Cerebras',
+      url: 'https://cloud.cerebras.ai/platform',
+      description: 'Ultra-fast inference for large models'
+    }
+  ];
+
+  return (
+    <>
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onClick={onClose}>
+        <div className="relative w-full max-w-lg bg-[#0a0a0f] border border-white/10 rounded-2xl shadow-2xl flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
+          {/* Header */}
+          <div className="p-5 flex items-center justify-between border-b border-white/5">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-orange-500/10 rounded-lg flex items-center justify-center">
+                <Settings size={18} className="text-orange-400" />
+              </div>
+              <h2 className="text-xl font-bold">Settings</h2>
+            </div>
+            <button onClick={onClose} className="p-2 rounded-lg hover:bg-white/5 transition-colors text-gray-400 hover:text-white">
+              <X size={18} />
+            </button>
+          </div>
+
+          {/* Tabs */}
+          <div className="p-2 grid grid-cols-3 gap-2 border-b border-white/5">
+            <TabButton id="keys" label="API Keys" Icon={Shield} />
+            <TabButton id="data" label="Data" Icon={Database} />
+            <TabButton id="about" label="About" Icon={HelpCircle} />
+          </div>
+
+          {/* Content */}
+          <div className="p-6 overflow-y-auto min-h-[25rem]">
+            {/* API Keys Tab */}
+            {activeTab === 'keys' && (
+              <div className="space-y-6 animate-fade-in">
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">API Keys</h3>
+                  <div className="bg-orange-500/10 border border-orange-500/20 rounded-lg p-4">
+                    <p className="text-sm text-orange-300 mb-2">
+                      🔒 Your API keys are stored locally in your browser and are never sent to our servers.
+                    </p>
+                    <p className="text-xs text-[var(--color-text-secondary)]">
+                      You need at least one API key to generate books. Google AI is recommended for beginners.
+                    </p>
+                    <button
+                      onClick={() => setShowAPIGuide(true)}
+                      className="mt-3 w-full btn bg-orange-500/20 border border-orange-500/30 text-[var(--color-text-primary)] hover:bg-orange-500/30 transition-colors flex items-center justify-center gap-2"
+                    >
+                      <BookMarked size={16} />
+                      How to Get API Keys
+                    </button>
+                  </div>
+
+                  {/* Current Model Selection */}
+                  <div className="bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg p-4">
+                    <h4 className="font-semibold mb-2 text-[var(--color-text-primary)]">Current Selection</h4>
+                    <div className="text-sm text-[var(--color-text-secondary)]">
+                      <div>Provider: <span className="font-medium text-orange-400 capitalize">{localSettings.selectedProvider}</span></div>
+                      <div>Model: <span className="font-medium text-green-400">{localSettings.selectedModel}</span></div>
+                    </div>
+                  </div>
+
+                  {/* API Key Inputs */}
+                  {apiConfigs.map(api => {
+                    const hasKey = !!localSettings[api.id];
+                    return (
+                      <div key={api.id} className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <label htmlFor={api.id} className="text-sm font-medium text-[var(--color-text-primary)] flex items-center gap-2">
+                            {api.name}
+                            <a href={api.url} target="_blank" rel="noopener noreferrer" className="text-orange-400 hover:text-orange-300" title="Get API Key">
+                              <ExternalLink size={12} />
+                            </a>
+                            {hasKey && <span className="text-xs bg-green-500/20 text-green-400 px-2 py-0.5 rounded">Connected</span>}
+                          </label>
+                        </div>
+                        <p className="text-xs text-[var(--color-text-secondary)] mb-2">{api.description}</p>
+                        <div className="relative">
+                          <Key className="w-4 h-4 text-[var(--color-text-secondary)] absolute top-1/2 left-3 -translate-y-1/2" />
+                          <input
+                            id={api.id}
+                            type={visibleApis[api.id] ? 'text' : 'password'}
+                            value={localSettings[api.id] as string}
+                            onChange={e => setLocalSettings(p => ({ ...p, [api.id]: e.target.value }))}
+                            placeholder={`Enter your ${api.name} API key`}
+                            className="input-style pl-9 pr-10"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setVisibleApis(p => ({ ...p, [api.id]: !p[api.id] }))}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
+                            title="Toggle visibility"
+                          >
+                            {visibleApis[api.id] ? <EyeOff size={16} /> : <Eye size={16} />}
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Data Tab */}
+            {activeTab === 'data' && (
+              <div className="space-y-6 animate-fade-in">
+                {/* Backup & Restore */}
+                <div>
+                  <h3 className="font-semibold mb-2 text-[var(--color-text-primary)]">Backup & Restore</h3>
+                  <p className="text-sm text-[var(--color-text-secondary)] mb-4">Export your books and settings, or import from a backup file.</p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <button onClick={handleExportData} className="btn btn-secondary w-full">
+                      <Download size={16} />
+                      Export Data
+                    </button>
+                    <label className="btn btn-secondary w-full cursor-pointer">
+                      <Upload size={16} />
+                      Import Data
+                      <input type="file" ref={fileInputRef} onChange={handleImportPreview} accept=".json" className="hidden" />
+                    </label>
+                  </div>
+                </div>
+
+                {/* Storage Info */}
+                <div className="bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg p-4">
+                  <h4 className="font-semibold mb-2 text-[var(--color-text-primary)]">Data Storage</h4>
+                  <div className="text-sm text-[var(--color-text-secondary)] space-y-1">
+                    <div>Books: <span className="font-medium">{storageUtils.getBooks().length} saved</span></div>
+                    <div>Storage: <span className="font-medium">Browser localStorage</span></div>
+                    <div>Sync: <span className="font-medium text-yellow-400">Local only</span></div>
+                  </div>
+                </div>
+
+                {/* Danger Zone */}
+                <div>
+                  <h3 className="font-semibold mb-2 text-red-400">Danger Zone</h3>
+                  <p className="text-sm text-[var(--color-text-secondary)] mb-3">This will permanently delete all your books, settings, and progress.</p>
+                  <button onClick={handleClearData} className="w-full btn bg-red-900/20 border border-red-500/30 text-red-400 hover:bg-red-900/40 transition-colors">
+                    <Trash2 size={16} />
+                    Clear All Data
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* About Tab */}
+            {activeTab === 'about' && (
+              <div className="space-y-8 animate-fade-in text-center flex flex-col items-center justify-center h-full">
+                {/* Logo and Title */}
+                <div className="space-y-6">
+                  <img src="/white-logo.png" alt="Pustakam Logo" className="w-16 h-16 mx-auto" />
+                  <div>
+                    <h4 className="text-2xl font-bold text-[var(--color-text-primary)] mb-2">Pustakam</h4>
+                    <p className="text-sm text-[var(--color-text-secondary)] max-w-xs mx-auto">
+                      AI-powered book generation engine that transforms your ideas into comprehensive digital books.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Feature Grid */}
+                <div className="grid grid-cols-2 gap-6 w-full max-w-sm">
+                  <div className="text-center p-4 bg-white/5 rounded-lg">
+                    <Zap className="w-6 h-6 text-orange-400 mx-auto mb-2" />
+                    <h5 className="font-semibold text-sm text-[var(--color-text-primary)] mb-1">AI-Powered</h5>
+                    <p className="text-xs text-[var(--color-text-secondary)]">Multiple AI models supported</p>
+                  </div>
+                  <div className="text-center p-4 bg-white/5 rounded-lg">
+                    <BookOpen className="w-6 h-6 text-green-400 mx-auto mb-2" />
+                    <h5 className="font-semibold text-sm text-[var(--color-text-primary)] mb-1">Full Books</h5>
+                    <p className="text-xs text-[var(--color-text-secondary)]">Complete structured content</p>
+                  </div>
+                  <div className="text-center p-4 bg-white/5 rounded-lg">
+                    <Globe className="w-6 h-6 text-purple-400 mx-auto mb-2" />
+                    <h5 className="font-semibold text-sm text-[var(--color-text-primary)] mb-1">PWA Ready</h5>
+                    <p className="text-xs text-[var(--color-text-secondary)]">Works offline</p>
+                  </div>
+                  <div className="text-center p-4 bg-white/5 rounded-lg">
+                    <Cpu className="w-6 h-6 text-orange-400 mx-auto mb-2" />
+                    <h5 className="font-semibold text-sm text-[var(--color-text-primary)] mb-1">Smart Analytics</h5>
+                    <p className="text-xs text-[var(--color-text-secondary)]">Reading insights</p>
+                  </div>
+                </div>
+
+                {/* Disclaimer Button */}
+                <div className="w-full max-w-sm space-y-3">
+                  <button
+                    onClick={() => setShowDisclaimer(true)}
+                    className="w-full btn bg-red-500/20 border border-red-500/30 text-red-300 hover:bg-red-500/30 transition-all flex items-center justify-center gap-2 py-3"
+                  >
+                    <AlertTriangle className="w-5 h-5" />
+                    <span className="font-semibold">View Important Disclaimer</span>
+                  </button>
+                  <p className="text-xs text-gray-500 leading-relaxed">
+                    Important information about AI-generated content, limitations, and user responsibilities
+                  </p>
+                </div>
+
+                {/* Version and Creator */}
+                <div className="space-y-4">
+                  <div className="text-xs text-gray-500">
+                    Version 1.0.0 • Built with React & TypeScript
+                  </div>
+                  <div className="flex items-center justify-center gap-2 text-gray-400 hover:text-white transition-colors">
+                    <User size={14} />
+                    <a
+                      href="https://linkedin.com/in/tanmay-kalbande"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-semibold text-sm"
+                    >
+                      by Tanmay Kalbande
+                    </a>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Footer */}
+          <div className="flex justify-end gap-3 p-4 border-t border-white/5">
+            <button onClick={onClose} className="px-4 py-2 text-gray-400 hover:text-white border border-white/10 rounded-lg hover:border-white/20 transition-all">Cancel</button>
+            <button onClick={handleSave} className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg transition-colors">Save Changes</button>
+          </div>
+        </div>
+      </div>
+
+      {/* Import Preview Modal */}
+      {showImportModal && importPreview && (
+        <div className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+          <div className="bg-[var(--color-sidebar)] border border-[var(--color-border)] rounded-2xl shadow-2xl w-full max-w-md p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <AlertTriangle className="text-yellow-400" size={20} />
+              <h3 className="text-lg font-semibold text-white">Import Preview</h3>
+            </div>
+
+            <div className="space-y-4 mb-6">
+              <div className="bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg p-3">
+                <h4 className="font-medium text-white mb-2">Import Contains:</h4>
+                <div className="text-sm text-gray-300 space-y-1">
+                  <div>📚 Books: <span className="font-medium">{importPreview.books.length}</span></div>
+                  <div>⚙️ Settings: <span className="font-medium">{importPreview.settings ? 'Yes' : 'No'}</span></div>
+                </div>
+              </div>
+
+              {(importPreview.conflicts.duplicateBooks > 0 || importPreview.conflicts.settingsConflict) && (
+                <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-3">
+                  <h4 className="font-medium text-yellow-400 mb-2 flex items-center gap-2">
+                    <AlertTriangle size={16} />
+                    Conflicts Detected:
+                  </h4>
+                  <div className="text-sm text-yellow-300 space-y-1">
+                    {importPreview.conflicts.duplicateBooks > 0 && (
+                      <div>• {importPreview.conflicts.duplicateBooks} duplicate book(s)</div>
+                    )}
+                    {importPreview.conflicts.settingsConflict && (
+                      <div>• Settings will be updated</div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="space-y-3">
+              <button
+                onClick={() => executeImport('merge')}
+                className="w-full btn bg-green-600/20 border border-green-500/30 text-green-400 hover:bg-green-600/30 transition-colors"
+              >
+                <Plus size={16} />
+                Smart Merge (Recommended)
+              </button>
+              <button
+                onClick={() => executeImport('replace')}
+                className="w-full btn bg-orange-600/20 border border-orange-500/30 text-orange-400 hover:bg-orange-600/30 transition-colors"
+              >
+                <Download size={16} />
+                Replace All Data
+              </button>
+              <button
+                onClick={() => { setShowImportModal(false); setImportPreview(null); }}
+                className="w-full btn btn-secondary"
+              >
+                Cancel
+              </button>
+            </div>
+
+            <div className="mt-4 text-xs text-gray-500">
+              <p><strong>Smart Merge:</strong> Adds new books and settings while preserving existing data.</p>
+              <p><strong>Replace All:</strong> Completely replaces your current data with the imported data.</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Disclaimer Modal */}
+      {showDisclaimer && (
+        <DisclaimerPage
+          isOpen={showDisclaimer}
+          onClose={() => setShowDisclaimer(false)}
+        />
+      )}
+
+      {/* API Key Guide Modal */}
+      {showAPIGuide && (
+        <APIKeyGuide
+          isOpen={showAPIGuide}
+          onClose={() => setShowAPIGuide(false)}
+        />
+      )}
+    </>
+  );
+}
