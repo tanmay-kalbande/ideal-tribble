@@ -21,7 +21,6 @@ import { AuthModal } from './components/AuthModal';
 import { CreditGate } from './components/CreditGate';
 import { WelcomeModal } from './components/WelcomeModal';
 import LandingPage from './components/LandingPage';
-import ParallaxBackground from './components/ParallaxBackground';
 import creditService from './services/creditService';
 
 type AppView = 'list' | 'create' | 'detail';
@@ -658,7 +657,14 @@ function App() {
 
   return (
     <div className="app-container">
-      <ParallaxBackground theme={theme} />
+      {theme === 'dark' ? (
+        <div className="starfield-background">
+          <div className="starfield-layer1" />
+          <div className="starfield-layer2" />
+        </div>
+      ) : (
+        <div className="sun-background" />
+      )}
 
       <TopHeader
         settings={settings}

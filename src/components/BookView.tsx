@@ -1062,10 +1062,33 @@ const HomeView = ({
   onOpenSettings: () => void;
 }) => (
   <div className="flex-1 flex flex-col items-center justify-center p-6 md:p-8 text-center relative overflow-hidden">
-    {/* Background Glows */}
-    <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-gradient-to-br from-orange-500/20 to-amber-500/10 blur-[120px] rounded-full pointer-events-none" />
+    {/* Enhanced Animated Background */}
+    {/* Main gradient glow - pulsing */}
+    <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-gradient-to-br from-orange-500/25 to-amber-500/15 blur-[150px] rounded-full pointer-events-none animate-pulse-slow" />
+
+    {/* Floating orbs */}
+    <div className="absolute top-1/4 left-1/4 w-[200px] h-[200px] bg-gradient-to-br from-orange-400/20 to-transparent blur-[80px] rounded-full pointer-events-none animate-float-slow" />
+    <div className="absolute bottom-1/4 right-1/4 w-[250px] h-[250px] bg-gradient-to-br from-amber-500/15 to-transparent blur-[100px] rounded-full pointer-events-none animate-float-slower" />
+    <div className="absolute top-1/2 right-1/3 w-[150px] h-[150px] bg-gradient-to-br from-yellow-400/10 to-transparent blur-[60px] rounded-full pointer-events-none animate-float-medium" />
+
+    {/* Scattered particles */}
+    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+      {/* Particle layer 1 */}
+      <div className="particle-container">
+        <div className="particle particle-1" />
+        <div className="particle particle-2" />
+        <div className="particle particle-3" />
+        <div className="particle particle-4" />
+        <div className="particle particle-5" />
+        <div className="particle particle-6" />
+        <div className="particle particle-7" />
+        <div className="particle particle-8" />
+      </div>
+    </div>
+
+    {/* Bottom gradient fade */}
     {theme === 'dark' && (
-      <div className="absolute bottom-0 left-0 right-0 h-[200px] bg-gradient-to-t from-[#0a0a0f] via-transparent to-transparent pointer-events-none" />
+      <div className="absolute bottom-0 left-0 right-0 h-[250px] bg-gradient-to-t from-[#0a0a0f] via-[#0a0a0f]/50 to-transparent pointer-events-none" />
     )}
 
     <div className="relative z-10 w-full max-w-xl mx-auto animate-fade-in-up">

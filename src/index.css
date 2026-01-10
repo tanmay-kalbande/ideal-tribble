@@ -347,6 +347,179 @@
     animation: slide-in-out 2s linear infinite;
   }
 
+  /* --- Floating Orb Animations --- */
+  @keyframes floatSlow {
+
+    0%,
+    100% {
+      transform: translateY(0) translateX(0);
+      opacity: 0.6;
+    }
+
+    25% {
+      transform: translateY(-20px) translateX(10px);
+      opacity: 0.8;
+    }
+
+    50% {
+      transform: translateY(-10px) translateX(-5px);
+      opacity: 0.7;
+    }
+
+    75% {
+      transform: translateY(-25px) translateX(5px);
+      opacity: 0.9;
+    }
+  }
+
+  @keyframes floatSlower {
+
+    0%,
+    100% {
+      transform: translateY(0) translateX(0) scale(1);
+      opacity: 0.5;
+    }
+
+    33% {
+      transform: translateY(-30px) translateX(-15px) scale(1.05);
+      opacity: 0.7;
+    }
+
+    66% {
+      transform: translateY(-15px) translateX(10px) scale(0.95);
+      opacity: 0.6;
+    }
+  }
+
+  @keyframes floatMedium {
+
+    0%,
+    100% {
+      transform: translateY(0) translateX(0);
+      opacity: 0.4;
+    }
+
+    50% {
+      transform: translateY(-15px) translateX(-10px);
+      opacity: 0.7;
+    }
+  }
+
+  @keyframes pulseSlow {
+
+    0%,
+    100% {
+      transform: translate(-50%, 0) scale(1);
+      opacity: 0.8;
+    }
+
+    50% {
+      transform: translate(-50%, 0) scale(1.1);
+      opacity: 1;
+    }
+  }
+
+  @keyframes particleFloat {
+
+    0%,
+    100% {
+      transform: translateY(0) translateX(0);
+      opacity: 0.3;
+    }
+
+    50% {
+      transform: translateY(-30px) translateX(10px);
+      opacity: 0.8;
+    }
+  }
+
+  .animate-float-slow {
+    animation: floatSlow 8s ease-in-out infinite;
+  }
+
+  .animate-float-slower {
+    animation: floatSlower 12s ease-in-out infinite;
+  }
+
+  .animate-float-medium {
+    animation: floatMedium 6s ease-in-out infinite;
+  }
+
+  .animate-pulse-slow {
+    animation: pulseSlow 6s ease-in-out infinite;
+  }
+
+  /* --- Particle System --- */
+  .particle-container {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+
+  .particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: rgba(249, 115, 22, 0.6);
+    animation: particleFloat 10s ease-in-out infinite;
+  }
+
+  .particle-1 {
+    top: 20%;
+    left: 15%;
+    animation-delay: 0s;
+    background: rgba(249, 115, 22, 0.5);
+  }
+
+  .particle-2 {
+    top: 40%;
+    left: 80%;
+    animation-delay: 1.5s;
+    background: rgba(251, 191, 36, 0.6);
+  }
+
+  .particle-3 {
+    top: 60%;
+    left: 25%;
+    animation-delay: 3s;
+    background: rgba(234, 88, 12, 0.4);
+  }
+
+  .particle-4 {
+    top: 25%;
+    left: 65%;
+    animation-delay: 4.5s;
+    background: rgba(245, 158, 11, 0.5);
+  }
+
+  .particle-5 {
+    top: 75%;
+    left: 45%;
+    animation-delay: 2s;
+    background: rgba(249, 115, 22, 0.6);
+  }
+
+  .particle-6 {
+    top: 35%;
+    left: 35%;
+    animation-delay: 5.5s;
+    background: rgba(251, 191, 36, 0.4);
+  }
+
+  .particle-7 {
+    top: 55%;
+    left: 75%;
+    animation-delay: 7s;
+    background: rgba(234, 88, 12, 0.5);
+  }
+
+  .particle-8 {
+    top: 15%;
+    left: 50%;
+    animation-delay: 8.5s;
+    background: rgba(245, 158, 11, 0.6);
+  }
 
   /* --- Layout & Backgrounds --- */
   .app-container {
