@@ -59,10 +59,10 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
 
     const displayName = userProfile?.full_name || user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User';
 
-    // Softer gradient that lets the background show through
+    // 6-step gradient for smooth fade
     const headerGradient = theme === 'light'
-        ? 'linear-gradient(to bottom, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0) 100%)'
-        : 'linear-gradient(to bottom, rgba(10,10,15,0.85) 0%, rgba(10,10,15,0.6) 50%, rgba(10,10,15,0) 100%)';
+        ? 'linear-gradient(to bottom, rgba(255,255,255,1) 0%, rgba(255,255,255,0.95) 20%, rgba(255,255,255,0.8) 40%, rgba(255,255,255,0.5) 60%, rgba(255,255,255,0.2) 80%, rgba(255,255,255,0) 100%)'
+        : 'linear-gradient(to bottom, rgba(10,10,15,1) 0%, rgba(10,10,15,0.95) 20%, rgba(10,10,15,0.8) 40%, rgba(10,10,15,0.5) 60%, rgba(10,10,15,0.2) 80%, rgba(10,10,15,0) 100%)';
 
     // Check if provider has API key configured
     const isProviderEnabled = (provider: ModelProvider) => {
@@ -83,7 +83,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
 
     return (
         <header
-            className="fixed top-0 left-0 right-0 z-40 h-[72px] flex items-center justify-between px-6 md:px-12 pointer-events-auto backdrop-blur-md"
+            className="fixed top-0 left-0 right-0 z-40 h-[72px] flex items-center justify-between px-6 md:px-12 pointer-events-auto"
             style={{ background: headerGradient }}
         >
             {/* Brand / Logo - Using existing logo + mono font */}
