@@ -83,14 +83,14 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
 
     return (
         <>
-            <header className={`fixed top-0 left-0 right-0 z-50 px-4 md:px-8 py-3 ${gradientClass}`}>
+            <header className={`fixed top-0 left-0 right-0 z-50 px-4 md:px-6 py-2 ${gradientClass}`}>
                 <div className="flex items-center justify-between">
                     {/* Brand / Logo - Compact */}
-                    <div className="flex items-center gap-2 select-none">
-                        <img src="/white-logo.png" alt="Pustakam" className="w-7 h-7" />
+                    <div className="flex items-center gap-1.5 select-none">
+                        <img src="/white-logo.png" alt="Pustakam" className="w-6 h-6" />
                         <div className="flex flex-col">
                             <span
-                                className={`text-base tracking-tight leading-none ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}
+                                className={`text-sm tracking-tight leading-none ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}
                                 style={{ fontFamily: "'Aptos-Mono', monospace", fontWeight: 700 }}
                             >
                                 Pustakam
@@ -276,7 +276,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
 
                     </div>
                 </div>
-            </header>
+            </header >
         </>
     );
 };
