@@ -77,21 +77,11 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
     const currentModelName = MODEL_OPTIONS.find(m => m.model === settings.selectedModel)?.name || settings.selectedModel || 'Select Model';
 
 
-
     return (
         <>
-            <header className="fixed top-0 left-0 right-0 z-50 px-6 md:px-12 py-4 overflow-visible">
-                {/* Gradient background overlay that extends below header */}
-                <div
-                    className="absolute inset-0 pointer-events-none"
-                    style={{
-                        background: theme === 'light'
-                            ? 'linear-gradient(to bottom, #ffffff 0%, #ffffff 60%, rgba(255,255,255,0.8) 80%, rgba(255,255,255,0) 100%)'
-                            : 'linear-gradient(to bottom, #0a0a0f 0%, #0a0a0f 60%, rgba(10,10,15,0.8) 80%, rgba(10,10,15,0) 100%)',
-                        height: '150%'
-                    }}
-                />
-                <div className="flex items-center justify-between relative z-10">
+            {/* Exact same style as landing page header */}
+            <header className={`fixed top-0 left-0 right-0 z-50 px-6 md:px-12 py-4 ${theme === 'light' ? 'bg-gradient-to-b from-white via-white/95 to-transparent' : 'bg-gradient-to-b from-[#0a0a0f] via-[#0a0a0f]/95 to-transparent'}`}>
+                <div className="flex items-center justify-between">
                     {/* Brand / Logo */}
                     <div className="flex items-center gap-2 select-none">
                         <img src={theme === 'light' ? '/black-logo.png' : '/white-logo.png'} alt="Pustakam" className="w-8 h-8" />
