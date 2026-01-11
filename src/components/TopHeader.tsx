@@ -83,7 +83,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
 
     return (
         <>
-            <header className={`fixed top-0 left-0 right-0 z-50 px-6 md:px-8 py-4 pb-10 ${gradientClass}`}>
+            <header className={`fixed top-0 left-0 right-0 z-50 px-6 md:px-8 py-3 pb-6 ${gradientClass}`}>
                 <div className="flex items-center justify-between">
                     {/* Brand / Logo */}
                     <div className="flex items-center gap-2.5 select-none">
