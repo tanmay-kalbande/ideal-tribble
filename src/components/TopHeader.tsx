@@ -76,10 +76,10 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
     // Get current model display name
     const currentModelName = MODEL_OPTIONS.find(m => m.model === settings.selectedModel)?.name || settings.selectedModel || 'Select Model';
 
-    // Smooth gradient without visible lines - using opacity stops
+    // Smooth gradient matching landing page header style
     const gradientClass = theme === 'light'
-        ? 'bg-gradient-to-b from-white via-white to-white/0'
-        : 'bg-gradient-to-b from-[#0a0a0f] via-[#0a0a0f] to-[#0a0a0f]/0';
+        ? 'bg-gradient-to-b from-white via-white/95 to-transparent'
+        : 'bg-gradient-to-b from-[#0a0a0f] via-[#0a0a0f]/95 to-transparent';
 
     return (
         <>
