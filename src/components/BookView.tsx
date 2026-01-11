@@ -1061,11 +1061,8 @@ const HomeView = ({
   localIsGenerating: boolean;
   onOpenSettings: () => void;
 }) => (
-  <div className="flex-1 flex flex-col items-center justify-start text-center relative overflow-y-auto">
-    {/* Fixed Header with Gradient Fade */}
-    <div className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-b from-[var(--color-bg)] via-[var(--color-bg)]/95 to-transparent pointer-events-none" style={{ height: '120px' }} />
-
-    <div className="relative z-10 w-full max-w-xl mx-auto my-auto animate-fade-in-up pt-20 px-6 md:px-8">
+  <div className="flex-1 flex flex-col items-center justify-start p-6 md:p-8 pt-20 text-center relative overflow-y-auto">
+    <div className="relative z-10 w-full max-w-xl mx-auto my-auto animate-fade-in-up">
       {/* Hero with Landing Page Style */}
       <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-center">
         Transform Ideas Into
