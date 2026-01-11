@@ -190,12 +190,12 @@ export function SettingsModal({ isOpen, onClose, settings, onSaveSettings, showA
   const TabButton = ({ id, label, Icon }: { id: ActiveTab; label: string; Icon: React.ElementType; }) => (
     <button
       onClick={() => setActiveTab(id)}
-      className={`flex-1 flex items-center justify-center gap-2 p-3 text-sm font-medium transition-colors rounded-lg ${activeTab === id
-        ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20'
-        : 'text-gray-400 hover:bg-white/5 hover:text-white border border-transparent'
+      className={`group flex items-center gap-3 px-4 py-2.5 text-sm font-semibold transition-all rounded-lg w-full ${activeTab === id
+        ? 'bg-orange-500/10 text-orange-500 shadow-sm shadow-orange-500/5'
+        : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/[0.03]'
         }`}
     >
-      <Icon size={16} />
+      <Icon size={18} className={`transition-colors ${activeTab === id ? 'text-orange-500' : 'text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white'}`} />
       {label}
     </button>
   );
@@ -229,288 +229,223 @@ export function SettingsModal({ isOpen, onClose, settings, onSaveSettings, showA
 
   return (
     <>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md" onClick={onClose}>
-        <div className="relative w-full max-w-lg">
-          {/* Neon Glow Backdrop */}
-          <div className="absolute -inset-4 bg-orange-500/20 blur-2xl rounded-[2.5rem] opacity-50" />
-
-          <div
-            className="relative bg-white dark:bg-[#0a0a0f] border border-gray-200 dark:border-white/10 rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden"
-            onClick={e => e.stopPropagation()}
-          >
-            {/* Header */}
-            <div className="p-5 flex items-center justify-between border-b border-gray-100 dark:border-white/5 bg-white/50 dark:bg-white/[0.02]">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-orange-500/15 rounded-xl flex items-center justify-center shadow-inner">
-                  <Settings size={20} className="text-orange-500 dark:text-orange-400" />
-                </div>
-                <div>
-                  <h2 className="text-xl font-bold text-gray-900 dark:text-white leading-tight">Settings</h2>
-                  <p className="text-xs text-gray-500 dark:text-white/40 font-medium">Configure your experience</p>
-                </div>
-              </div>
-              <button
-                onClick={onClose}
-                className="p-2.5 rounded-xl hover:bg-gray-100 dark:hover:bg-white/5 transition-all text-gray-400 hover:text-gray-900 dark:hover:text-white group"
-              >
-                <X size={20} className="group-hover:rotate-90 transition-transform duration-300" />
-              </button>
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/40 backdrop-blur-sm" onClick={onClose}>
+        <div
+          className="relative w-full max-w-2xl bg-white dark:bg-[#0a0a0f] border border-gray-200 dark:border-white/[0.08] rounded-xl shadow-2xl flex flex-col max-h-[85vh] overflow-hidden"
+          onClick={e => e.stopPropagation()}
+        >
+          {/* Header */}
+          <div className="px-6 py-4 flex items-center justify-between border-b border-gray-100 dark:border-white/[0.05]">
+            <div className="flex items-center gap-3">
+              <Settings size={18} className="text-gray-400" />
+              <h2 className="text-sm font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">System Preferences</h2>
             </div>
+            <button
+              onClick={onClose}
+              className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-white/[0.05] transition-colors text-gray-400 hover:text-gray-900 dark:hover:text-white"
+            >
+              <X size={18} />
+            </button>
+          </div>
 
-            {/* Tabs */}
-            <div className="p-2 grid grid-cols-3 gap-1.5 border-b border-gray-100 dark:border-white/5 bg-gray-50/50 dark:bg-transparent">
+          <div className="flex flex-1 overflow-hidden">
+            {/* Sidebar Navigation */}
+            <div className="w-52 border-r border-gray-100 dark:border-white/[0.05] p-3 space-y-1 bg-gray-50/50 dark:bg-black/20">
               <TabButton id="keys" label="API Keys" Icon={Shield} />
               <TabButton id="data" label="Data Area" Icon={Database} />
               <TabButton id="about" label="Platform" Icon={HelpCircle} />
             </div>
 
-            {/* Content */}
-            <div className="p-6 overflow-y-auto min-h-[25rem] scroll-smooth">
+            {/* Content Area */}
+            <div className="flex-1 overflow-y-auto bg-white dark:bg-transparent p-8 scroll-smooth">
               {/* API Keys Tab */}
               {activeTab === 'keys' && (
-                <div className="space-y-6 animate-fade-in">
-                  <div className="space-y-5">
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-lg font-bold text-gray-900 dark:text-white">External Connections</h3>
-                      <button
-                        onClick={() => setShowAPIGuide(true)}
-                        className="text-xs font-semibold text-orange-500 hover:text-orange-600 dark:text-orange-400 dark:hover:text-orange-300 flex items-center gap-1.5 transition-colors"
-                      >
-                        <BookMarked size={14} />
-                        Setup Guide
-                      </button>
-                    </div>
+                <div className="max-w-md animate-fade-in space-y-8">
+                  <header>
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">External Connections</h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Configure your LLM provider credentials.</p>
+                  </header>
 
-                    <div className="bg-orange-500/[0.03] dark:bg-orange-500/10 border border-orange-500/20 rounded-xl p-4 shadow-sm">
-                      <div className="flex gap-3">
-                        <div className="mt-1"><Shield size={16} className="text-orange-500" /></div>
-                        <div>
-                          <p className="text-sm font-semibold text-orange-600 dark:text-orange-300 mb-1">
-                            Enterprise Grade Privacy
-                          </p>
-                          <p className="text-xs text-gray-600 dark:text-white/60 leading-relaxed">
-                            Your keys are encrypted and stored in your browser's private storage. We never transmit them to our servers.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* API Key Inputs */}
-                    <div className="space-y-4">
-                      {apiConfigs.map(api => {
-                        const hasKey = !!localSettings[api.id];
-                        return (
-                          <div key={api.id} className="group transition-all duration-300">
-                            <div className="flex items-center justify-between mb-1.5">
-                              <label htmlFor={api.id} className="text-sm font-bold text-gray-700 dark:text-white/80 flex items-center gap-2">
-                                {api.name}
-                                <a href={api.url} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-orange-500 transition-colors" title="Get API Key">
-                                  <ExternalLink size={12} />
-                                </a>
-                              </label>
-                              {hasKey && (
-                                <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-100 dark:bg-green-500/20 border border-green-200 dark:border-green-500/30">
-                                  <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                                  <span className="text-[10px] font-bold text-green-700 dark:text-green-400 uppercase tracking-wider">Active</span>
-                                </div>
-                              )}
-                            </div>
-
-                            <div className="relative group/input">
-                              <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 group-hover/input:text-orange-500 transition-colors">
-                                <Key size={16} />
-                              </div>
-                              <input
-                                id={api.id}
-                                type={visibleApis[api.id] ? 'text' : 'password'}
-                                value={localSettings[api.id] as string}
-                                onChange={e => setLocalSettings(p => ({ ...p, [api.id]: e.target.value }))}
-                                placeholder={`Paste ${api.name} Key here...`}
-                                className="w-full bg-gray-50 dark:bg-white/[0.03] border border-gray-200 dark:border-white/10 rounded-xl py-3 pl-10 pr-12 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500/50 transition-all shadow-sm"
-                              />
-                              <button
-                                type="button"
-                                onClick={() => setVisibleApis(p => ({ ...p, [api.id]: !p[api.id] }))}
-                                className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 rounded-lg hover:bg-gray-200 dark:hover:bg-white/10 text-gray-400 hover:text-gray-900 dark:hover:text-white transition-all"
-                                title="Toggle visibility"
-                              >
-                                {visibleApis[api.id] ? <EyeOff size={16} /> : <Eye size={16} />}
-                              </button>
-                            </div>
-                            <p className="mt-1.5 text-[11px] text-gray-500 dark:text-white/40 ml-1 font-medium italic">{api.description}</p>
+                  <div className="space-y-6">
+                    {apiConfigs.map(api => {
+                      const hasKey = !!localSettings[api.id];
+                      return (
+                        <div key={api.id} className="space-y-2">
+                          <div className="flex items-center justify-between">
+                            <label htmlFor={api.id} className="text-[11px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 flex items-center gap-2">
+                              {api.name}
+                              {hasKey && <span className="w-1.5 h-1.5 rounded-full bg-orange-500" title="Key Configured" />}
+                            </label>
+                            <a href={api.url} target="_blank" rel="noopener noreferrer" className="text-[10px] font-semibold text-orange-500 hover:underline flex items-center gap-1">
+                              Get Key <ExternalLink size={10} />
+                            </a>
                           </div>
-                        );
-                      })}
-                    </div>
+
+                          <div className="relative group">
+                            <input
+                              id={api.id}
+                              type={visibleApis[api.id] ? 'text' : 'password'}
+                              value={localSettings[api.id] as string}
+                              onChange={e => setLocalSettings(p => ({ ...p, [api.id]: e.target.value }))}
+                              placeholder={`Enter ${api.name} API Key`}
+                              className="w-full bg-gray-50 dark:bg-white/[0.03] border border-gray-200 dark:border-white/[0.08] rounded-lg py-2 pl-3 pr-10 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-orange-500/30 focus:border-orange-500/40 transition-all shadow-sm"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => setVisibleApis(p => ({ ...p, [api.id]: !p[api.id] }))}
+                              className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                            >
+                              {visibleApis[api.id] ? <EyeOff size={14} /> : <Eye size={14} />}
+                            </button>
+                          </div>
+                          <p className="text-[10px] text-gray-400 dark:text-gray-500 font-medium">{api.description}</p>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  <div className="pt-4 border-t border-gray-100 dark:border-white/[0.05]">
+                    <button
+                      onClick={() => setShowAPIGuide(true)}
+                      className="text-xs font-semibold text-gray-500 hover:text-orange-500 flex items-center gap-2 transition-colors"
+                    >
+                      <BookMarked size={14} />
+                      View API Setup Documentation
+                    </button>
                   </div>
                 </div>
               )}
 
               {/* Data Tab */}
               {activeTab === 'data' && (
-                <div className="space-y-6 animate-fade-in">
-                  <div className="space-y-6">
-                    <div>
-                      <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1.5">Knowledge Backup</h3>
-                      <p className="text-xs text-gray-500 dark:text-white/40 font-medium mb-4">Secure your generated books and customized configurations.</p>
+                <div className="max-w-md animate-fade-in space-y-8">
+                  <header>
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">Knowledge Management</h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Control your local library and archives.</p>
+                  </header>
 
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <button
-                          onClick={handleExportData}
-                          className="flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-400 active:scale-95 text-white text-sm font-black rounded-xl shadow-lg shadow-orange-500/25 transition-all"
-                        >
-                          <Download size={16} />
-                          Secure Export
-                        </button>
+                  <section className="space-y-4">
+                    <h4 className="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500">Backup Operations</h4>
+                    <div className="grid grid-cols-2 gap-3">
+                      <button
+                        onClick={handleExportData}
+                        className="flex items-center justify-center gap-2 px-4 py-2 bg-gray-900 dark:bg-white text-white dark:text-black text-xs font-bold rounded-lg hover:opacity-90 transition-opacity whitespace-nowrap"
+                      >
+                        <Download size={14} />
+                        Export Archive
+                      </button>
+                      <label className="flex items-center justify-center gap-2 px-4 py-2 border border-gray-200 dark:border-white/[0.1] text-gray-700 dark:text-white text-xs font-bold rounded-lg hover:bg-gray-50 dark:hover:bg-white/[0.03] transition-all cursor-pointer whitespace-nowrap">
+                        <Upload size={14} />
+                        Restore Library
+                        <input type="file" ref={fileInputRef} onChange={handleImportPreview} accept=".json" className="hidden" />
+                      </label>
+                    </div>
+                  </section>
 
-                        <label className="flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-400 active:scale-95 text-white text-sm font-black rounded-xl shadow-lg shadow-orange-500/25 transition-all cursor-pointer">
-                          <Upload size={16} />
-                          Restore Archive
-                          <input type="file" ref={fileInputRef} onChange={handleImportPreview} accept=".json" className="hidden" />
-                        </label>
+                  <section className="space-y-4 pt-6 border-t border-gray-100 dark:border-white/[0.05]">
+                    <h4 className="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500">System Integrity</h4>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-1">
+                        <p className="text-[10px] text-gray-400 font-bold tracking-wider">LOCAL DATABASE</p>
+                        <p className="text-sm font-bold text-gray-900 dark:text-white">{storageUtils.getBooks().length} Entires Recorded</p>
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-[10px] text-gray-400 font-bold tracking-wider">STORAGE TYPE</p>
+                        <p className="text-sm font-bold text-gray-900 dark:text-white italic">IndexedDB Engine</p>
                       </div>
                     </div>
+                  </section>
 
-                    <div className="bg-gray-50 dark:bg-white/[0.02] border border-gray-100 dark:border-white/5 rounded-2xl p-5 shadow-inner">
-                      <h4 className="text-sm font-bold text-gray-900 dark:text-white mb-3 flex items-center gap-2 text-primary">
-                        <div className="w-1.5 h-4 bg-orange-500 rounded-full" />
-                        Storage Integrity
-                      </h4>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="p-3 bg-white dark:bg-white/5 rounded-xl border border-gray-100 dark:border-white/5">
-                          <p className="text-[10px] text-gray-400 dark:text-white/30 uppercase font-bold tracking-wider mb-0.5">Library Content</p>
-                          <p className="text-lg font-black text-gray-900 dark:text-white">{storageUtils.getBooks().length} <span className="text-xs font-bold text-gray-400">Items</span></p>
-                        </div>
-                        <div className="p-3 bg-white dark:bg-white/5 rounded-xl border border-gray-100 dark:border-white/5">
-                          <p className="text-[10px] text-gray-400 dark:text-white/30 uppercase font-bold tracking-wider mb-0.5">Storage Protocol</p>
-                          <p className="text-sm font-black text-gray-900 dark:text-white flex items-center gap-1.5">
-                            LocalDB
-                            <span className="flex h-2 w-2 rounded-full bg-orange-500" />
-                          </p>
-                        </div>
-                      </div>
+                  <section className="pt-8 space-y-3">
+                    <h4 className="text-[10px] font-bold uppercase tracking-widest text-red-500">Danger Zone</h4>
+                    <div className="p-4 rounded-xl border border-red-500/10 bg-red-500/[0.02]">
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mb-4 leading-relaxed">
+                        Resetting the engine will purge all knowledge bases, session history, and provider configurations.
+                      </p>
+                      <button
+                        onClick={handleClearData}
+                        className="text-xs font-black text-red-500 hover:text-red-400 flex items-center gap-2 transition-colors"
+                      >
+                        <Trash2 size={14} />
+                        Purge All System Data
+                      </button>
                     </div>
-
-                    <div className="pt-2 border-t border-gray-100 dark:border-white/5">
-                      <h3 className="text-sm font-bold text-red-600 dark:text-red-400 mb-2">Danger Territory</h3>
-                      <div className="p-4 bg-red-50 dark:bg-red-500/5 border border-red-100 dark:border-red-500/10 rounded-xl">
-                        <p className="text-xs text-red-700 dark:text-red-300/70 leading-relaxed mb-4 font-medium">
-                          Initiating a data wipe will permanently eliminate all knowledge bases and custom configurations. This process is irreversible.
-                        </p>
-                        <button
-                          onClick={handleClearData}
-                          className="w-full flex items-center justify-center gap-2 px-6 py-2.5 bg-red-900/20 border border-red-500/30 text-red-400 hover:bg-red-900/40 active:scale-95 text-sm font-black rounded-xl transition-all"
-                        >
-                          <Trash2 size={16} />
-                          Factory Reset System
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+                  </section>
                 </div>
               )}
 
-              {/* About Tab */}
+              {/* Platform Tab */}
               {activeTab === 'about' && (
-                <div className="space-y-8 animate-fade-in py-2 text-center">
-                  {/* Branding Center */}
-                  <div className="space-y-4">
-                    <div className="relative inline-block group">
-                      <div className="absolute -inset-2 bg-orange-500/25 blur-lg rounded-2xl opacity-25 group-hover:opacity-40 transition-opacity" />
-                      <img
-                        src="/white-logo.png"
-                        alt="Pustakam"
-                        className="relative w-20 h-20 mx-auto drop-shadow-2xl transition-transform group-hover:scale-110 duration-500"
-                      />
+                <div className="max-w-md animate-fade-in space-y-10">
+                  <div className="flex items-start gap-6">
+                    <div className="w-16 h-16 rounded-xl bg-orange-500/5 flex items-center justify-center border border-orange-500/10 shrink-0">
+                      <img src="/white-logo.png" alt="Logo" className="w-10 h-10 drop-shadow-sm" />
                     </div>
                     <div>
-                      <h4 className="text-3xl font-black text-gray-900 dark:text-white tracking-tight flex items-center justify-center gap-2">
-                        PUSTAKAM
-                        <span className="text-[10px] bg-orange-500 text-white px-2 py-0.5 rounded-full font-bold uppercase tracking-tighter align-top mt-1">v1.2</span>
-                      </h4>
-                      <p className="text-sm font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-500 to-gray-400 dark:from-white/60 dark:to-white/40 max-w-xs mx-auto mt-1">
-                        Professional Knowledge Synthesis Engine
+                      <h3 className="text-xl font-black tracking-tight text-gray-900 dark:text-white">PUSTAKAM</h3>
+                      <p className="text-xs font-bold text-orange-500 uppercase tracking-widest mb-2">Knowledge Synthesis v1.2</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed font-medium">
+                        Professional-grade orchestration engine for modular knowledge generation and structured learning assets.
                       </p>
                     </div>
                   </div>
 
-                  {/* Performance Grid */}
-                  <div className="grid grid-cols-2 gap-3 w-full max-w-sm mx-auto">
+                  <div className="grid grid-cols-2 gap-x-8 gap-y-6">
                     {[
-                      { icon: Zap, color: 'text-orange-500', bg: 'bg-orange-500/10', title: 'Neural Engine', desc: 'Adv. Inference' },
-                      { icon: BookOpen, color: 'text-green-500', bg: 'bg-green-500/10', title: 'Full Synthesis', desc: 'Struct. Content' },
-                      { icon: Globe, color: 'text-blue-500', bg: 'bg-blue-500/10', title: 'Global Access', desc: 'Cloud Hybrid' },
-                      { icon: Cpu, color: 'text-purple-500', bg: 'bg-purple-500/10', title: 'Local Core', desc: 'Privacy Safe' }
-                    ].map((feat, i) => (
-                      <div key={i} className="group p-4 bg-white dark:bg-white/5 border border-gray-100 dark:border-white/5 rounded-2xl shadow-sm hover:border-orange-500/20 transition-all text-left">
-                        <div className={`w-8 h-8 rounded-lg ${feat.bg} flex items-center justify-center mb-3 group-hover:scale-110 transition-transform`}>
-                          <feat.icon size={18} className={feat.color} />
+                      { icon: Zap, label: 'Neural Core', val: 'Low-latency' },
+                      { icon: BookOpen, label: 'Export Engine', val: 'PDF / MD / TXT' },
+                      { icon: Globe, label: 'Architecture', val: 'Hybrid PWA' },
+                      { icon: Shield, label: 'Security', val: 'Client-side Enc.' }
+                    ].map((idx, i) => (
+                      <div key={i} className="space-y-1.5">
+                        <div className="flex items-center gap-2 text-gray-400 dark:text-gray-500">
+                          <idx.icon size={12} />
+                          <span className="text-[10px] font-bold uppercase tracking-widest">{idx.label}</span>
                         </div>
-                        <h5 className="font-bold text-xs text-gray-900 dark:text-white mb-0.5">{feat.title}</h5>
-                        <p className="text-[10px] text-gray-400 dark:text-white/30 font-bold uppercase tracking-widest leading-none">{feat.desc}</p>
+                        <p className="text-sm font-bold text-gray-900 dark:text-white ml-5">{idx.val}</p>
                       </div>
                     ))}
                   </div>
 
-                  <div className="pt-2">
+                  <div className="space-y-4 pt-10 border-t border-gray-100 dark:border-white/[0.05]">
+                    <div className="flex items-center justify-between">
+                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Developer Liaison</p>
+                      <a href="https://linkedin.com/in/tanmay-kalbande" target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-gray-900 dark:text-white hover:text-orange-500 transition-colors">
+                        T. KALBANDE
+                      </a>
+                    </div>
                     <button
                       onClick={() => setShowDisclaimer(true)}
-                      className="w-full flex items-center justify-center gap-2 px-6 py-2.5 bg-red-900/20 border border-red-500/30 text-red-300 hover:bg-red-900/40 active:scale-95 text-sm font-black rounded-xl transition-all"
+                      className="w-full flex items-center justify-between px-4 py-2 rounded-lg bg-gray-50 dark:bg-white/[0.03] border border-gray-100 dark:border-white/[0.05] hover:border-orange-500/20 transition-all text-xs font-bold group"
                     >
-                      <AlertTriangle className="w-5 h-5" />
-                      <span className="font-semibold">System Regulatory Compliance</span>
-                      <ChevronRight className="w-4 h-4" />
+                      <span className="text-gray-500 dark:text-gray-400 group-hover:text-orange-500 transition-colors tracking-tight">System Regulatory Compliance</span>
+                      <ChevronRight size={14} className="text-gray-300" />
                     </button>
-                  </div>
-
-                  {/* Footer Info */}
-                  <div className="text-center space-y-4 py-2 border-t border-gray-100 dark:border-white/5">
-                    <div className="flex items-center justify-center gap-6">
-                      <div className="flex flex-col items-center">
-                        <p className="text-[10px] font-black text-gray-400 dark:text-white/20 uppercase tracking-[0.2em] mb-1">Architecture</p>
-                        <div className="flex items-center gap-2 grayscale opacity-60">
-                          <img src="https://img.icons8.com/color/48/react-native.png" className="w-5 h-5" alt="React" />
-                          <img src="https://img.icons8.com/color/48/tailwindcss.png" className="w-5 h-5" alt="Tailwind" />
-                        </div>
-                      </div>
-                      <div className="w-px h-10 bg-gray-100 dark:bg-white/10" />
-                      <div className="flex flex-col items-center">
-                        <p className="text-[10px] font-black text-gray-400 dark:text-white/20 uppercase tracking-[0.2em] mb-1">Developer</p>
-                        <a
-                          href="https://linkedin.com/in/tanmay-kalbande"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-1.5 text-xs font-black text-gray-700 dark:text-white/80 hover:text-orange-500 transition-colors"
-                        >
-                          T. KALBANDE
-                          <ExternalLink size={10} />
-                        </a>
-                      </div>
-                    </div>
                   </div>
                 </div>
               )}
             </div>
+          </div>
 
-            {/* Footer */}
-            <div className="flex items-center justify-between p-5 border-t border-gray-100 dark:border-white/5 bg-gray-50/50 dark:bg-white/[0.01]">
-              <p className="text-[10px] text-gray-400 dark:text-white/30 font-black uppercase tracking-widest hidden sm:block">
-                Auto-Saving System
-              </p>
-              <div className="flex items-center gap-3 w-full sm:w-auto">
-                <button
-                  onClick={onClose}
-                  className="flex-1 sm:flex-none px-10 py-2.5 bg-gray-700/50 hover:bg-gray-600/50 active:scale-95 text-white text-sm font-black rounded-xl shadow-lg shadow-gray-700/25 transition-all"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleSave}
-                  className="flex-1 sm:flex-none px-10 py-2.5 bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-400 active:scale-95 text-white text-sm font-black rounded-xl shadow-lg shadow-orange-500/25 transition-all"
-                >
-                  Commit Changes
-                </button>
-              </div>
+          {/* Footer */}
+          <div className="px-8 py-5 bg-gray-50/80 dark:bg-black/40 border-t border-gray-100 dark:border-white/[0.05] flex items-center justify-between backdrop-blur-md">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-green-500 shadow-sm shadow-green-500/20" />
+              <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">System Synchronized</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={onClose}
+                className="text-xs font-bold text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white px-4 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSave}
+                className="bg-orange-500 hover:bg-orange-600 text-white text-xs font-black px-8 py-2.5 rounded-lg shadow-lg shadow-orange-500/10 active:scale-95 transition-all"
+              >
+                Save Changes
+              </button>
             </div>
           </div>
         </div>
@@ -518,81 +453,66 @@ export function SettingsModal({ isOpen, onClose, settings, onSaveSettings, showA
 
       {/* Import Preview Modal */}
       {showImportModal && importPreview && (
-        <div className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="bg-white dark:bg-[#0a0a0f] border border-gray-200 dark:border-white/10 rounded-2xl shadow-2xl w-full max-w-md p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <AlertTriangle className="text-yellow-400" size={20} />
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Import Preview</h3>
-            </div>
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
+          <div className="bg-white dark:bg-[#0a0a0f] border border-gray-200 dark:border-white/[0.1] rounded-xl shadow-2xl w-full max-w-md p-8">
+            <header className="mb-6">
+              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1 flex items-center gap-2">
+                <AlertTriangle className="text-orange-500" size={20} />
+                Confirm Data Import
+              </h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Review the details below before proceeding.</p>
+            </header>
 
-            <div className="space-y-4 mb-6">
-              <div className="bg-gray-50 dark:bg-white/[0.02] border border-gray-200 dark:border-white/10 rounded-lg p-3">
-                <h4 className="font-medium text-gray-900 dark:text-white mb-2">Import Contains:</h4>
-                <div className="text-sm text-gray-500 dark:text-gray-300 space-y-1">
-                  <div>📚 Books: <span className="font-medium">{importPreview.books.length}</span></div>
-                  <div>⚙️ Settings: <span className="font-medium">{importPreview.settings ? 'Yes' : 'No'}</span></div>
+            <div className="space-y-6 mb-8 text-sm">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="p-3 rounded-lg bg-gray-50 dark:bg-white/[0.03] border border-gray-100 dark:border-white/[0.05]">
+                  <p className="text-[10px] font-bold text-gray-400 uppercase mb-1">Items Included</p>
+                  <p className="font-bold text-gray-900 dark:text-white">{importPreview.books.length} Books</p>
+                </div>
+                <div className="p-3 rounded-lg bg-gray-50 dark:bg-white/[0.03] border border-gray-100 dark:border-white/[0.05]">
+                  <p className="text-[10px] font-bold text-gray-400 uppercase mb-1">Configuration</p>
+                  <p className="font-bold text-gray-900 dark:text-white">{importPreview.settings ? 'Encrypted' : 'None'}</p>
                 </div>
               </div>
 
               {(importPreview.conflicts.duplicateBooks > 0 || importPreview.conflicts.settingsConflict) && (
-                <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-3">
-                  <h4 className="font-medium text-yellow-600 dark:text-yellow-400 mb-2 flex items-center gap-2">
-                    <AlertTriangle size={16} />
-                    Conflicts Detected:
-                  </h4>
-                  <div className="text-sm text-yellow-700 dark:text-yellow-300 space-y-1">
-                    {importPreview.conflicts.duplicateBooks > 0 && (
-                      <div>• {importPreview.conflicts.duplicateBooks} duplicate book(s)</div>
-                    )}
-                    {importPreview.conflicts.settingsConflict && (
-                      <div>• Settings will be updated</div>
-                    )}
-                  </div>
+                <div className="p-4 rounded-xl border border-orange-500/20 bg-orange-500/[0.02]">
+                  <p className="text-xs font-bold text-orange-600 dark:text-orange-400 mb-2">Detected Overwrites</p>
+                  <ul className="text-xs text-gray-500 dark:text-gray-400 space-y-1 list-disc pl-4">
+                    {importPreview.conflicts.duplicateBooks > 0 && <li>{importPreview.conflicts.duplicateBooks} existing records will be updated</li>}
+                    {importPreview.conflicts.settingsConflict && <li>Provider configurations will be adjusted</li>}
+                  </ul>
                 </div>
               )}
             </div>
 
-            <div className="space-y-3">
+            <div className="flex flex-col gap-2">
               <button
                 onClick={() => executeImport('merge')}
-                className="w-full flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-400 active:scale-95 text-white text-sm font-black rounded-xl shadow-lg shadow-orange-500/25 transition-all"
+                className="w-full bg-orange-500 hover:bg-orange-600 text-white text-xs font-black py-3 rounded-lg shadow-lg shadow-orange-500/10 transition-all"
               >
-                <Plus size={16} />
-                Smart Merge
+                Merge with Current Library
               </button>
               <button
                 onClick={() => executeImport('replace')}
-                className="w-full flex items-center justify-center gap-2 px-6 py-2.5 bg-orange-600/20 border border-orange-500/30 text-orange-600 dark:text-orange-400 hover:bg-orange-600/30 active:scale-95 text-sm font-black rounded-xl transition-all"
+                className="w-full border border-gray-200 dark:border-white/[0.1] text-gray-700 dark:text-white text-xs font-bold py-3 rounded-lg hover:bg-gray-50 dark:hover:bg-white/[0.03] transition-all"
               >
-                <Download size={16} />
-                Replace All Data
+                Replace Entire Library
               </button>
               <button
                 onClick={() => { setShowImportModal(false); setImportPreview(null); }}
-                className="w-full flex items-center justify-center gap-2 px-6 py-2.5 bg-gray-700/50 hover:bg-gray-600/50 active:scale-95 text-white text-sm font-black rounded-xl shadow-lg shadow-gray-700/25 transition-all"
+                className="w-full text-xs font-bold text-gray-400 hover:text-gray-600 py-3 transition-colors"
               >
-                Cancel
+                Cancel Import
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Disclaimer Modal */}
-      {showDisclaimer && (
-        <DisclaimerPage
-          isOpen={showDisclaimer}
-          onClose={() => setShowDisclaimer(false)}
-        />
-      )}
-
-      {/* API Key Guide Modal */}
-      {showAPIGuide && (
-        <APIKeyGuide
-          isOpen={showAPIGuide}
-          onClose={() => setShowAPIGuide(false)}
-        />
-      )}
+      {/* Overlays */}
+      {showDisclaimer && <DisclaimerPage isOpen={showDisclaimer} onClose={() => setShowDisclaimer(false)} />}
+      {showAPIGuide && <APIKeyGuide isOpen={showAPIGuide} onClose={() => setShowAPIGuide(false)} />}
     </>
   );
 }
