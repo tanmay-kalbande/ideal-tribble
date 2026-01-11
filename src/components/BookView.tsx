@@ -1062,6 +1062,10 @@ const HomeView = ({
   onOpenSettings: () => void;
 }) => (
   <div className="flex-1 flex flex-col items-center justify-start p-6 md:p-8 pt-12 text-center relative overflow-y-auto">
+    {/* Gradient fade overlay at top - matches LandingPage header effect */}
+    <div className="pointer-events-none fixed top-0 left-0 right-0 h-24 bg-gradient-to-b from-[#0a0a0f] via-[#0a0a0f]/80 to-transparent z-40 dark:block hidden" />
+    <div className="pointer-events-none fixed top-0 left-0 right-0 h-24 bg-gradient-to-b from-white via-white/80 to-transparent z-40 dark:hidden block" />
+
     <div className="relative z-10 w-full max-w-xl mx-auto my-auto animate-fade-in-up">
       {/* Hero with Landing Page Style */}
       <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-center">
