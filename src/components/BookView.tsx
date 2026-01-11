@@ -1063,10 +1063,10 @@ const HomeView = ({
 }) => (
   <div className="flex-1 flex flex-col items-center justify-start p-6 md:p-8 pt-20 text-center relative overflow-y-auto">
     <div className="relative z-10 w-full max-w-xl mx-auto my-auto animate-fade-in-up">
-      {/* Simplified Hero */}
-      <h1 className="text-3xl md:text-4xl font-bold mb-3 text-[var(--color-text-primary)] tracking-tight leading-snug">
-        What would you like to
-        <span className="block text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-yellow-400">learn about?</span>
+      {/* Hero with Landing Page Style */}
+      <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-center">
+        Transform Ideas Into
+        <span className="block text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-yellow-400">Complete Books</span>
       </h1>
 
 
@@ -1079,7 +1079,7 @@ const HomeView = ({
             value={formData.goal}
             onChange={(e) => setFormData((p: any) => ({ ...p, goal: e.target.value }))}
             placeholder="e.g., 'A comprehensive guide to organic gardening for beginners', 'The history of artificial intelligence', or 'Mastering personal finance in your 20s'"
-            className="w-full bg-[var(--color-card)] border-2 border-[var(--color-border)] rounded-2xl p-5 text-[var(--color-text-primary)] placeholder-[var(--color-text-secondary)]/50 focus:border-orange-500/50 focus:ring-4 focus:ring-orange-500/15 focus:shadow-lg focus:shadow-orange-500/10 transition-all outline-none resize-none text-base leading-relaxed"
+            className="w-full bg-white/[0.05] border-2 border-white/10 rounded-2xl p-5 text-[var(--color-text-primary)] placeholder-[var(--color-text-secondary)]/50 focus:border-orange-500/50 focus:ring-4 focus:ring-orange-500/15 focus:shadow-lg focus:shadow-orange-500/10 transition-all outline-none resize-none text-base leading-relaxed backdrop-blur-sm"
             rows={4}
             required
           />

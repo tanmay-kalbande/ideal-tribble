@@ -483,30 +483,7 @@
     }
   }
 
-  /* Animated particles overlay */
-  .home-view-container::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    z-index: 1;
-    background-image:
-      radial-gradient(circle, rgba(249, 115, 22, 0.3) 1px, transparent 1px),
-      radial-gradient(circle, rgba(251, 191, 36, 0.2) 1px, transparent 1px);
-    background-size: 50px 50px, 80px 80px;
-    background-position: 0 0, 40px 40px;
-    animation: particle-float 30s linear infinite;
-    opacity: 0.4;
-  }
-
-  @keyframes particle-float {
-    from {
-      transform: translateY(0);
-    }
-
-    to {
-      transform: translateY(-80px);
-    }
-  }
+  /* Removed animated particles for smooth background */
 
   /* Add subtle glow orbs */
   .home-view-glow {

@@ -395,40 +395,36 @@ function App() {
         return;
       }
 
-      // UNLIMITED GENERATION FOR PRO USERS
-      // Only check and deduct credits if user is on Free plan
-      if (profile?.plan === 'free') {
-        // Check if user has credits
-        if (credits < 1) {
-          setShowCreditGate(true);
-          return;
-        }
+      // Check if user has credits
+      if (credits < 1) {
+        setShowCreditGate(true);
+        return;
+      }
 
-        // Deduct credit before starting generation
-        try {
-          const result = await creditService.useCredit(book.id, book.title || 'Untitled', session.goal);
-          if (!result.success) {
-            showAlertDialog({
-              type: 'warning',
-              title: 'Insufficient Credits',
-              message: result.error || 'You need at least 1 credit to generate a book. Please purchase credits to continue.',
-              confirmText: 'Buy Credits',
-              onConfirm: () => setShowCreditGate(true),
-            });
-            return;
-          }
-          // Refresh credits display after deduction
-          await refreshCredits();
-        } catch (error) {
-          console.error('Credit deduction failed:', error);
+      // Deduct credit before starting generation
+      try {
+        const result = await creditService.useCredit(book.id, book.title || 'Untitled', session.goal);
+        if (!result.success) {
           showAlertDialog({
-            type: 'error',
-            title: 'Credit Error',
-            message: 'Failed to process credits. Please try again.',
-            confirmText: 'Dismiss',
+            type: 'warning',
+            title: 'Insufficient Credits',
+            message: result.error || 'You need at least 1 credit to generate a book. Please purchase credits to continue.',
+            confirmText: 'Buy Credits',
+            onConfirm: () => setShowCreditGate(true),
           });
           return;
         }
+        // Refresh credits display after deduction
+        await refreshCredits();
+      } catch (error) {
+        console.error('Credit deduction failed:', error);
+        showAlertDialog({
+          type: 'error',
+          title: 'Credit Error',
+          message: 'Failed to process credits. Please try again.',
+          confirmText: 'Dismiss',
+        });
+        return;
       }
     }
     // =========================================================================
@@ -738,17 +734,6 @@ function App() {
         settings={settings}
         onSaveSettings={handleSaveSettings}
         showAlertDialog={showAlertDialog}
-        userProfile={profile}
-        credits={credits}
-        onBuyCredits={() => {
-          setSettingsOpen(false);
-          setShowCreditGate(true);
-        }}
-        onUpgradePlan={() => {
-          setSettingsOpen(false);
-          setAuthMode('subscribe');
-          setShowAuthModal(true);
-        }}
       />
 
       {showModelSwitch && (
