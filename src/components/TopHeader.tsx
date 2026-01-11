@@ -59,11 +59,6 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
 
     const displayName = userProfile?.full_name || user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User';
 
-    // Simplified gradient to match Landing Page style
-    const headerGradient = theme === 'light'
-        ? 'linear-gradient(to bottom, #ffffff, rgba(255,255,255,0.95), transparent)'
-        : 'linear-gradient(to bottom, #0a0a0f, rgba(10,10,15,0.95), transparent)';
-
     // Check if provider has API key configured
     const isProviderEnabled = (provider: ModelProvider) => {
         switch (provider) {
@@ -85,7 +80,6 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
         <>
             <header
                 className="fixed top-0 left-0 right-0 z-40 h-[72px] flex items-center justify-between px-6 md:px-12 pointer-events-auto"
-                style={{ background: headerGradient }}
             >
 
                 {/* Brand / Logo - Using existing logo + mono font */}
