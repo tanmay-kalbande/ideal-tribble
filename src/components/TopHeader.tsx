@@ -84,22 +84,22 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
     return (
         <>
             <header
-                className="fixed top-0 left-0 right-0 z-40 h-[100px] flex items-start pt-4 justify-between px-6 md:px-12"
+                className="fixed top-0 left-0 right-0 z-40 h-[80px] flex items-start pt-3 justify-between px-4 md:px-8"
                 style={{ background: headerGradient, pointerEvents: 'none' }}
             >
-                {/* Brand / Logo - Using existing logo + mono font */}
-                <div className="flex items-center gap-3 select-none pointer-events-auto">
+                {/* Brand / Logo - Compact size */}
+                <div className="flex items-center gap-2 select-none pointer-events-auto">
                     {/* Logo Image */}
-                    <img src="/white-logo.png" alt="Pustakam" className="w-10 h-10" />
+                    <img src="/white-logo.png" alt="Pustakam" className="w-8 h-8" />
                     <div className="flex flex-col">
                         <span
-                            className={`text-xl tracking-tight leading-none ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}
+                            className={`text-lg tracking-tight leading-none ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}
                             style={{ fontFamily: "'Aptos-Mono', monospace", fontWeight: 700 }}
                         >
                             Pustakam
                         </span>
                         <span
-                            className={`text-[11px] tracking-wide mt-0.5 ${theme === 'light' ? 'text-gray-400' : 'text-gray-500'}`}
+                            className={`text-[9px] tracking-wide mt-0.5 ${theme === 'light' ? 'text-gray-400' : 'text-gray-500'}`}
                             style={{ fontFamily: "'Aptos-Mono', monospace" }}
                         >
                             injin
