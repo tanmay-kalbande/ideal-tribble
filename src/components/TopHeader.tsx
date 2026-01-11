@@ -111,15 +111,15 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
                         <div className="relative hidden md:block">
                             <button
                                 onClick={() => setShowModelMenu(!showModelMenu)}
-                                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all
+                                className={`flex items-center gap-1.5 px-2 py-1 rounded-md border transition-all text-[11px]
                             ${theme === 'light'
                                         ? 'bg-gray-50 border-gray-200 hover:bg-gray-100 text-gray-700'
                                         : 'bg-white/[0.03] border-white/10 hover:bg-white/[0.08] text-gray-200'}
                         `}
                             >
-                                <span className={`text-xs ${theme === 'light' ? 'text-gray-500' : 'text-gray-400'}`}>Model:</span>
-                                <span className="text-xs font-medium">{currentModelName}</span>
-                                <ChevronDown size={14} className="opacity-50" />
+                                <span className={`${theme === 'light' ? 'text-gray-500' : 'text-gray-400'}`}>Model:</span>
+                                <span className="font-medium">{currentModelName}</span>
+                                <ChevronDown size={12} className="opacity-50" />
                             </button>
 
                             {/* Model Dropdown */}
@@ -201,31 +201,31 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
                         {/* Theme Toggle */}
                         <button
                             onClick={onToggleTheme}
-                            className={`p-2 rounded-lg transition-all ${theme === 'light' ? 'text-gray-500 hover:bg-gray-100 hover:text-gray-900' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+                            className={`p-1.5 rounded-md transition-all ${theme === 'light' ? 'text-gray-500 hover:bg-gray-100 hover:text-gray-900' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
                             title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
                         >
-                            {theme === 'dark' ? <Moon size={18} /> : <Sun size={18} />}
+                            {theme === 'dark' ? <Moon size={14} /> : <Sun size={14} />}
                         </button>
 
                         {/* Divider */}
-                        <div className={`h-6 w-[1px] mx-1 ${theme === 'light' ? 'bg-gray-200' : 'bg-white/10'}`} />
+                        <div className={`h-4 w-[1px] mx-0.5 ${theme === 'light' ? 'bg-gray-200' : 'bg-white/10'}`} />
 
                         {/* Auth State */}
                         {isAuthenticated ? (
                             <div className="relative">
                                 <button
                                     onClick={() => setShowUserMenu(!showUserMenu)}
-                                    className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all border
+                                    className={`flex items-center gap-1.5 px-2 py-1 rounded-md transition-all border
                                 ${theme === 'light'
                                             ? 'bg-white border-gray-200 hover:border-orange-200 hover:bg-orange-50 text-gray-700'
                                             : 'bg-white/5 border-white/10 hover:border-orange-500/30 hover:bg-white/10 text-gray-200'}
                             `}
                                 >
-                                    <div className="w-6 h-6 rounded-full bg-gradient-to-r from-orange-400 to-amber-500 flex items-center justify-center text-[10px] font-bold text-white">
+                                    <div className="w-5 h-5 rounded-full bg-gradient-to-r from-orange-400 to-amber-500 flex items-center justify-center text-[9px] font-bold text-white">
                                         {displayName.charAt(0).toUpperCase()}
                                     </div>
-                                    <span className="text-sm font-medium max-w-[100px] truncate hidden sm:block">{displayName}</span>
-                                    <ChevronDown size={14} className="opacity-50" />
+                                    <span className="text-xs font-medium max-w-[80px] truncate hidden sm:block">{displayName}</span>
+                                    <ChevronDown size={12} className="opacity-50" />
                                 </button>
 
                                 {showUserMenu && (
