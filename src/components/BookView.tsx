@@ -1079,7 +1079,7 @@ const HomeView = ({
             value={formData.goal}
             onChange={(e) => setFormData((p: any) => ({ ...p, goal: e.target.value }))}
             placeholder="e.g., 'A comprehensive guide to organic gardening for beginners', 'The history of artificial intelligence', or 'Mastering personal finance in your 20s'"
-            className="w-full bg-white/[0.05] border-2 border-white/10 rounded-2xl p-5 text-[var(--color-text-primary)] placeholder-[var(--color-text-secondary)]/50 focus:border-orange-500/50 focus:ring-4 focus:ring-orange-500/15 focus:shadow-lg focus:shadow-orange-500/10 transition-all outline-none resize-none text-base leading-relaxed backdrop-blur-sm"
+            className="w-full bg-white/10 dark:bg-white/[0.05] border-2 border-gray-300 dark:border-white/10 rounded-2xl p-5 text-[var(--color-text-primary)] placeholder-[var(--color-text-secondary)]/50 focus:border-orange-500/50 focus:ring-4 focus:ring-orange-500/15 focus:shadow-lg focus:shadow-orange-500/10 transition-all outline-none resize-none text-base leading-relaxed backdrop-blur-md"
             rows={4}
             required
           />
