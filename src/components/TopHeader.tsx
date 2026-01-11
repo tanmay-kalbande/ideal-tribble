@@ -59,6 +59,11 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
 
     const displayName = userProfile?.full_name || user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User';
 
+    // Enhanced gradient fade effect to match reading mode (longer, smoother fade)
+    const headerGradient = theme === 'light'
+        ? 'linear-gradient(to bottom, #ffffff 0%, rgba(255,255,255,0.98) 30%, rgba(255,255,255,0.85) 60%, rgba(255,255,255,0.5) 80%, transparent 100%)'
+        : 'linear-gradient(to bottom, #0a0a0f 0%, rgba(10,10,15,0.98) 30%, rgba(10,10,15,0.85) 60%, rgba(10,10,15,0.5) 80%, transparent 100%)';
+
     // Check if provider has API key configured
     const isProviderEnabled = (provider: ModelProvider) => {
         switch (provider) {
@@ -79,11 +84,11 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
     return (
         <>
             <header
-                className="header-with-fade fixed top-0 left-0 right-0 z-40 h-[72px] flex items-center justify-between px-6 md:px-12 pointer-events-auto relative"
+                className="fixed top-0 left-0 right-0 z-40 h-[100px] flex items-start pt-4 justify-between px-6 md:px-12"
+                style={{ background: headerGradient, pointerEvents: 'none' }}
             >
-
                 {/* Brand / Logo - Using existing logo + mono font */}
-                <div className="flex items-center gap-3 select-none">
+                <div className="flex items-center gap-3 select-none pointer-events-auto">
                     {/* Logo Image */}
                     <img src="/white-logo.png" alt="Pustakam" className="w-10 h-10" />
                     <div className="flex flex-col">
@@ -103,7 +108,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
                 </div>
 
                 {/* Right Controls */}
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 pointer-events-auto">
 
                     {/* Model Selector Dropdown */}
                     <div className="relative hidden md:block">
