@@ -688,18 +688,6 @@ function App() {
         onSignOut={signOut}
       />
 
-      {/* Gradient Fade Overlay - covers both header and content */}
-      <div
-        className="fixed top-0 left-0 right-0 pointer-events-none"
-        style={{
-          height: '140px',
-          background: theme === 'dark'
-            ? 'linear-gradient(to bottom, #0a0a0f, rgba(10,10,15,0.95), rgba(10,10,15,0.7), transparent)'
-            : 'linear-gradient(to bottom, #ffffff, rgba(255,255,255,0.95), rgba(255,255,255,0.7), transparent)',
-          zIndex: 45
-        }}
-      />
-
       <main id="main-scroll-area" className="main-content">
         {showOfflineMessage && (
           <div className="fixed top-20 right-4 z-50 content-card p-3 animate-fade-in-up">

@@ -79,7 +79,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
     return (
         <>
             <header
-                className="fixed top-0 left-0 right-0 z-40 h-[72px] flex items-center justify-between px-6 md:px-12 pointer-events-auto"
+                className="header-with-fade fixed top-0 left-0 right-0 z-40 h-[72px] flex items-center justify-between px-6 md:px-12 pointer-events-auto relative"
             >
 
                 {/* Brand / Logo - Using existing logo + mono font */}
