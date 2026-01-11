@@ -1,6 +1,7 @@
 // src/components/SettingsModal.tsx
 import React from 'react';
-import { X, Shield, Database, Download, Upload, Trash2, HelpCircle, Key, Settings, ExternalLink, Eye, EyeOff, User, Zap, Globe, Cpu, BookOpen, AlertTriangle, Plus, BookMarked, ChevronRight } from 'lucide-react';
+import { X, Shield, Database, Download, Upload, Trash2, HelpCircle, Key, Settings, ExternalLink, Eye, EyeOff, User, Zap, Globe, Cpu, BookOpen, AlertTriangle, Plus, BookMarked, ChevronRight, CreditCard, Crown, Sparkles, Calendar } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 import { APISettings } from '../types';
 import { storageUtils } from '../utils/storage';
 import { DisclaimerPage } from './DisclaimerPage';
@@ -21,7 +22,7 @@ interface SettingsModalProps {
   }) => void;
 }
 
-type ActiveTab = 'keys' | 'data' | 'about';
+type ActiveTab = 'keys' | 'data' | 'about' | 'subscription';
 
 interface ImportPreview {
   books: any[];
@@ -34,6 +35,7 @@ interface ImportPreview {
 
 export function SettingsModal({ isOpen, onClose, settings, onSaveSettings, showAlertDialog }: SettingsModalProps) {
   const [localSettings, setLocalSettings] = React.useState<APISettings>(settings);
+  const { profile, isAuthenticated } = useAuth();
   const [activeTab, setActiveTab] = React.useState<ActiveTab>('keys');
   const [visibleApis, setVisibleApis] = React.useState<Record<string, boolean>>({});
   const [importPreview, setImportPreview] = React.useState<ImportPreview | null>(null);
@@ -252,6 +254,7 @@ export function SettingsModal({ isOpen, onClose, settings, onSaveSettings, showA
             {/* Sidebar Navigation */}
             <div className="w-52 border-r border-gray-100 dark:border-white/[0.05] p-3 space-y-1 bg-gray-50/50 dark:bg-black/20">
               <TabButton id="keys" label="API Keys" Icon={Shield} />
+              <TabButton id="subscription" label="Subscription" Icon={CreditCard} />
               <TabButton id="data" label="Data Area" Icon={Database} />
               <TabButton id="about" label="Platform" Icon={HelpCircle} />
             </div>
@@ -313,6 +316,114 @@ export function SettingsModal({ isOpen, onClose, settings, onSaveSettings, showA
                       View API Setup Documentation
                     </button>
                   </div>
+                </div>
+              )}
+
+              {/* Subscription Tab */}
+              {activeTab === 'subscription' && (
+                <div className="max-w-md animate-fade-in space-y-8">
+                  <header>
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">Subscription & Credits</h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Manage your plan and view credit balance.</p>
+                  </header>
+
+                  {!isAuthenticated ? (
+                    <div className="bg-gray-50 dark:bg-white/[0.03] border border-gray-200 dark:border-white/[0.08] rounded-xl p-6 text-center">
+                      <User size={32} className="mx-auto text-gray-400 mb-3" />
+                      <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">Sign in to view your subscription details.</p>
+                    </div>
+                  ) : (
+                    <>
+                      {/* Current Plan Card */}
+                      <section className="bg-gradient-to-br from-orange-500/10 to-amber-500/5 border border-orange-500/20 rounded-xl p-6">
+                        <div className="flex items-center gap-3 mb-4">
+                          <div className="p-2 bg-orange-500/20 rounded-lg">
+                            <Crown size={20} className="text-orange-500" />
+                          </div>
+                          <div>
+                            <p className="text-[11px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Current Plan</p>
+                            <h4 className="text-lg font-bold text-gray-900 dark:text-white">
+                              {profile?.plan === 'monthly' ? 'Monthly PRO' : profile?.plan === 'yearly' ? 'Yearly PRO' : 'Free Tier'}
+                            </h4>
+                          </div>
+                        </div>
+
+                        {(profile?.plan === 'monthly' || profile?.plan === 'yearly') ? (
+                          <div className="space-y-3">
+                            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                              <Sparkles size={16} className="text-orange-500" />
+                              <span>Unlimited book generation</span>
+                            </div>
+                            {profile?.plan_expires_at && (
+                              <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                                <Calendar size={16} />
+                                <span>Renews: {new Date(profile.plan_expires_at).toLocaleDateString()}</span>
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          <div className="space-y-3">
+                            <div className="flex items-center justify-between">
+                              <span className="text-sm text-gray-600 dark:text-gray-300">Credits Remaining</span>
+                              <span className="text-2xl font-bold text-orange-500">{profile?.credits ?? 0}</span>
+                            </div>
+                            <div className="w-full bg-gray-200 dark:bg-white/10 rounded-full h-2">
+                              <div
+                                className="bg-gradient-to-r from-orange-500 to-amber-500 h-2 rounded-full transition-all"
+                                style={{ width: `${Math.min(((profile?.credits ?? 0) / 10) * 100, 100)}%` }}
+                              />
+                            </div>
+                          </div>
+                        )}
+                      </section>
+
+                      {/* Upgrade Section - Only for free users */}
+                      {profile?.plan === 'free' && (
+                        <section className="space-y-4">
+                          <h4 className="text-[11px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Upgrade Your Plan</h4>
+
+                          <div className="grid gap-3">
+                            <a
+                              href="https://wa.me/919730416498?text=Hi%2C%20I%20want%20to%20subscribe%20to%20Pustakam%20Monthly%20Plan"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center justify-between p-4 bg-gray-50 dark:bg-white/[0.03] border border-gray-200 dark:border-white/[0.08] rounded-xl hover:border-orange-500/40 transition-all group"
+                            >
+                              <div>
+                                <p className="font-semibold text-gray-900 dark:text-white">Monthly Plan</p>
+                                <p className="text-sm text-gray-500">₹149/month • Unlimited books</p>
+                              </div>
+                              <ChevronRight size={18} className="text-gray-400 group-hover:text-orange-500 transition-colors" />
+                            </a>
+
+                            <a
+                              href="https://wa.me/919730416498?text=Hi%2C%20I%20want%20to%20subscribe%20to%20Pustakam%20Yearly%20Plan"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center justify-between p-4 bg-gray-50 dark:bg-white/[0.03] border border-gray-200 dark:border-white/[0.08] rounded-xl hover:border-orange-500/40 transition-all group"
+                            >
+                              <div>
+                                <p className="font-semibold text-gray-900 dark:text-white">Yearly Plan</p>
+                                <p className="text-sm text-gray-500">₹1,499/year • Save 16%</p>
+                              </div>
+                              <ChevronRight size={18} className="text-gray-400 group-hover:text-orange-500 transition-colors" />
+                            </a>
+                          </div>
+                        </section>
+                      )}
+
+                      {/* Books Created */}
+                      <section className="pt-4 border-t border-gray-100 dark:border-white/[0.05]">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                            <BookOpen size={16} />
+                            <span>Books Created</span>
+                          </div>
+                          <span className="font-semibold text-gray-900 dark:text-white">{profile?.books_created ?? 0}</span>
+                        </div>
+                      </section>
+                    </>
+                  )}
                 </div>
               )}
 

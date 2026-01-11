@@ -76,18 +76,18 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
     // Get current model display name
     const currentModelName = MODEL_OPTIONS.find(m => m.model === settings.selectedModel)?.name || settings.selectedModel || 'Select Model';
 
-    // Gradient classes matching LandingPage exactly - extended height for visible fade
+    // Smooth gradient without visible lines - using opacity stops
     const gradientClass = theme === 'light'
-        ? 'bg-gradient-to-b from-white via-white/90 to-transparent'
-        : 'bg-gradient-to-b from-[#0a0a0f] via-[#0a0a0f]/90 to-transparent';
+        ? 'bg-gradient-to-b from-white via-white to-white/0'
+        : 'bg-gradient-to-b from-[#0a0a0f] via-[#0a0a0f] to-[#0a0a0f]/0';
 
     return (
         <>
-            <header className={`fixed top-0 left-0 right-0 z-50 px-6 md:px-8 py-3 pb-6 ${gradientClass}`}>
+            <header className={`fixed top-0 left-0 right-0 z-50 px-3 md:px-4 py-3 pb-8 ${gradientClass}`}>
                 <div className="flex items-center justify-between">
                     {/* Brand / Logo */}
-                    <div className="flex items-center gap-2.5 select-none">
-                        <img src="/white-logo.png" alt="Pustakam" className="w-8 h-8" />
+                    <div className="flex items-center gap-2 select-none">
+                        <img src={theme === 'light' ? '/black-logo.png' : '/white-logo.png'} alt="Pustakam" className="w-8 h-8" />
                         <div className="flex flex-col">
                             <span
                                 className={`text-lg tracking-tight leading-none ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}
@@ -119,7 +119,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
                             >
                                 <span className={`${theme === 'light' ? 'text-gray-500' : 'text-gray-400'}`}>Model:</span>
                                 <span className="font-medium">{currentModelName}</span>
-                                <ChevronDown size={14} className="opacity-50" />
+                                <ChevronDown size={16} className="opacity-50" />
                             </button>
 
                             {/* Model Dropdown */}
@@ -189,7 +189,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
                                             ${theme === 'light' ? 'text-gray-500 hover:bg-gray-50' : 'text-gray-400 hover:bg-white/5'}
                                         `}
                                             >
-                                                <Settings size={12} />
+                                                <Settings size={14} />
                                                 Manage API Keys
                                             </button>
                                         </div>
@@ -201,10 +201,10 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
                         {/* Theme Toggle */}
                         <button
                             onClick={onToggleTheme}
-                            className={`p-2 rounded-lg transition-all ${theme === 'light' ? 'text-gray-500 hover:bg-gray-100 hover:text-gray-900' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+                            className={`p-2.5 rounded-lg transition-all ${theme === 'light' ? 'text-gray-500 hover:bg-gray-100 hover:text-gray-900' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
                             title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
                         >
-                            {theme === 'dark' ? <Moon size={16} /> : <Sun size={16} />}
+                            {theme === 'dark' ? <Moon size={20} /> : <Sun size={20} />}
                         </button>
 
                         {/* Divider */}
@@ -225,7 +225,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
                                         {displayName.charAt(0).toUpperCase()}
                                     </div>
                                     <span className="text-sm font-medium max-w-[100px] truncate hidden sm:block">{displayName}</span>
-                                    <ChevronDown size={14} className="opacity-50" />
+                                    <ChevronDown size={16} className="opacity-50" />
                                 </button>
 
                                 {showUserMenu && (
@@ -247,7 +247,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
                                             ${theme === 'light' ? 'text-gray-700 hover:bg-gray-50' : 'text-gray-300 hover:bg-white/5'}
                                         `}
                                             >
-                                                <Settings size={16} />
+                                                <Settings size={18} />
                                                 Settings
                                             </button>
                                             <button
@@ -257,7 +257,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
                                                 }}
                                                 className="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-500/10 flex items-center gap-2 transition-colors"
                                             >
-                                                <LogOut size={16} />
+                                                <LogOut size={18} />
                                                 Sign Out
                                             </button>
                                         </div>
@@ -269,7 +269,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
                                 onClick={onOpenAuth}
                                 className="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg text-sm font-semibold shadow-lg hover:shadow-orange-500/20 transition-all"
                             >
-                                <User size={16} />
+                                <User size={18} />
                                 <span>Sign In</span>
                             </button>
                         )}
