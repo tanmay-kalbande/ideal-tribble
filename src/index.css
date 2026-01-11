@@ -581,7 +581,7 @@
     position: relative;
     overflow-y: auto;
     background-color: var(--color-bg);
-    padding-top: 80px;
+    padding-top: 48px;
     /* Clear fixed header */
   }
 
@@ -1697,7 +1697,9 @@ article a:hover {
 
 .reading-floating-btn:nth-child(2) {
   animation-delay: 0.1s;
-}/* ========================================================================== 
+}
+
+/* ========================================================================== 
    Header Fade Effect - Fades content scrolling under the header
    ========================================================================== */
 .header-with-fade::after {
@@ -1708,11 +1710,11 @@ article a:hover {
   right: 0;
   height: 100px;
   transform: translateY(100%);
-  background: linear-gradient(to bottom, var(--color-bg), rgba(10,10,15,0.85), rgba(10,10,15,0.5), transparent);
+  background: linear-gradient(to bottom, var(--color-bg), rgba(10, 10, 15, 0.85), rgba(10, 10, 15, 0.5), transparent);
   pointer-events: none;
   z-index: 1;
 }
 
 html.light .header-with-fade::after {
-  background: linear-gradient(to bottom, #ffffff, rgba(255,255,255,0.85), rgba(255,255,255,0.5), transparent);
+  background: linear-gradient(to bottom, #ffffff, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.5), transparent);
 }

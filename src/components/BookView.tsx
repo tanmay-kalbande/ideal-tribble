@@ -1061,7 +1061,7 @@ const HomeView = ({
   localIsGenerating: boolean;
   onOpenSettings: () => void;
 }) => (
-  <div className="flex-1 flex flex-col items-center justify-start p-6 md:p-8 pt-20 text-center relative overflow-y-auto">
+  <div className="flex-1 flex flex-col items-center justify-start p-6 md:p-8 pt-12 text-center relative overflow-y-auto">
     <div className="relative z-10 w-full max-w-xl mx-auto my-auto animate-fade-in-up">
       {/* Hero with Landing Page Style */}
       <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-center">
