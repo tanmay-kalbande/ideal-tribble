@@ -154,6 +154,13 @@ function App() {
 
   useEffect(() => { if (!currentBookId) setView('list'); }, [currentBookId]);
 
+  // Reset auth transitioning state when user signs out
+  useEffect(() => {
+    if (!isAuthenticated && !isLoading) {
+      setIsAuthTransitioning(false);
+    }
+  }, [isAuthenticated, isLoading]);
+
   useEffect(() => {
     const handleOnline = () => { setIsOnline(true); setShowOfflineMessage(false); };
     const handleOffline = () => { setIsOnline(false); setShowOfflineMessage(true); setTimeout(() => setShowOfflineMessage(false), 5000); };
