@@ -208,7 +208,7 @@ const formatTime = (seconds: number): string => {
 const GradientProgressBar = ({ progress = 0, active = true }) => (
   <div className="relative w-full h-2.5 bg-[var(--color-card)] rounded-full overflow-hidden border border-[var(--color-border)]">
     <div
-      className="absolute inset-0 bg-gradient-to-r from-orange-500 via-yellow-400 to-orange-500 transition-all duration-700 ease-out"
+      className="absolute inset-0 bg-gradient-to-r from-gray-500 via-gray-400 to-gray-500 transition-all duration-700 ease-out"
       style={{
         width: `${progress}%`,
         backgroundSize: '200% 100%',
@@ -224,8 +224,8 @@ const PixelAnimation = () => {
 
   useEffect(() => {
     const colors = [
-      'bg-orange-500', 'bg-yellow-500', 'bg-amber-600',
-      'bg-red-500', 'bg-[var(--color-text-secondary)]', 'bg-[var(--color-border)]',
+      'bg-gray-500', 'bg-gray-400', 'bg-gray-600',
+      'bg-gray-300', 'bg-[var(--color-text-secondary)]', 'bg-[var(--color-border)]',
     ];
 
     const generatePixels = () => {
@@ -341,7 +341,7 @@ const RetryDecisionPanel = ({
         </div>
         <div className="mb-4 p-4 bg-[var(--color-card)] border border-[var(--color-border)] rounded-lg">
           <h4 className="font-medium text-[var(--color-text-primary)] mb-2 flex items-center gap-2">
-            <FileText className="w-4 h-4 text-orange-400" />
+            <FileText className="w-4 h-4 text-gray-400" />
             {retryInfo.moduleTitle}
           </h4>
           <div className="text-sm text-[var(--color-text-secondary)] mb-3">
@@ -355,16 +355,16 @@ const RetryDecisionPanel = ({
               </div>
             )}
             {isNetworkError && (
-              <div className="flex items-center gap-1.5 text-xs bg-orange-500/10 text-orange-400 px-2 py-1 rounded-md border border-orange-500/20">
+              <div className="flex items-center gap-1.5 text-xs bg-gray-500/10 text-gray-400 px-2 py-1 rounded-md border border-gray-500/20">
                 <AlertTriangle className="w-3 h-3" />
                 Network Issue
               </div>
             )}
           </div>
         </div>
-        <div className="mb-6 p-4 bg-orange-500/5 border border-orange-500/20 rounded-lg">
+        <div className="mb-6 p-4 bg-gray-500/5 border border-gray-500/20 rounded-lg">
           <div className="flex items-start gap-3">
-            <Sparkles className="w-5 h-5 text-orange-400 shrink-0 mt-0.5" />
+            <Sparkles className="w-5 h-5 text-gray-400 shrink-0 mt-0.5" />
             <div className="text-sm text-[var(--color-text-secondary)]">
               <p className="font-medium text-[var(--color-text-primary)] mb-2">Recommended Actions:</p>
               <ul className="space-y-1.5 text-xs text-[var(--color-text-secondary)]">
@@ -403,7 +403,7 @@ const RetryDecisionPanel = ({
           {availableModels.length > 0 && (
             <button
               onClick={onSwitchModel}
-              className="w-full btn bg-orange-600 hover:bg-orange-700 rounded-lg text-white font-semibold py-3 transition-all shadow-lg hover:shadow-orange-500/30 flex items-center justify-center gap-2"
+              className="w-full btn bg-gray-700 hover:bg-gray-800 rounded-lg text-white font-semibold py-3 transition-all shadow-lg hover:shadow-gray-500/30 flex items-center justify-center gap-2"
             >
               <Settings className="w-4 h-4" />
               Switch AI Model ({availableModels.length} available)
@@ -480,8 +480,8 @@ const EmbeddedProgressPanel = ({
                 <Pause className="w-6 h-6 text-yellow-400" />
               </div>
             ) : (
-              <div className="w-12 h-12 flex items-center justify-center bg-orange-500/20 rounded-lg border border-orange-500/30">
-                <Brain className="w-6 h-6 text-orange-400 animate-pulse" />
+              <div className="w-12 h-12 flex items-center justify-center bg-gray-500/20 rounded-lg border border-gray-500/30">
+                <Brain className="w-6 h-6 text-gray-400 animate-pulse" />
               </div>
             )}
             <div>
@@ -496,7 +496,7 @@ const EmbeddedProgressPanel = ({
           <div className="flex items-center gap-3">
             <div className={`px-3 py-1.5 border rounded-full text-xs font-semibold ${isPaused
               ? 'bg-yellow-500/20 border-yellow-500/30 text-yellow-300'
-              : 'bg-orange-500/20 border-orange-500/30 text-orange-300'
+              : 'bg-gray-500/20 border-gray-500/30 text-gray-300'
               }`}>
               {Math.round(overallProgress)}%
             </div>
@@ -550,7 +550,7 @@ const EmbeddedProgressPanel = ({
                   className="text-sm text-[var(--color-text-secondary)] leading-relaxed max-h-32 overflow-y-auto font-mono streaming-text-box"
                 >
                   {generationStatus.currentModule.generatedText}
-                  <span className="inline-block w-2 h-4 bg-orange-400 animate-pulse ml-1" />
+                  <span className="inline-block w-2 h-4 bg-gray-400 animate-pulse ml-1" />
                 </div>
               </div>
             )}
@@ -2206,8 +2206,8 @@ export function BookView({
                 generationStatus?.status !== 'waiting_retry' && (
                   <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-lg p-7">
                     <div className="flex items-center gap-4 mb-5">
-                      <div className="w-10 h-10 flex items-center justify-center bg-orange-500/10 rounded-lg">
-                        <Play className="w-5 h-5 text-orange-500" />
+                      <div className="w-10 h-10 flex items-center justify-center bg-gray-500/10 rounded-lg">
+                        <Play className="w-5 h-5 text-gray-400" />
                       </div>
                       <div>
                         <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">
@@ -2220,9 +2220,9 @@ export function BookView({
                         </p>
                       </div>
                     </div>
-                    <div className="bg-orange-500/5 border border-orange-500/20 rounded-lg p-4 mb-5">
+                    <div className="bg-gray-500/5 border border-gray-500/20 rounded-lg p-4 mb-5">
                       <div className="flex items-start gap-3">
-                        <Sparkles className="w-5 h-5 text-orange-400 shrink-0 mt-0.5" />
+                        <Sparkles className="w-5 h-5 text-gray-400 shrink-0 mt-0.5" />
                         <div className="text-sm text-[var(--color-text-secondary)]">
                           <p className="font-medium text-[var(--color-text-primary)] mb-2">Smart Recovery Enabled</p>
                           <ul className="space-y-1 text-xs text-[var(--color-text-secondary)]">
@@ -2296,8 +2296,8 @@ export function BookView({
               {currentBook.status === 'completed' && detailTab === 'overview' && (
                 <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-lg p-7">
                   <div className="flex items-center gap-3 mb-5">
-                    <div className="w-10 h-10 flex items-center justify-center bg-orange-500/10 rounded-lg">
-                      <Download className="w-5 h-5 text-orange-500" />
+                    <div className="w-10 h-10 flex items-center justify-center bg-gray-500/10 rounded-lg">
+                      <Download className="w-5 h-5 text-gray-400" />
                     </div>
                     <div>
                       <h3 className="text-lg font-bold text-[var(--color-text-primary)]">
@@ -2313,14 +2313,14 @@ export function BookView({
                     <button
                       onClick={handleDownloadPdf}
                       disabled={pdfProgress > 0 && pdfProgress < 100}
-                      className="flex items-center justify-between p-4 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg hover:border-orange-500 transition-all group disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex items-center justify-between p-4 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg hover:border-gray-400 transition-all group disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 flex items-center justify-center bg-orange-500/10 rounded-lg">
-                          <Download className="w-5 h-5 text-orange-500" />
+                        <div className="w-10 h-10 flex items-center justify-center bg-gray-500/10 rounded-lg">
+                          <Download className="w-5 h-5 text-gray-400" />
                         </div>
                         <div className="text-left">
-                          <div className="font-semibold group-hover:text-orange-400 transition-colors text-[var(--color-text-primary)]">
+                          <div className="font-semibold group-hover:text-gray-400 transition-colors text-[var(--color-text-primary)]">
                             Professional PDF
                           </div>
                           <div className="text-sm text-[var(--color-text-secondary)]">
@@ -2396,24 +2396,24 @@ export function BookView({
                       return (
                         <div
                           key={module.id}
-                          className={`flex items - center gap - 3.5 p - 3.5 rounded - lg border transition - all ${isActive
-                            ? 'bg-orange-500/10 border-orange-500/40'
+                          className={`flex items-center gap-3.5 p-3.5 rounded-lg border transition-all ${isActive
+                            ? 'bg-gray-500/10 border-gray-500/40'
                             : completedModule?.status === 'completed'
                               ? 'bg-emerald-500/10 border-emerald-500/30'
                               : completedModule?.status === 'error'
                                 ? 'border-red-500/30 bg-red-500/5'
                                 : 'bg-[var(--color-bg)] border-[var(--color-border)]'
-                            } `}
+                            }`}
                         >
                           <div
-                            className={`w - 7 h - 7 rounded - full flex items - center justify - center text - xs font - bold shrink - 0 transition - all ${completedModule?.status === 'completed'
+                            className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 transition-all ${completedModule?.status === 'completed'
                               ? 'bg-emerald-500 text-white'
                               : completedModule?.status === 'error'
                                 ? 'bg-red-500 text-white'
                                 : isActive
-                                  ? 'bg-orange-500 text-white animate-pulse'
+                                  ? 'bg-gray-600 text-white animate-pulse'
                                   : 'bg-[var(--color-card)] text-[var(--color-text-secondary)]'
-                              } `}
+                              }`}
                           >
                             {completedModule?.status === 'completed' ? (
                               <Check size={14} />
