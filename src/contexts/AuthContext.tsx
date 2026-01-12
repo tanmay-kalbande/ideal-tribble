@@ -248,10 +248,30 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const signOut = useCallback(async () => {
         if (!supabase) return;
 
-        await supabase.auth.signOut();
-        setUser(null);
-        setProfile(null);
-        setSession(null);
+        try {
+            // Use local scope to ensure the local session is cleared even if network fails
+            const { error } = await supabase.auth.signOut({ scope: 'local' });
+
+            if (error) {
+                console.error('❌ Sign out error:', error);
+            } else {
+                console.log('🚪 Signed out successfully');
+            }
+        } catch (error) {
+            console.error('❌ Sign out exception:', error);
+        } finally {
+            // Always clear local state, even if signOut fails
+            setUser(null);
+            setProfile(null);
+            setSession(null);
+
+            // Explicitly clear the auth storage key
+            try {
+                localStorage.removeItem('kitaab-auth');
+            } catch (e) {
+                console.warn('Failed to clear auth storage:', e);
+            }
+        }
     }, []);
 
     // Update profile

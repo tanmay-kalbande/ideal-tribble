@@ -395,8 +395,9 @@ function App() {
         return;
       }
 
-      // Check if user has credits
-      if (credits < 1) {
+      // Check if user has a paid plan (unlimited books) OR has credits
+      const isPaidPlan = profile?.plan === 'monthly' || profile?.plan === 'yearly';
+      if (!isPaidPlan && credits < 1) {
         setShowCreditGate(true);
         return;
       }
