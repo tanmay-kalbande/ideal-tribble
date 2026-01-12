@@ -224,8 +224,8 @@ const PixelAnimation = () => {
 
   useEffect(() => {
     const colors = [
-      'bg-gray-500', 'bg-gray-400', 'bg-gray-600',
-      'bg-gray-300', 'bg-[var(--color-text-secondary)]', 'bg-[var(--color-border)]',
+      'bg-emerald-500', 'bg-cyan-500', 'bg-purple-500',
+      'bg-blue-500', 'bg-teal-500', 'bg-indigo-400',
     ];
 
     const generatePixels = () => {
@@ -470,18 +470,18 @@ const EmbeddedProgressPanel = ({
   }
 
   return (
-    <div className={`bg-[var(--color-card)] backdrop-blur-xl border rounded-xl overflow-hidden animate-fade-in-up ${isPaused ? 'border-yellow-500/50' : 'border-[var(--color-border)]'
+    <div className={`bg-[var(--color-card)] backdrop-blur-xl border rounded-xl overflow-hidden animate-fade-in-up ${isPaused ? 'border-slate-500/50' : 'border-[var(--color-border)]'
       }`}>
       <div className="p-6">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             {isPaused ? (
-              <div className="w-12 h-12 flex items-center justify-center bg-yellow-500/20 rounded-lg border border-yellow-500/30">
-                <Pause className="w-6 h-6 text-yellow-400" />
+              <div className="w-12 h-12 flex items-center justify-center bg-slate-500/20 rounded-lg border border-slate-500/30">
+                <Pause className="w-6 h-6 text-slate-400" />
               </div>
             ) : (
-              <div className="w-12 h-12 flex items-center justify-center bg-gray-500/20 rounded-lg border border-gray-500/30">
-                <Brain className="w-6 h-6 text-gray-400 animate-pulse" />
+              <div className="w-12 h-12 flex items-center justify-center bg-emerald-500/20 rounded-lg border border-emerald-500/30">
+                <Brain className="w-6 h-6 text-emerald-400 animate-bounce" />
               </div>
             )}
             <div>
@@ -495,8 +495,8 @@ const EmbeddedProgressPanel = ({
           </div>
           <div className="flex items-center gap-3">
             <div className={`px-3 py-1.5 border rounded-full text-xs font-semibold ${isPaused
-              ? 'bg-yellow-500/20 border-yellow-500/30 text-yellow-300'
-              : 'bg-gray-500/20 border-gray-500/30 text-gray-300'
+              ? 'bg-slate-500/20 border-slate-500/30 text-slate-300'
+              : 'bg-emerald-500/20 border-emerald-500/30 text-emerald-300'
               }`}>
               {Math.round(overallProgress)}%
             </div>
@@ -512,14 +512,14 @@ const EmbeddedProgressPanel = ({
           />
         </div>
         {isPaused && (
-          <div className="mb-4 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
+          <div className="mb-4 p-4 bg-slate-500/10 border border-slate-500/30 rounded-lg">
             <div className="flex items-start gap-3">
-              <Pause className="w-5 h-5 text-yellow-400 shrink-0 mt-0.5" />
+              <Pause className="w-5 h-5 text-slate-400 shrink-0 mt-0.5" />
               <div className="flex-1">
-                <p className="text-sm font-medium text-yellow-300 mb-1">
+                <p className="text-sm font-medium text-slate-300 mb-1">
                   Generation Paused
                 </p>
-                <p className="text-xs text-yellow-400/80">
+                <p className="text-xs text-slate-400/80">
                   Your progress is saved. You can resume anytime or close this tab safely.
                 </p>
               </div>
@@ -535,11 +535,11 @@ const EmbeddedProgressPanel = ({
               <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-lg p-4">
                 <div className="flex items-center justify-between mb-3">
                   <h4 className="font-semibold text-[var(--color-text-primary)] flex items-center gap-2">
-                    <Zap className="w-4 h-4 text-yellow-400" />
+                    <Zap className="w-4 h-4 text-cyan-400" />
                     {generationStatus.currentModule.title}
                   </h4>
                   {generationStatus.currentModule.attempt > 1 && (
-                    <div className="flex items-center gap-1.5 text-xs text-yellow-400 bg-yellow-500/10 px-2 py-1 rounded-md border border-yellow-500/20">
+                    <div className="flex items-center gap-1.5 text-xs text-cyan-400 bg-cyan-500/10 px-2 py-1 rounded-md border border-cyan-500/20">
                       <RefreshCw className="w-3 h-3" />
                       <span>Attempt {generationStatus.currentModule.attempt}</span>
                     </div>
@@ -559,7 +559,7 @@ const EmbeddedProgressPanel = ({
         <div className="mt-6 pt-4 border-t border-[var(--color-border)]">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-sm text-[var(--color-text-secondary)]">
-              <Clock className="w-4 h-4 text-yellow-500" />
+              <Clock className="w-4 h-4 text-slate-400" />
               <span>
                 {isPaused
                   ? `Paused • ${stats.completedModules}/${stats.totalModules} done`
@@ -580,7 +580,7 @@ const EmbeddedProgressPanel = ({
                   </button>
                 )
               ) : isGenerating && onPause && (
-                <button onClick={onPause} className="px-5 py-2.5 bg-yellow-600 hover:bg-yellow-700 rounded-lg text-white font-semibold transition-all shadow-lg hover:shadow-yellow-500/30 flex items-center gap-2" title="Pause and save progress" >
+                <button onClick={onPause} className="px-5 py-2.5 bg-slate-600 hover:bg-slate-700 rounded-lg text-white font-semibold transition-all shadow-lg hover:shadow-slate-500/30 flex items-center gap-2" title="Pause and save progress" >
                   <Pause className="w-4 h-4" /> Pause
                 </button>
               )}
