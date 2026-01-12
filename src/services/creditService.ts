@@ -141,6 +141,10 @@ export const creditService = {
             return { success: false, error: 'Insufficient credits' };
         }
 
+        // Increment books_created counter for free tier users too
+        // This ensures ALL users have accurate book count tracking
+        await supabase.rpc('increment_books_created', { p_user_id: user.id });
+
         // Fetch updated credits
         const remainingCredits = await this.getCredits();
 
