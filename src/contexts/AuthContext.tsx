@@ -127,6 +127,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         }
 
         let mounted = true;
+        let initialFetchDone = false; // Prevent duplicate fetches
 
         // Timeout to prevent indefinite loading (5 seconds max)
         const loadingTimeout = setTimeout(() => {
@@ -136,19 +137,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
                 setIsLoading(false);
             }
         }, 5000);
-
-        // Fetch profile with retry
-        const fetchProfileWithRetry = async (userId: string, retries = 3): Promise<UserProfile | null> => {
-            for (let i = 0; i < retries; i++) {
-                const profileData = await fetchProfile(userId);
-                if (profileData) return profileData;
-                // Wait before retry
-                if (i < retries - 1) {
-                    await new Promise(resolve => setTimeout(resolve, 500));
-                }
-            }
-            return null;
-        };
 
         // Get initial session
         const initAuth = async () => {
@@ -165,14 +153,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
                 setUser(session?.user ?? null);
 
                 if (session?.user) {
-                    const profileData = await fetchProfileWithRetry(session.user.id);
-                    if (mounted) {
+                    console.log('🔍 Fetching profile for user:', session.user.id);
+                    const profileData = await fetchProfile(session.user.id);
+                    if (mounted && profileData) {
                         setProfile(profileData);
-                        // Log credits for debugging
                         console.log('💰 Credits loaded:', profileData?.credits ?? 0);
                     }
+                    initialFetchDone = true;
                 } else {
-                    // No session, clear profile
                     setProfile(null);
                 }
             } catch (error) {
@@ -187,10 +175,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
         initAuth();
 
-        // Listen for auth changes
+        // Listen for auth changes - skip INITIAL_SESSION since initAuth handles it
         const { data: { subscription } } = supabase.auth.onAuthStateChange(
             async (event, session) => {
                 if (!mounted) return;
+
+                // Skip INITIAL_SESSION - initAuth already handles this
+                if (event === 'INITIAL_SESSION') {
+                    return;
+                }
 
                 console.log('Auth state changed:', event);
 
@@ -200,8 +193,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
                 if (session?.user) {
                     // Small delay to ensure DB trigger has completed
                     await new Promise(resolve => setTimeout(resolve, 100));
-                    const profileData = await fetchProfileWithRetry(session.user.id);
-                    if (mounted) {
+                    console.log('🔍 Fetching profile for user:', session.user.id);
+                    const profileData = await fetchProfile(session.user.id);
+                    if (mounted && profileData) {
                         setProfile(profileData);
                     }
                 } else {
@@ -215,7 +209,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
             clearTimeout(loadingTimeout);
             subscription.unsubscribe();
         };
-    }, [fetchProfile, isLoading]);
+    }, [fetchProfile]);
 
     // Sign in with email/password
     const signIn = useCallback(async (email: string, password: string) => {
