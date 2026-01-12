@@ -43,6 +43,7 @@ export const storageUtils = {
         cerebras: [
           'gpt-oss-120b',
           'qwen-3-235b-a22b-instruct-2507',
+          'zai-glm-4.7',
           'zai-glm-4.6'
         ]
       };

@@ -39,6 +39,7 @@ const MODEL_OPTIONS: { provider: ModelProvider; model: string; name: string }[] 
     // Cerebras Models
     { provider: 'cerebras', model: 'gpt-oss-120b', name: 'GPT-OSS 120B' },
     { provider: 'cerebras', model: 'qwen-3-235b-a22b-instruct-2507', name: 'Qwen 3 235B' },
+    { provider: 'cerebras', model: 'zai-glm-4.7', name: 'ZAI GLM 4.7' },
     { provider: 'cerebras', model: 'zai-glm-4.6', name: 'ZAI GLM 4.6' },
 ];
 
