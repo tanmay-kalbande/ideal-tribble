@@ -224,8 +224,8 @@ const PixelAnimation = () => {
 
   useEffect(() => {
     const colors = [
-      'bg-emerald-500', 'bg-cyan-500', 'bg-purple-500',
-      'bg-blue-500', 'bg-teal-500', 'bg-indigo-400',
+      'bg-orange-500', 'bg-yellow-500', 'bg-amber-600',
+      'bg-red-500', 'bg-[var(--color-text-secondary)]', 'bg-[var(--color-border)]',
     ];
 
     const generatePixels = () => {
@@ -481,7 +481,7 @@ const EmbeddedProgressPanel = ({
               </div>
             ) : (
               <div className="w-12 h-12 flex items-center justify-center bg-emerald-500/20 rounded-lg border border-emerald-500/30">
-                <Brain className="w-6 h-6 text-emerald-400 animate-bounce" />
+                <Brain className="w-6 h-6 text-emerald-400 animate-pulse" />
               </div>
             )}
             <div>
@@ -1272,12 +1272,11 @@ const BookListGrid = ({
       error: AlertCircle,
     };
     const Icon = iconMap[status] || Loader2;
-    const colorClass =
-      status === 'completed'
-        ? 'text-green-500'
-        : status === 'error'
-          ? 'text-red-500'
-          : 'text-orange-500';
+    const colorClass = status === 'completed'
+      ? 'text-green-500'
+      : status === 'error'
+        ? 'text-red-500'
+        : 'text-cyan-500';
     const animateClass = ['generating_roadmap', 'generating_content', 'assembling'].includes(
       status
     )
@@ -1300,12 +1299,12 @@ const BookListGrid = ({
   const getStatusColor = (status: BookProject['status']) => {
     const colors = {
       completed: 'border-[var(--color-border)]',
-      generating_content: 'border-orange-500/30',
-      assembling: 'border-orange-500/30',
-      roadmap_completed: 'border-yellow-500/30',
+      generating_content: 'border-cyan-500/30',
+      assembling: 'border-cyan-500/30',
+      roadmap_completed: 'border-green-500/30',
       error: 'border-red-500/30',
       planning: 'border-[var(--color-border)]',
-      generating_roadmap: 'border-orange-500/30',
+      generating_roadmap: 'border-cyan-500/30',
     };
     return colors[status] || 'border-[var(--color-border)]';
   };
