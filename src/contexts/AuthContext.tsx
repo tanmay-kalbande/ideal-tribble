@@ -95,39 +95,27 @@ export function AuthProvider({ children }: AuthProviderProps) {
         }
     }, [user, fetchProfile]);
 
-    // Periodic refresh of credits (every 30 seconds when window is focused)
+    // Smart refresh of credits - only when window regains focus after being away for 5+ minutes
     useEffect(() => {
         if (!user || !supabase) return;
 
-        let intervalId: ReturnType<typeof setInterval> | null = null;
+        let lastRefreshTime = Date.now();
+        const MIN_REFRESH_INTERVAL = 5 * 60 * 1000; // 5 minutes minimum between refreshes
 
-        const startRefresh = () => {
-            // Refresh immediately when window gets focus
-            refreshCredits();
-            // Then refresh every 30 seconds
-            intervalId = setInterval(refreshCredits, 30000);
-        };
-
-        const stopRefresh = () => {
-            if (intervalId) {
-                clearInterval(intervalId);
-                intervalId = null;
+        const handleFocus = () => {
+            const timeSinceLastRefresh = Date.now() - lastRefreshTime;
+            // Only refresh if it's been more than 5 minutes since last refresh
+            if (timeSinceLastRefresh > MIN_REFRESH_INTERVAL) {
+                console.log('🔄 Refreshing credits after returning (was away for', Math.round(timeSinceLastRefresh / 1000 / 60), 'mins)');
+                refreshCredits();
+                lastRefreshTime = Date.now();
             }
         };
 
-        // Start if window is focused
-        if (document.hasFocus()) {
-            startRefresh();
-        }
-
-        // Listen for focus/blur
-        window.addEventListener('focus', startRefresh);
-        window.addEventListener('blur', stopRefresh);
+        window.addEventListener('focus', handleFocus);
 
         return () => {
-            stopRefresh();
-            window.removeEventListener('focus', startRefresh);
-            window.removeEventListener('blur', stopRefresh);
+            window.removeEventListener('focus', handleFocus);
         };
     }, [user, refreshCredits]);
 
