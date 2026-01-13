@@ -1098,18 +1098,19 @@ const HomeView = ({
           className="flex-1 bg-transparent border-none outline-none text-[var(--color-text-primary)] placeholder-[var(--color-text-secondary)] text-base"
         />
 
-        {/* Model selector (simplified) */}
+        {/* Enhance Idea button (moved here from chips) */}
         <button
-          onClick={() => setShowAdvanced(!showAdvanced)}
+          onClick={handleEnhanceWithAI}
+          disabled={!formData.goal.trim() || isEnhancing || !hasApiKey}
           className="grok-input-icon shrink-0 flex items-center gap-1.5 text-sm"
-          title="Advanced options"
+          title="Enhance your idea with AI"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
-            <circle cx="12" cy="12" r="3" />
-          </svg>
-          <span className="hidden sm:inline">Auto</span>
-          <ChevronDown size={14} className={`transition-transform ${showAdvanced ? 'rotate-180' : ''}`} />
+          {isEnhancing ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
+            <Sparkles className="w-4 h-4" />
+          )}
+          <span className="hidden sm:inline">{isEnhancing ? 'Refining...' : 'Enhance'}</span>
         </button>
 
         {/* Generate button */}
@@ -1126,22 +1127,23 @@ const HomeView = ({
           title={hasApiKey ? 'Generate book' : 'Add API key first'}
         >
           {localIsGenerating ? (
-            <Loader2 className="w-5 h-5 animate-spin" />
+            <Loader2 className="w-4 h-4 animate-spin" />
           ) : (
-            <Sparkles className="w-5 h-5" />
+            <Sparkles className="w-4 h-4" />
           )}
         </button>
       </div>
 
       {/* Action Chips */}
       <div className="grok-chips">
+        {/* Auto/Options chip (moved from input bar) */}
         <button
-          onClick={handleEnhanceWithAI}
-          disabled={!formData.goal.trim() || isEnhancing || !hasApiKey}
+          onClick={() => setShowAdvanced(!showAdvanced)}
           className="grok-chip"
         >
-          <Sparkles size={16} />
-          {isEnhancing ? 'Refining...' : 'Enhance Idea'}
+          <Settings size={16} />
+          Auto
+          <ChevronDown size={12} className={`transition-transform ${showAdvanced ? 'rotate-180' : ''}`} />
         </button>
 
         {bookCount > 0 && (
