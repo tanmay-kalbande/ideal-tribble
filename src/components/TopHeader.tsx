@@ -80,8 +80,8 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
 
     return (
         <>
-            {/* Exact same style as landing page header */}
-            <header className={`fixed top-0 left-0 right-0 z-50 px-6 md:px-12 py-4 ${theme === 'light' ? 'bg-gradient-to-b from-white via-white/95 to-transparent' : 'bg-gradient-to-b from-black via-black/95 to-transparent'}`}>
+            {/* Grok-style solid header - no gradient fade */}
+            <header className={`fixed top-0 left-0 right-0 z-50 px-6 md:px-12 py-4 ${theme === 'light' ? 'bg-white' : 'bg-black'}`}>
                 <div className="flex items-center justify-between">
                     {/* Brand / Logo */}
                     <div className="flex items-center gap-2 select-none">
@@ -205,9 +205,6 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
                             {theme === 'dark' ? <Moon size={20} /> : <Sun size={20} />}
                         </button>
 
-                        {/* Divider */}
-                        <div className={`h-5 w-[1px] mx-1 ${theme === 'light' ? 'bg-gray-200' : 'bg-white/10'}`} />
-
                         {/* Auth State */}
                         {isAuthenticated ? (
                             <div className="relative">
@@ -215,11 +212,11 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
                                     onClick={() => setShowUserMenu(!showUserMenu)}
                                     className={`flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all border
                                 ${theme === 'light'
-                                            ? 'bg-white border-gray-200 hover:border-orange-200 hover:bg-orange-50 text-gray-700'
-                                            : 'bg-white/5 border-white/10 hover:border-orange-500/30 hover:bg-white/10 text-gray-200'}
+                                            ? 'bg-white border-gray-200 hover:border-gray-300 hover:bg-gray-50 text-gray-700'
+                                            : 'bg-white/5 border-white/10 hover:border-white/20 hover:bg-white/10 text-gray-200'}
                             `}
                                 >
-                                    <div className="w-6 h-6 rounded-full bg-gradient-to-r from-orange-400 to-amber-500 flex items-center justify-center text-[10px] font-bold text-white">
+                                    <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold ${theme === 'light' ? 'bg-gray-200 text-gray-600' : 'bg-white/20 text-white'}`}>
                                         {displayName.charAt(0).toUpperCase()}
                                     </div>
                                     <span className="text-sm font-medium max-w-[100px] truncate hidden sm:block">{displayName}</span>
