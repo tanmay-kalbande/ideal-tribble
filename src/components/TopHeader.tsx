@@ -80,8 +80,8 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
 
     return (
         <>
-            {/* Grok-style solid header - no gradient fade */}
-            <header className={`fixed top-0 left-0 right-0 z-50 px-6 md:px-12 py-4 ${theme === 'light' ? 'bg-white' : 'bg-black'}`}>
+            {/* Grok-style header with smooth fade */}
+            <header className={`fixed top-0 left-0 right-0 z-50 px-6 md:px-12 py-4 ${theme === 'light' ? 'bg-gradient-to-b from-white via-white/80 to-transparent pb-8' : 'bg-gradient-to-b from-black via-black/80 to-transparent pb-8'}`}>
                 <div className="flex items-center justify-between">
                     {/* Brand / Logo */}
                     <div className="flex items-center gap-2 select-none">
@@ -105,19 +105,18 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
                     {/* Right Controls */}
                     <div className="flex items-center gap-3">
 
-                        {/* Model Selector Dropdown */}
+                        {/* Grok-style Model Selector */}
                         <div className="relative hidden md:block">
                             <button
                                 onClick={() => setShowModelMenu(!showModelMenu)}
-                                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all text-xs
+                                className={`flex items-center gap-2 pl-4 pr-3 py-2 rounded-full transition-all text-sm font-medium
                             ${theme === 'light'
-                                        ? 'bg-gray-50 border-gray-200 hover:bg-gray-100 text-gray-700'
-                                        : 'bg-white/[0.03] border-white/10 hover:bg-white/[0.08] text-gray-200'}
+                                        ? 'bg-gray-100 hover:bg-gray-200 text-gray-900'
+                                        : 'bg-[#1a1a1a] hover:bg-[#252525] text-gray-200'}
                         `}
                             >
-                                <span className={`${theme === 'light' ? 'text-gray-500' : 'text-gray-400'}`}>Model:</span>
-                                <span className="font-medium">{currentModelName}</span>
-                                <ChevronDown size={16} className="opacity-50" />
+                                <span>{currentModelName}</span>
+                                <ChevronDown size={14} className={`opacity-50 transition-transform ${showModelMenu ? 'rotate-180' : ''}`} />
                             </button>
 
                             {/* Model Dropdown */}
@@ -125,70 +124,71 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
                                 <>
                                     <div className="fixed inset-0 z-40" onClick={() => setShowModelMenu(false)} />
                                     <div
-                                        className={`absolute top-full right-0 mt-2 w-56 rounded-xl border shadow-2xl overflow-hidden py-1 z-50
+                                        className={`absolute top-full right-0 mt-2 w-64 rounded-2xl shadow-2xl overflow-hidden py-2 z-50
                                     ${theme === 'light'
-                                                ? 'bg-white/95 backdrop-blur-xl border-gray-200/50'
-                                                : 'bg-[#16161a]/95 backdrop-blur-xl border-white/10'}
+                                                ? 'bg-white border border-gray-100'
+                                                : 'bg-[#1a1a1a] border border-white/5'}
                                 `}
                                         style={{
                                             animation: 'dropdownExpand 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
                                             transformOrigin: 'top right'
                                         }}
                                     >
-                                        <div className={`px-3 py-2 border-b ${theme === 'light' ? 'border-gray-100' : 'border-white/5'}`}>
-                                            <p className={`text-xs font-medium ${theme === 'light' ? 'text-gray-500' : 'text-gray-400'}`}>Select AI Model</p>
+                                        <div className={`px-4 py-2 border-b ${theme === 'light' ? 'border-gray-100' : 'border-white/5'}`}>
+                                            <p className={`text-xs font-medium uppercase tracking-wider ${theme === 'light' ? 'text-gray-500' : 'text-gray-500'}`}>Model</p>
                                         </div>
-                                        {availableModels.length === 0 ? (
-                                            <div className={`px-3 py-4 text-center ${theme === 'light' ? 'text-gray-500' : 'text-gray-400'}`}>
-                                                <p className="text-sm mb-2">No API keys configured</p>
-                                                <button
-                                                    onClick={() => { onOpenSettings(); setShowModelMenu(false); }}
-                                                    className="text-xs text-orange-400 hover:text-orange-300"
-                                                >
-                                                    Add API Key →
-                                                </button>
-                                            </div>
-                                        ) : (
-                                            availableModels.map((option) => {
-                                                const isSelected = settings.selectedModel === option.model;
-                                                return (
+                                        <div className="max-h-[300px] overflow-y-auto py-1">
+                                            {availableModels.length === 0 ? (
+                                                <div className={`px-4 py-8 text-center ${theme === 'light' ? 'text-gray-500' : 'text-gray-400'}`}>
+                                                    <p className="text-sm mb-3">No API keys configured</p>
                                                     <button
-                                                        key={`${option.provider}-${option.model}`}
-                                                        onClick={() => {
-                                                            onModelChange(option.model, option.provider);
-                                                            setShowModelMenu(false);
-                                                        }}
-                                                        className={`w-full text-left px-3 py-2 text-sm flex items-center justify-between transition-colors
-                                                    ${isSelected
-                                                                ? 'bg-orange-500/10 text-orange-500'
-                                                                : (theme === 'light' ? 'text-gray-700 hover:bg-gray-50' : 'text-gray-300 hover:bg-white/5')}
-                                                `}
+                                                        onClick={() => { onOpenSettings(); setShowModelMenu(false); }}
+                                                        className="text-xs font-semibold px-3 py-1.5 rounded-full bg-orange-500/10 text-orange-500 hover:bg-orange-500/20 transition-colors"
                                                     >
-                                                        <div>
-                                                            <div className="font-medium">{option.name}</div>
-                                                            <div className={`text-[10px] ${theme === 'light' ? 'text-gray-400' : 'text-gray-500'}`}>
-                                                                {option.provider}
-                                                            </div>
-                                                        </div>
-                                                        {isSelected && (
-                                                            <div className="w-2 h-2 rounded-full bg-orange-500" />
-                                                        )}
+                                                        Configure Keys
                                                     </button>
-                                                );
-                                            })
-                                        )}
-                                        <div className={`border-t ${theme === 'light' ? 'border-gray-100' : 'border-white/5'}`}>
+                                                </div>
+                                            ) : (
+                                                availableModels.map((option) => {
+                                                    const isSelected = settings.selectedModel === option.model;
+                                                    return (
+                                                        <button
+                                                            key={`${option.provider}-${option.model}`}
+                                                            onClick={() => {
+                                                                onModelChange(option.model, option.provider);
+                                                                setShowModelMenu(false);
+                                                            }}
+                                                            className={`w-full text-left px-4 py-2.5 text-sm flex items-center justify-between transition-colors
+                                                        ${isSelected
+                                                                    ? (theme === 'light' ? 'bg-gray-50 text-gray-900' : 'bg-white/5 text-white')
+                                                                    : (theme === 'light' ? 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' : 'text-gray-400 hover:bg-white/5 hover:text-gray-200')}
+                                                    `}
+                                                        >
+                                                            <div>
+                                                                <div className="font-medium">{option.name}</div>
+                                                                <div className="text-[10px] opacity-50 uppercase tracking-wider mt-0.5">
+                                                                    {option.provider}
+                                                                </div>
+                                                            </div>
+                                                            {isSelected && (
+                                                                <div className="w-1.5 h-1.5 rounded-full bg-orange-500" />
+                                                            )}
+                                                        </button>
+                                                    );
+                                                })
+                                            )}
+                                        </div>
+                                        <div className={`border-t ${theme === 'light' ? 'border-gray-100' : 'border-white/5'} p-2`}>
                                             <button
                                                 onClick={() => {
                                                     onOpenSettings();
                                                     setShowModelMenu(false);
                                                 }}
-                                                className={`w-full text-left px-3 py-2 text-xs flex items-center gap-2 transition-colors
-                                            ${theme === 'light' ? 'text-gray-500 hover:bg-gray-50' : 'text-gray-400 hover:bg-white/5'}
+                                                className={`w-full text-center px-3 py-2 text-xs font-medium rounded-lg transition-colors
+                                            ${theme === 'light' ? 'text-gray-500 hover:bg-gray-100 hover:text-gray-900' : 'text-gray-400 hover:bg-white/5 hover:text-white'}
                                         `}
                                             >
-                                                <Settings size={14} />
-                                                Manage API Keys
+                                                Manage Models
                                             </button>
                                         </div>
                                     </div>
@@ -199,11 +199,12 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
                         {/* Theme Toggle */}
                         <button
                             onClick={onToggleTheme}
-                            className={`p-2.5 rounded-lg transition-all ${theme === 'light' ? 'text-gray-500 hover:bg-gray-100 hover:text-gray-900' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+                            className={`p-2.5 rounded-full transition-all ${theme === 'light' ? 'text-gray-500 hover:bg-gray-100 hover:text-gray-900' : 'text-gray-400 hover:text-white hover:bg-[#1a1a1a]'}`}
                             title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
                         >
                             {theme === 'dark' ? <Moon size={20} /> : <Sun size={20} />}
                         </button>
+
 
                         {/* Auth State */}
                         {isAuthenticated ? (
