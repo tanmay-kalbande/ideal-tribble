@@ -48,7 +48,8 @@ import {
   Sun,
   Palette,
   Bookmark,
-  ChevronDown
+  ChevronDown,
+  Search
 } from 'lucide-react';
 import { BookProject, BookSession, ReadingBookmark } from '../types/book';
 import { bookService } from '../services/bookService';
@@ -1330,300 +1331,347 @@ const BookListGrid = ({
     return readingProgressUtils.getBookmark(bookId);
   };
 
+  const [searchQuery, setSearchQuery] = React.useState('');
+  const [statusFilter, setStatusFilter] = React.useState<'all' | 'in-progress' | 'completed' | 'error'>('all');
+
+  const filteredBooks = React.useMemo(() => {
+    return books.filter(book => {
+      const matchesSearch = book.title.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesStatus = statusFilter === 'all' ||
+        (statusFilter === 'in-progress' && book.status === 'generating') ||
+        (statusFilter === 'completed' && book.status === 'completed') ||
+        (statusFilter === 'error' && book.status === 'error');
+      return matchesSearch && matchesStatus;
+    });
+  }, [books, searchQuery, statusFilter]);
+
   return (
-    <div className="w-full max-w-7xl mx-auto px-6 py-10 animate-fade-in-up">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-[var(--color-text-primary)] tracking-tight">My Library</h1>
-          <p className="text-[var(--color-text-secondary)] mt-1 text-sm">{books.length} {books.length === 1 ? 'project' : 'projects'}</p>
-        </div>
-        <div className="flex items-center gap-3">
-          <button onClick={() => setShowListInMain(false)} className="btn btn-secondary btn-sm rounded-lg">
-            <ArrowLeft className="w-4 h-4" /> Back
-          </button>
-          <button
-            onClick={() => {
-              setView('create');
-              setShowListInMain(false);
-            }}
-            className="btn bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg shadow-lg hover:shadow-emerald-600/20 transition-all btn-sm"
-          >
-            <Plus className="w-4 h-4" /> New Book
-          </button>
-        </div>
-      </div>
-
-      {books.length === 0 ? (
-        <div className="text-center py-20 bg-[var(--color-card)] rounded-2xl border border-[var(--color-border)] border-dashed backdrop-blur-sm">
-          <div className="w-20 h-20 mx-auto mb-6 bg-emerald-500/10 rounded-full flex items-center justify-center border border-emerald-500/20">
-            <BookOpen className="w-8 h-8 text-emerald-400" />
+    <div className="min-h-screen bg-black">
+      <div className="w-full max-w-[1400px] mx-auto px-6 py-10 animate-fade-in-up">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-white tracking-tight" style={{ fontFamily: 'Rubik, sans-serif' }}>My Library</h1>
+            <p className="text-gray-400 mt-1 text-sm">{books.length} {books.length === 1 ? 'project' : 'projects'}</p>
           </div>
-          <h3 className="text-xl font-semibold text-[var(--color-text-primary)] mb-2">No books yet</h3>
-          <p className="text-[var(--color-text-secondary)] mb-6 max-w-sm mx-auto">Create your first AI-generated book to get started with Pustakam's powerful engine.</p>
-          <button
-            onClick={() => {
-              setView('create');
-              setShowListInMain(false);
-            }}
-            className="btn bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl px-6 py-3 font-semibold shadow-lg hover:shadow-emerald-600/30 transition-all inline-flex items-center gap-2"
-          >
-            <Sparkles className="w-4 h-4" />
-            Create Your First Book
-          </button>
+          <div className="flex items-center gap-3">
+            <button onClick={() => setShowListInMain(false)} className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white border border-white/10 hover:border-white/20 rounded-lg transition-all">
+              <ArrowLeft className="w-4 h-4 inline mr-2" /> Back
+            </button>
+            <button
+              onClick={() => {
+                setView('create');
+                setShowListInMain(false);
+              }}
+              className="px-4 py-2 text-sm font-medium bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-all inline-flex items-center gap-2"
+            >
+              <Plus className="w-4 h-4" /> New Book
+            </button>
+          </div>
         </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {books.map((book) => {
-            const progress = book.modules.filter((m) => m.status === 'completed').length;
-            const total = book.modules.length;
-            const percent = total > 0 ? (progress / total) * 100 : 0;
-            const isHovered = hoveredBookId === book.id;
 
-            return (
-              <div
-                key={book.id}
-                onMouseEnter={() => setHoveredBookId(book.id)}
-                onMouseLeave={() => {
-                  setHoveredBookId(null);
-                  setStatusDropdownOpen(null);
-                }}
-                onClick={() => onSelectBook(book.id)}
-                className={`group relative bg-[var(--color-card)] backdrop-blur-md rounded-lg border border-[var(--color-border)] p-3 transition-all duration-300 cursor-pointer ${isHovered ? 'shadow-lg shadow-black/8 border-[var(--color-text-secondary)]/20 -translate-y-0.5' : ''
-                  }`}
-              >
-                <div className="flex justify-between items-start mb-2">
-                  <div className={`p-1.5 rounded-md transition-colors ${book.status === 'completed' ? 'bg-green-500/10 text-green-500' :
-                    book.status === 'error' ? 'bg-red-500/10 text-red-500' :
-                      'bg-[var(--color-text-secondary)]/10 text-[var(--color-text-secondary)]'
-                    }`}>
-                    <Book className="w-4 h-4" />
-                  </div>
-                  <div className="relative">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setStatusDropdownOpen(statusDropdownOpen === book.id ? null : book.id);
-                      }}
-                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${getStatusColor(book.status)} bg-[var(--color-bg)] text-[var(--color-text-secondary)] hover:bg-[var(--color-card)]`}
-                    >
-                      {getStatusIcon(book.status)}
-                      <span>{getStatusText(book.status)}</span>
-                      <ChevronDown size={12} className="opacity-50" />
-                    </button>
+        {/* Search and Filter */}
+        <div className="flex flex-col sm:flex-row gap-4 mb-8">
+          <div className="flex-1 relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+            <input
+              type="text"
+              placeholder="Search books..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-white/5 border border-white/10 rounded-lg pl-10 pr-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-white/20 focus:bg-white/[0.07] transition-all"
+            />
+          </div>
+          <div className="relative">
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value as any)}
+              className="bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 pr-10 text-sm text-white focus:outline-none focus:border-white/20 focus:bg-white/[0.07] transition-all appearance-none cursor-pointer"
+              style={{ minWidth: '160px' }}
+            >
+              <option value="all">All Books</option>
+              <option value="in-progress">In Progress</option>
+              <option value="completed">Completed</option>
+              <option value="error">Error</option>
+            </select>
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
+          </div>
+        </div>
 
-                    {/* Status Dropdown */}
-                    {statusDropdownOpen === book.id && (
-                      <div className="absolute right-0 top-full mt-2 w-48 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-xl shadow-2xl z-50 overflow-hidden animate-fade-in-up" onClick={(e) => e.stopPropagation()}>
-                        <div className="p-2">
-                          <div className="text-xs font-semibold text-[var(--color-text-secondary)] px-2 py-1 mb-1 uppercase tracking-wider">Set Status</div>
-                          {availableStatuses.map(status => (
+        {filteredBooks.length === 0 ? (
+          <div className="text-center py-24 bg-white/[0.02] rounded-2xl border border-white/10 border-dashed">
+            <div className="w-20 h-20 mx-auto mb-6 bg-emerald-500/10 rounded-full flex items-center justify-center border border-emerald-500/20">
+              <BookOpen className="w-8 h-8 text-emerald-400" />
+            </div>
+            <h3 className="text-xl font-semibold text-white mb-2">{searchQuery || statusFilter !== 'all' ? 'No books found' : 'No books yet'}</h3>
+            <p className="text-gray-400 mb-6 max-w-sm mx-auto">
+              {searchQuery || statusFilter !== 'all'
+                ? 'Try adjusting your search or filter settings.'
+                : 'Create your first AI-generated book to get started with Pustakam.'}
+            </p>
+            <button
+              onClick={() => {
+                setView('create');
+                setShowListInMain(false);
+              }}
+              className="btn bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl px-6 py-3 font-semibold shadow-lg hover:shadow-emerald-600/30 transition-all inline-flex items-center gap-2"
+            >
+              <Sparkles className="w-4 h-4" />
+              Create Your First Book
+            </button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {filteredBooks.map((book) => {
+              const progress = book.modules.filter((m) => m.status === 'completed').length;
+              const total = book.modules.length;
+              const percent = total > 0 ? (progress / total) * 100 : 0;
+              const isHovered = hoveredBookId === book.id;
+
+              return (
+                <div
+                  key={book.id}
+                  onMouseEnter={() => setHoveredBookId(book.id)}
+                  onMouseLeave={() => {
+                    setHoveredBookId(null);
+                    setStatusDropdownOpen(null);
+                  }}
+                  onClick={() => onSelectBook(book.id)}
+                  className={`group relative bg-white/[0.03] backdrop-blur-md rounded-xl border border-white/10 p-4 transition-all duration-300 cursor-pointer hover:bg-white/[0.05] hover:border-white/20 hover:shadow-lg hover:shadow-emerald-500/5 hover:-translate-y-1`}
+                >
+                  <div className="flex justify-between items-start mb-2">
+                    <div className={`p-1.5 rounded-md transition-colors ${book.status === 'completed' ? 'bg-green-500/10 text-green-500' :
+                      book.status === 'error' ? 'bg-red-500/10 text-red-500' :
+                        'bg-white/10 text-gray-400'
+                      }`}>
+                      <Book className="w-4 h-4" />
+                    </div>
+                    <div className="relative">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setStatusDropdownOpen(statusDropdownOpen === book.id ? null : book.id);
+                        }}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${getStatusColor(book.status)} bg-black/50 text-gray-300 hover:bg-white/5 hover:border-white/20`}
+                      >
+                        {getStatusIcon(book.status)}
+                        <span>{getStatusText(book.status)}</span>
+                        <ChevronDown size={12} className="opacity-50" />
+                      </button>
+
+                      {/* Status Dropdown */}
+                      {statusDropdownOpen === book.id && (
+                        <div className="absolute right-0 top-full mt-2 w-48 bg-[#1a1a1a] border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden animate-fade-in-up" onClick={(e) => e.stopPropagation()}>
+                          <div className="p-2">
+                            <div className="text-xs font-semibold text-gray-400 px-2 py-1 mb-1 uppercase tracking-wider">Set Status</div>
+                            {availableStatuses.map(status => (
+                              <button
+                                key={status}
+                                onClick={() => {
+                                  onUpdateBookStatus(book.id, status);
+                                  setStatusDropdownOpen(null);
+                                }}
+                                className={`w-full text-left px-2 py-1.5 rounded-lg text-xs flex items-center gap-2 hover:bg-white/5 ${book.status === status ? 'text-white bg-white/10' : 'text-gray-400'}`}
+                              >
+                                {getStatusIcon(status)}
+                                {getStatusText(status)}
+                              </button>
+                            ))}
+                            <div className="h-px bg-white/10 my-1" />
                             <button
-                              key={status}
                               onClick={() => {
-                                onUpdateBookStatus(book.id, status);
-                                setStatusDropdownOpen(null);
+                                if (window.confirm('Delete this book project?')) {
+                                  onDeleteBook(book.id);
+                                }
                               }}
-                              className={`w-full text-left px-2 py-1.5 rounded-lg text-xs flex items-center gap-2 hover:bg-[var(--color-card)] ${book.status === status ? 'text-white bg-[var(--color-card)]' : 'text-[var(--color-text-secondary)]'}`}
+                              className="w-full text-left px-2 py-1.5 rounded-lg text-xs flex items-center gap-2 text-red-400 hover:bg-red-500/10 hover:text-red-300"
                             >
-                              {getStatusIcon(status)}
-                              {getStatusText(status)}
+                              <Trash2 size={12} /> Delete Project
                             </button>
-                          ))}
-                          <div className="h-px bg-[var(--color-border)] my-1" />
-                          <button
-                            onClick={() => {
-                              if (window.confirm('Delete this book project?')) {
-                                onDeleteBook(book.id);
-                              }
-                            }}
-                            className="w-full text-left px-2 py-1.5 rounded-lg text-xs flex items-center gap-2 text-red-400 hover:bg-red-500/10 hover:text-red-300"
-                          >
-                            <Trash2 size={12} /> Delete Project
-                          </button>
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
+                    </div>
+                  </div>
+
+                  <h3 className="text-base font-semibold text-white mb-1.5 line-clamp-1 group-hover:text-white transition-colors" style={{ fontFamily: 'Rubik, sans-serif' }}>
+                    {book.title}
+                  </h3>
+
+                  <div className="space-y-3 mb-3">
+                    <div className="flex items-center justify-between text-xs text-gray-400">
+                      <span className="flex items-center gap-1.5">
+                        <ListChecks size={13} />
+                        {book.modules.length} Modules
+                      </span>
+                      <span className="font-mono bg-white/5 px-2 py-0.5 rounded-md border border-white/10">{Math.round(percent)}%</span>
+                    </div>
+                    <div className="w-full bg-white/5 rounded-full h-1.5 overflow-hidden border border-white/10">
+                      <div
+                        className={`h-full rounded-full transition-all duration-500 ${book.status === 'completed' ? 'bg-green-500' :
+                          book.status === 'error' ? 'bg-red-500' :
+                            'bg-gradient-to-r from-emerald-500 to-emerald-400'
+                          }`}
+                        style={{ width: `${percent}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between pt-4 border-t border-white/10 text-xs text-gray-400">
+                    <div className="flex items-center gap-1.5">
+                      <Clock size={12} />
+                      {new Date(book.updatedAt).toLocaleDateString()}
+                    </div>
+                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0 text-white font-medium">
+                      Open Project <ArrowRight size={12} />
+                    </div>
                   </div>
                 </div>
-
-                <h3 className="text-base font-semibold text-[var(--color-text-primary)] mb-1.5 line-clamp-1 group-hover:text-white transition-colors">
-                  {book.title}
-                </h3>
-
-                <div className="space-y-3 mb-3">
-                  <div className="flex items-center justify-between text-xs text-[var(--color-text-secondary)]">
-                    <span className="flex items-center gap-1.5">
-                      <ListChecks size={13} />
-                      {book.modules.length} Modules
-                    </span>
-                    <span className="font-mono bg-[var(--color-bg)] px-2 py-0.5 rounded-md border border-[var(--color-border)]">{Math.round(percent)}%</span>
-                  </div>
-                  <div className="w-full bg-[var(--color-bg)] rounded-full h-1.5 overflow-hidden border border-[var(--color-border)]">
-                    <div
-                      className={`h-full rounded-full transition-all duration-500 ${book.status === 'completed' ? 'bg-green-500' :
-                        book.status === 'error' ? 'bg-red-500' :
-                          'bg-gradient-to-r from-emerald-500 to-emerald-400'
-                        }`}
-                      style={{ width: `${percent}%` }}
-                    />
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between pt-4 border-t border-[var(--color-border)] text-xs text-[var(--color-text-secondary)]">
-                  <div className="flex items-center gap-1.5">
-                    <Clock size={12} />
-                    {new Date(book.updatedAt).toLocaleDateString()}
-                  </div>
-                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0 text-white font-medium">
-                    Open Project <ArrowRight size={12} />
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
-    </div>
-  );
+              );
+            })}
+          </div>
+        )}
+      </div>
+      );
 };
 
 
 
-const DetailTabButton = ({
-  label,
-  Icon,
-  isActive,
-  onClick,
+      const DetailTabButton = ({
+        label,
+        Icon,
+        isActive,
+        onClick,
 }: {
-  label: ReactNode;
-  Icon: React.ElementType;
-  isActive: boolean;
+        label: ReactNode;
+      Icon: React.ElementType;
+      isActive: boolean;
   onClick: () => void;
 }) => (
-  <button
-    onClick={onClick}
-    className={`flex items-center gap-2 px-1 py-3 text-sm font-semibold transition-all duration-200 border-b-2 ${isActive
-      ? 'border-[var(--color-text-primary)] text-[var(--color-text-primary)]'
-      : 'border-transparent text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
-      }`}
-  >
-    <Icon className="w-4 h-4" />
-    {label}
-  </button>
-);
+      <button
+        onClick={onClick}
+        className={`flex items-center gap-2 px-1 py-3 text-sm font-semibold transition-all duration-200 border-b-2 ${isActive
+          ? 'border-[var(--color-text-primary)] text-[var(--color-text-primary)]'
+          : 'border-transparent text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
+          }`}
+      >
+        <Icon className="w-4 h-4" />
+        {label}
+      </button>
+      );
 
-export function BookView({
-  books,
-  currentBookId,
-  onCreateBookRoadmap,
-  onGenerateAllModules,
-  onRetryFailedModules,
-  onAssembleBook,
-  onSelectBook,
-  onDeleteBook,
-  onUpdateBookStatus,
-  hasApiKey,
-  view,
-  setView,
-  onUpdateBookContent,
-  showListInMain,
-  setShowListInMain,
-  isMobile = false,
-  generationStatus,
-  generationStats,
-  onPauseGeneration,
-  onResumeGeneration,
-  isGenerating,
-  onRetryDecision,
-  availableModels,
-  theme,
-  onOpenSettings, // ✅ Destructure prop
-  showAlertDialog,
+      export function BookView({
+        books,
+        currentBookId,
+        onCreateBookRoadmap,
+        onGenerateAllModules,
+        onRetryFailedModules,
+        onAssembleBook,
+        onSelectBook,
+        onDeleteBook,
+        onUpdateBookStatus,
+        hasApiKey,
+        view,
+        setView,
+        onUpdateBookContent,
+        showListInMain,
+        setShowListInMain,
+        isMobile = false,
+        generationStatus,
+        generationStats,
+        onPauseGeneration,
+        onResumeGeneration,
+        isGenerating,
+        onRetryDecision,
+        availableModels,
+        theme,
+        onOpenSettings, // ✅ Destructure prop
+        showAlertDialog,
 }: BookViewProps) {
   const [detailTab, setDetailTab] = useState<'overview' | 'analytics' | 'read'>('overview');
-  const [localIsGenerating, setLocalIsGenerating] = useState(false);
-  const [showAdvanced, setShowAdvanced] = useState(false);
-  const [formData, setFormData] = useState<BookSession>({
-    goal: '',
-    language: 'en',
-    targetAudience: '',
-    complexityLevel: 'intermediate',
-    reasoning: '',
-    preferences: {
-      includeExamples: true,
-      includePracticalExercises: false,
-      includeQuizzes: false,
+      const [localIsGenerating, setLocalIsGenerating] = useState(false);
+      const [showAdvanced, setShowAdvanced] = useState(false);
+      const [formData, setFormData] = useState<BookSession>({
+        goal: '',
+        language: 'en',
+        targetAudience: '',
+        complexityLevel: 'intermediate',
+        reasoning: '',
+        preferences: {
+          includeExamples: true,
+        includePracticalExercises: false,
+        includeQuizzes: false,
     },
   });
-  const [isEditing, setIsEditing] = useState(false);
-  const [editedContent, setEditedContent] = useState('');
+        const [isEditing, setIsEditing] = useState(false);
+        const [editedContent, setEditedContent] = useState('');
   const currentBook = currentBookId ? books.find(b => b.id === currentBookId) : null;
-  const [pdfProgress, setPdfProgress] = useState(0);
+        const [pdfProgress, setPdfProgress] = useState(0);
 
-  const [isEnhancing, setIsEnhancing] = React.useState(false);
+        const [isEnhancing, setIsEnhancing] = React.useState(false);
 
   const handleStartGeneration = () => {
     if (!currentBook?.roadmap) {
-      showAlertDialog({
-        type: 'warning',
-        title: 'Missing Roadmap',
-        message: 'No roadmap available to generate modules.',
-        confirmText: 'Got it'
-      });
-      return;
+          showAlertDialog({
+            type: 'warning',
+            title: 'Missing Roadmap',
+            message: 'No roadmap available to generate modules.',
+            confirmText: 'Got it'
+          });
+        return;
     }
 
-    const session: BookSession = {
-      goal: currentBook.goal,
-      language: 'en',
-      targetAudience: '',
-      complexityLevel: currentBook.roadmap.difficultyLevel || 'intermediate',
-      preferences: {
-        includeExamples: true,
+        const session: BookSession = {
+          goal: currentBook.goal,
+        language: 'en',
+        targetAudience: '',
+        complexityLevel: currentBook.roadmap.difficultyLevel || 'intermediate',
+        preferences: {
+          includeExamples: true,
         includePracticalExercises: false,
         includeQuizzes: false
       },
-      reasoning: currentBook.reasoning
+        reasoning: currentBook.reasoning
     };
 
-    onGenerateAllModules(currentBook, session);
+        onGenerateAllModules(currentBook, session);
   };
 
   const handleStartAssembly = () => {
     if (!currentBook) return;
 
-    const session: BookSession = {
-      goal: currentBook.goal,
-      language: 'en',
-      targetAudience: '',
-      complexityLevel: currentBook.roadmap?.difficultyLevel || 'intermediate',
-      preferences: {
-        includeExamples: true,
+        const session: BookSession = {
+          goal: currentBook.goal,
+        language: 'en',
+        targetAudience: '',
+        complexityLevel: currentBook.roadmap?.difficultyLevel || 'intermediate',
+        preferences: {
+          includeExamples: true,
         includePracticalExercises: false,
         includeQuizzes: false
       },
-      reasoning: currentBook.reasoning
+        reasoning: currentBook.reasoning
     };
 
-    onAssembleBook(currentBook, session);
+        onAssembleBook(currentBook, session);
   };
 
   useEffect(() => {
     if (currentBook) {
       const isGen = ['generating_roadmap', 'generating_content', 'assembling'].includes(
         currentBook.status
-      );
-      setLocalIsGenerating(isGen);
-      setIsEditing(false);
+        );
+        setLocalIsGenerating(isGen);
+        setIsEditing(false);
 
-      if (currentBook.status === 'completed') {
+        if (currentBook.status === 'completed') {
         const bookmark = readingProgressUtils.getBookmark(currentBook.id);
         setDetailTab(bookmark ? 'read' : 'overview');
       } else {
-        setDetailTab('overview');
+          setDetailTab('overview');
       }
     } else {
-      setDetailTab('overview');
+          setDetailTab('overview');
     }
   }, [currentBook]);
 
@@ -1634,185 +1682,185 @@ export function BookView({
   }, [currentBookId]);
 
   const handleGoBackToLibrary = () => {
-    setView('list');
-    onSelectBook(null);
-    setShowListInMain(true);
+          setView('list');
+        onSelectBook(null);
+        setShowListInMain(true);
   };
 
   const handleCreateRoadmap = async (session: BookSession) => {
     if (!session.goal.trim()) {
-      showAlertDialog({
-        type: 'warning',
-        title: 'Input Required',
-        message: 'Please enter a learning goal.',
-        confirmText: 'Got it'
-      });
-      return;
+          showAlertDialog({
+            type: 'warning',
+            title: 'Input Required',
+            message: 'Please enter a learning goal.',
+            confirmText: 'Got it'
+          });
+        return;
     }
-    if (!hasApiKey) {
-      showAlertDialog({
-        type: 'warning',
-        title: 'API Key Required',
-        message: 'Please configure an API key in Settings first.',
-        confirmText: 'Open Settings',
-        onConfirm: onOpenSettings
-      });
-      return;
+        if (!hasApiKey) {
+          showAlertDialog({
+            type: 'warning',
+            title: 'API Key Required',
+            message: 'Please configure an API key in Settings first.',
+            confirmText: 'Open Settings',
+            onConfirm: onOpenSettings
+          });
+        return;
     }
-    await onCreateBookRoadmap(session);
+        await onCreateBookRoadmap(session);
   };
 
   const handleGenerateAllModules = async (book: BookProject, session: BookSession) => {
     if (!book.roadmap) {
-      showAlertDialog({
-        type: 'warning',
-        title: 'Missing Roadmap',
-        message: 'No roadmap available to generate modules.',
-        confirmText: 'Got it'
-      });
-      return;
+          showAlertDialog({
+            type: 'warning',
+            title: 'Missing Roadmap',
+            message: 'No roadmap available to generate modules.',
+            confirmText: 'Got it'
+          });
+        return;
     }
-    await onGenerateAllModules(book, session);
+        await onGenerateAllModules(book, session);
   };
 
   const handlePauseGeneration = () => {
     if (currentBook) {
-      onPauseGeneration?.(currentBook.id);
+          onPauseGeneration?.(currentBook.id);
     }
   };
 
   const handleResumeGeneration = async () => {
     if (!currentBook?.roadmap) {
-      showAlertDialog({
-        type: 'warning',
-        title: 'Missing Roadmap',
-        message: 'No roadmap available to resume generation. This book might be corrupted.',
-        confirmText: 'Got it'
-      });
-      return;
+          showAlertDialog({
+            type: 'warning',
+            title: 'Missing Roadmap',
+            message: 'No roadmap available to resume generation. This book might be corrupted.',
+            confirmText: 'Got it'
+          });
+        return;
     }
 
-    const session: BookSession = {
-      goal: currentBook.goal,
-      language: 'en',
-      targetAudience: '',
-      complexityLevel: currentBook.roadmap.difficultyLevel || 'intermediate',
-      preferences: { includeExamples: true, includePracticalExercises: false, includeQuizzes: false },
-      reasoning: currentBook.reasoning
+        const session: BookSession = {
+          goal: currentBook.goal,
+        language: 'en',
+        targetAudience: '',
+        complexityLevel: currentBook.roadmap.difficultyLevel || 'intermediate',
+        preferences: {includeExamples: true, includePracticalExercises: false, includeQuizzes: false },
+        reasoning: currentBook.reasoning
     };
 
-    await onResumeGeneration?.(currentBook, session);
+        await onResumeGeneration?.(currentBook, session);
   };
 
   const handleRetryFailedModules = async (book: BookProject, session: BookSession) => {
     const failedModules = book.modules.filter(m => m.status === 'error');
-    if (failedModules.length === 0) {
-      showAlertDialog({
-        type: 'info',
-        title: 'No Failed Modules',
-        message: 'There are no failed modules to retry.',
-        confirmText: 'Got it'
-      });
-      return;
+        if (failedModules.length === 0) {
+          showAlertDialog({
+            type: 'info',
+            title: 'No Failed Modules',
+            message: 'There are no failed modules to retry.',
+            confirmText: 'Got it'
+          });
+        return;
     }
-    await onRetryFailedModules(book, session);
+        await onRetryFailedModules(book, session);
   };
 
   const handleAssembleBook = async (book: BookProject, session: BookSession) => {
-    await onAssembleBook(book, session);
+          await onAssembleBook(book, session);
   };
 
   const handleDeleteBook = (id: string) => {
-    showAlertDialog({
-      type: 'confirm',
-      title: 'Confirm Deletion',
-      message: 'Delete this book permanently? This cannot be undone.',
-      confirmText: 'Delete',
-      cancelText: 'Cancel',
-      onConfirm: () => onDeleteBook(id)
-    });
+          showAlertDialog({
+            type: 'confirm',
+            title: 'Confirm Deletion',
+            message: 'Delete this book permanently? This cannot be undone.',
+            confirmText: 'Delete',
+            cancelText: 'Cancel',
+            onConfirm: () => onDeleteBook(id)
+          });
   };
 
   const handleDownloadPdf = async () => {
     if (!currentBook) return;
-    setPdfProgress(1);
-    try {
-      await pdfService.generatePdf(currentBook, setPdfProgress);
+        setPdfProgress(1);
+        try {
+          await pdfService.generatePdf(currentBook, setPdfProgress);
       setTimeout(() => setPdfProgress(0), 2000);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'PDF generation failed';
-      showAlertDialog({
-        type: 'error',
+        showAlertDialog({
+          type: 'error',
         title: 'PDF Generation Failed',
         message: errorMessage + '\n\nTry these steps:\n1. Hard refresh the page (Ctrl+Shift+R)\n2. Clear browser cache\n3. Download Markdown (.md) version instead',
         confirmText: 'Dismiss'
       });
-      setPdfProgress(0);
+        setPdfProgress(0);
     }
   };
 
   const handleStartEditing = () => {
     if (currentBook?.finalBook) {
-      setEditedContent(currentBook.finalBook);
-      setIsEditing(true);
+          setEditedContent(currentBook.finalBook);
+        setIsEditing(true);
     }
   };
 
   const handleCancelEditing = () => {
-    setIsEditing(false);
-    setEditedContent('');
+          setIsEditing(false);
+        setEditedContent('');
   };
 
   const handleSaveChanges = () => {
     if (currentBook && editedContent) {
-      onUpdateBookContent(currentBook.id, editedContent);
-      setIsEditing(false);
-      setEditedContent('');
+          onUpdateBookContent(currentBook.id, editedContent);
+        setIsEditing(false);
+        setEditedContent('');
     }
   };
 
   const getStatusIcon = (status: BookProject['status']) => {
     const iconMap: Record<BookProject['status'], React.ElementType> = {
-      planning: Clock,
-      generating_roadmap: Loader2,
-      roadmap_completed: ListChecks,
-      generating_content: Loader2,
-      assembling: Box,
-      completed: CheckCircle,
-      error: AlertCircle,
+          planning: Clock,
+        generating_roadmap: Loader2,
+        roadmap_completed: ListChecks,
+        generating_content: Loader2,
+        assembling: Box,
+        completed: CheckCircle,
+        error: AlertCircle,
     };
-    const Icon = iconMap[status] || Loader2;
-    const colorClass =
-      status === 'completed'
+        const Icon = iconMap[status] || Loader2;
+        const colorClass =
+        status === 'completed'
         ? 'text-green-500'
         : status === 'error'
-          ? 'text-red-500'
-          : 'text-orange-500';
-    const animateClass = ['generating_roadmap', 'generating_content', 'assembling'].includes(
-      status
-    )
-      ? 'animate-spin'
-      : '';
-    return <Icon className={`w - 4 h - 4 ${colorClass} ${animateClass} `} />;
+        ? 'text-red-500'
+        : 'text-orange-500';
+        const animateClass = ['generating_roadmap', 'generating_content', 'assembling'].includes(
+        status
+        )
+        ? 'animate-spin'
+        : '';
+        return <Icon className={`w - 4 h - 4 ${colorClass} ${animateClass} `} />;
   };
 
   const getStatusText = (status: BookProject['status']) =>
-  ({
-    planning: 'Planning',
-    generating_roadmap: 'Creating Roadmap',
-    roadmap_completed: 'Ready to Write',
-    generating_content: 'Writing Chapters',
-    assembling: 'Finalizing Book',
-    completed: 'Completed',
-    error: 'Error',
+        ({
+          planning: 'Planning',
+        generating_roadmap: 'Creating Roadmap',
+        roadmap_completed: 'Ready to Write',
+        generating_content: 'Writing Chapters',
+        assembling: 'Finalizing Book',
+        completed: 'Completed',
+        error: 'Error',
   }[status] || 'Unknown');
 
-  // ============================================================================
-  // VIEW RENDERING
-  // ============================================================================
-  if (view === 'list') {
+        // ============================================================================
+        // VIEW RENDERING
+        // ============================================================================
+        if (view === 'list') {
     if (showListInMain)
-      return (
+        return (
         <BookListGrid
           books={books}
           onSelectBook={onSelectBook}
@@ -1821,670 +1869,670 @@ export function BookView({
           setView={setView}
           setShowListInMain={setShowListInMain}
         />
-      );
+        );
 
     // handleEnhanceWithAI defined here for HomeView
     const handleEnhanceWithAI = async () => {
       if (!formData.goal.trim()) {
-        showAlertDialog({
-          type: 'warning',
-          title: 'Input Required',
-          message: 'Please describe what you want to learn before using the AI refiner.',
-          confirmText: 'Got it'
-        });
+          showAlertDialog({
+            type: 'warning',
+            title: 'Input Required',
+            message: 'Please describe what you want to learn before using the AI refiner.',
+            confirmText: 'Got it'
+          });
         return;
       }
 
-      if (!hasApiKey) {
-        showAlertDialog({
-          type: 'warning',
-          title: 'API Key Required',
-          message: 'Please configure an API key in Settings to use the AI refiner.',
-          confirmText: 'Open Settings',
-          onConfirm: onOpenSettings
-        });
+        if (!hasApiKey) {
+          showAlertDialog({
+            type: 'warning',
+            title: 'API Key Required',
+            message: 'Please configure an API key in Settings to use the AI refiner.',
+            confirmText: 'Open Settings',
+            onConfirm: onOpenSettings
+          });
         return;
       }
 
-      setIsEnhancing(true);
-      try {
+        setIsEnhancing(true);
+        try {
         const enhanced = await bookService.enhanceBookInput(formData.goal);
 
         setFormData({
           goal: enhanced.goal,
-          language: 'en',
-          targetAudience: enhanced.targetAudience,
-          complexityLevel: enhanced.complexityLevel,
-          reasoning: enhanced.reasoning || '',
-          preferences: enhanced.preferences
+        language: 'en',
+        targetAudience: enhanced.targetAudience,
+        complexityLevel: enhanced.complexityLevel,
+        reasoning: enhanced.reasoning || '',
+        preferences: enhanced.preferences
         });
 
         showAlertDialog({
           type: 'success',
-          title: 'Idea Refined! ✨',
-          message: `Your idea has been refined and the form below is auto-filled. Review and adjust if needed, then click "Generate Book".`,
-          confirmText: 'Great!'
+        title: 'Idea Refined! ✨',
+        message: `Your idea has been refined and the form below is auto-filled. Review and adjust if needed, then click "Generate Book".`,
+        confirmText: 'Great!'
         });
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Refinement failed';
         showAlertDialog({
           type: 'error',
-          title: 'Refinement Failed',
-          message: errorMessage,
-          confirmText: 'Dismiss'
+        title: 'Refinement Failed',
+        message: errorMessage,
+        confirmText: 'Dismiss'
         });
       } finally {
-        setIsEnhancing(false);
+          setIsEnhancing(false);
       }
     };
 
-    return (
-      <HomeView
-        onNewBook={() => setView('create')}
-        onShowList={() => setShowListInMain(true)}
-        hasApiKey={hasApiKey}
-        bookCount={books.length}
-        theme={theme}
-        formData={formData}
-        setFormData={setFormData}
-        showAdvanced={showAdvanced}
-        setShowAdvanced={setShowAdvanced}
-        handleCreateRoadmap={handleCreateRoadmap}
-        handleEnhanceWithAI={handleEnhanceWithAI}
-        isEnhancing={isEnhancing}
-        localIsGenerating={localIsGenerating}
-        onOpenSettings={onOpenSettings}
-      />
-    );
+        return (
+        <HomeView
+          onNewBook={() => setView('create')}
+          onShowList={() => setShowListInMain(true)}
+          hasApiKey={hasApiKey}
+          bookCount={books.length}
+          theme={theme}
+          formData={formData}
+          setFormData={setFormData}
+          showAdvanced={showAdvanced}
+          setShowAdvanced={setShowAdvanced}
+          handleCreateRoadmap={handleCreateRoadmap}
+          handleEnhanceWithAI={handleEnhanceWithAI}
+          isEnhancing={isEnhancing}
+          localIsGenerating={localIsGenerating}
+          onOpenSettings={onOpenSettings}
+        />
+        );
   }
 
-  if (view === 'create') {
+        if (view === 'create') {
     const handleEnhanceWithAI = async () => {
       if (!formData.goal.trim()) {
-        showAlertDialog({
-          type: 'warning',
-          title: 'Input Required',
-          message: 'Please describe what you want to learn before using the AI refiner.',
-          confirmText: 'Got it'
-        });
+          showAlertDialog({
+            type: 'warning',
+            title: 'Input Required',
+            message: 'Please describe what you want to learn before using the AI refiner.',
+            confirmText: 'Got it'
+          });
         return;
       }
 
-      if (!hasApiKey) {
-        showAlertDialog({
-          type: 'warning',
-          title: 'API Key Required',
-          message: 'Please configure an API key in Settings to use the AI refiner.',
-          confirmText: 'Open Settings',
-          onConfirm: onOpenSettings
-        });
+        if (!hasApiKey) {
+          showAlertDialog({
+            type: 'warning',
+            title: 'API Key Required',
+            message: 'Please configure an API key in Settings to use the AI refiner.',
+            confirmText: 'Open Settings',
+            onConfirm: onOpenSettings
+          });
         return;
       }
 
-      setIsEnhancing(true);
-      try {
+        setIsEnhancing(true);
+        try {
         const enhanced = await bookService.enhanceBookInput(formData.goal);
 
         setFormData({
           goal: enhanced.goal,
-          language: 'en',
-          targetAudience: enhanced.targetAudience,
-          complexityLevel: enhanced.complexityLevel,
-          reasoning: enhanced.reasoning || '',
-          preferences: enhanced.preferences
+        language: 'en',
+        targetAudience: enhanced.targetAudience,
+        complexityLevel: enhanced.complexityLevel,
+        reasoning: enhanced.reasoning || '',
+        preferences: enhanced.preferences
         });
 
         showAlertDialog({
           type: 'success',
-          title: 'Idea Refined! ✨',
-          message: `Your idea has been refined and the form below is auto - filled.Review and adjust if needed, then click "Generate Book Roadmap".`,
-          confirmText: 'Great!'
+        title: 'Idea Refined! ✨',
+        message: `Your idea has been refined and the form below is auto - filled.Review and adjust if needed, then click "Generate Book Roadmap".`,
+        confirmText: 'Great!'
         });
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Refinement failed';
         showAlertDialog({
           type: 'error',
-          title: 'Refinement Failed',
-          message: errorMessage,
-          confirmText: 'Dismiss'
+        title: 'Refinement Failed',
+        message: errorMessage,
+        confirmText: 'Dismiss'
         });
       } finally {
-        setIsEnhancing(false);
+          setIsEnhancing(false);
       }
     };
 
-    return (
-      <div className="w-full max-w-2xl mx-auto px-6 py-10 animate-fade-in-up">
-        <button
-          onClick={() => {
-            setView('list');
-            setShowListInMain(false);
-          }}
-          className="flex items-center gap-2 text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors mb-8 group"
-        >
-          <div className="w-8 h-8 rounded-full bg-[var(--color-card)] border border-[var(--color-border)] flex items-center justify-center group-hover:border-orange-500/50 transition-colors">
-            <ArrowLeft className="w-4 h-4" />
-          </div>
-          Back to Library
-        </button>
-
-        <div className="mb-10 text-center">
-          <div className="inline-flex items-center justify-center p-3 mb-4 rounded-2xl bg-orange-500/10 border border-orange-500/20 text-orange-500">
-            <Sparkles className="w-6 h-6" />
-          </div>
-          <h1 className="text-3xl md:text-4xl font-bold mb-3 text-[var(--color-text-primary)] tracking-tight">Create New Book</h1>
-          <p className="text-[var(--color-text-secondary)] text-lg max-w-lg mx-auto leading-relaxed">
-            Describe your idea, and our AI will craft a comprehensive, professional book for you.
-          </p>
-        </div>
-
-        <div className="space-y-8 bg-[var(--color-card)] backdrop-blur-xl border border-[var(--color-border)] p-8 rounded-3xl shadow-2xl">
-          {/* Main Input Section */}
-          <div>
-            <label htmlFor="goal" className="block text-sm font-semibold mb-2 text-[var(--color-text-primary)] flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
-              What would you like to write about?
-            </label>
-            <div className="relative group">
-              <textarea
-                id="goal"
-                value={formData.goal}
-                onChange={(e) => setFormData((p) => ({ ...p, goal: e.target.value }))}
-                placeholder="e.g., 'A comprehensive guide to organic gardening for beginners', 'The history of artificial intelligence', or 'Mastering personal finance in your 20s'"
-                className="w-full bg-[var(--color-bg)] border-2 border-[var(--color-border)] rounded-xl p-4 text-[var(--color-text-primary)] placeholder-[var(--color-text-secondary)]/50 focus:border-orange-500/50 focus:ring-4 focus:ring-orange-500/10 transition-all outline-none resize-none text-base leading-relaxed"
-                rows={4}
-                required
-              />
-              <div className="absolute bottom-3 right-3">
-                <button
-                  onClick={handleEnhanceWithAI}
-                  disabled={!formData.goal.trim() || isEnhancing}
-                  className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-orange-500/10 text-orange-500 hover:bg-orange-500 hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                  title="Use AI to refine your idea into a detailed prompt"
-                >
-                  {isEnhancing ? (
-                    <Loader2 className="animate-spin w-3 h-3" />
-                  ) : (
-                    <Sparkles className="w-3 h-3" />
-                  )}
-                  {isEnhancing ? 'Refining...' : 'Enhance with AI'}
-                </button>
-              </div>
-            </div>
-            <p className="text-xs text-[var(--color-text-secondary)] mt-2 ml-1">
-              Tip: Be specific about your topic and target audience for the best results.
-            </p>
-          </div>
-
-          {/* SEPARATOR */}
-          <div className="relative py-2">
-            <div className="absolute inset-0 flex items-center" aria-hidden="true">
-              <div className="w-full border-t border-[var(--color-border)]" />
-            </div>
-            <div className="relative flex justify-center">
-              <span className="bg-[var(--color-card)] px-4 text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary)]">Configuration</span>
-            </div>
-          </div>
-
-          {/* Configuration Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label htmlFor="audience" className="block text-sm font-semibold mb-2 text-[var(--color-text-primary)]">
-                Target Audience
-              </label>
-              <input
-                id="audience"
-                type="text"
-                value={formData.targetAudience}
-                onChange={(e) =>
-                  setFormData((p) => ({ ...p, targetAudience: e.target.value }))
-                }
-                placeholder="e.g. Beginners, Professionals"
-                className="w-full h-11 bg-[var(--color-bg)] border-2 border-[var(--color-border)] rounded-xl px-4 text-[var(--color-text-primary)] placeholder-[var(--color-text-secondary)]/50 focus:border-orange-500/50 focus:ring-4 focus:ring-orange-500/10 transition-all outline-none"
-              />
-            </div>
-            <div>
-              <label htmlFor="complexity" className="block text-sm font-semibold mb-2 text-[var(--color-text-primary)]">
-                Complexity Level
-              </label>
-              <div className="relative">
-                <CustomSelect
-                  value={formData.complexityLevel || 'intermediate'}
-                  onChange={(val) =>
-                    setFormData((p) => ({ ...p, complexityLevel: val as any }))
-                  }
-                  options={[
-                    { value: 'beginner', label: 'Beginner' },
-                    { value: 'intermediate', label: 'Intermediate' },
-                    { value: 'advanced', label: 'Advanced' },
-                  ]}
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Advanced Options Toggle */}
-          <div className="pt-2">
-            <button
-              onClick={() => setShowAdvanced(!showAdvanced)}
-              className="group flex items-center gap-2 text-sm font-medium text-[var(--color-text-secondary)] hover:text-orange-500 transition-colors"
-            >
-              <div className={`p-1 rounded-md bg-[var(--color-bg)] border border-[var(--color-border)] group-hover:border-orange-500/30 transition-all ${showAdvanced ? 'bg-orange-500/10 text-orange-500' : ''} `}>
-                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${showAdvanced ? 'rotate-180' : ''} `} />
-              </div>
-              {showAdvanced ? 'Hide Advanced Options' : 'Show Advanced Options'}
-            </button>
-
-            {showAdvanced && (
-              <div className="mt-6 space-y-6 pt-6 border-t border-[var(--color-border)] animate-fade-in-down">
-                <div>
-                  <label htmlFor="reasoning" className="block text-sm font-semibold mb-2 text-[var(--color-text-primary)]">
-                    Context & Goals (Optional)
-                  </label>
-                  <textarea
-                    id="reasoning"
-                    value={formData.reasoning}
-                    onChange={(e) => setFormData((p) => ({ ...p, reasoning: e.target.value }))}
-                    placeholder="Why are you writing this book? What should the reader achieve?"
-                    className="w-full bg-[var(--color-bg)] border-2 border-[var(--color-border)] rounded-xl p-4 text-[var(--color-text-primary)] placeholder-[var(--color-text-secondary)]/50 focus:border-orange-500/50 focus:ring-4 focus:ring-orange-500/10 transition-all outline-none resize-none text-sm"
-                    rows={3}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold mb-3 text-[var(--color-text-primary)]">
-                    Structure Preferences
-                  </label>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <label className={`flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-all ${formData.preferences?.includeExamples ? 'border-orange-500/50 bg-orange-500/5' : 'border-[var(--color-border)] bg-[var(--color-bg)] hover:border-[var(--color-text-secondary)]/30'} `}>
-                      <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-colors ${formData.preferences?.includeExamples ? 'border-orange-500 bg-orange-500 text-white' : 'border-[var(--color-text-secondary)]/50'} `}>
-                        {formData.preferences?.includeExamples && <Check size={12} strokeWidth={3} />}
-                      </div>
-                      <input
-                        type="checkbox"
-                        className="hidden"
-                        checked={formData.preferences?.includeExamples}
-                        onChange={(e) => setFormData((p) => ({ ...p, preferences: { ...p.preferences!, includeExamples: e.target.checked } }))}
-                      />
-                      <span className="text-sm font-medium text-[var(--color-text-primary)]">Include Examples</span>
-                    </label>
-
-                    <label className={`flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-all ${formData.preferences?.includePracticalExercises ? 'border-orange-500/50 bg-orange-500/5' : 'border-[var(--color-border)] bg-[var(--color-bg)] hover:border-[var(--color-text-secondary)]/30'} `}>
-                      <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-colors ${formData.preferences?.includePracticalExercises ? 'border-orange-500 bg-orange-500 text-white' : 'border-[var(--color-text-secondary)]/50'} `}>
-                        {formData.preferences?.includePracticalExercises && <Check size={12} strokeWidth={3} />}
-                      </div>
-                      <input
-                        type="checkbox"
-                        className="hidden"
-                        checked={formData.preferences?.includePracticalExercises}
-                        onChange={(e) => setFormData((p) => ({ ...p, preferences: { ...p.preferences!, includePracticalExercises: e.target.checked } }))}
-                      />
-                      <span className="text-sm font-medium text-[var(--color-text-primary)]">Practical Exercises</span>
-                    </label>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          <button
-            onClick={() => handleCreateRoadmap(formData)}
-            disabled={!formData.goal.trim() || !hasApiKey || localIsGenerating}
-            className="btn w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white text-lg font-bold py-4 rounded-xl shadow-xl shadow-orange-500/20 hover:shadow-orange-500/40 hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-3"
-          >
-            {localIsGenerating ? (
-              <>
-                <Loader2 className="animate-spin w-5 h-5" />
-                <span>Designing Roadmap...</span>
-              </>
-            ) : (
-              <>
-                <Sparkles size={20} className="text-white/90" />
-                <span>Generate Book Roadmap</span>
-              </>
-            )}
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  if (view === 'detail' && currentBook) {
-    const areAllModulesDone =
-      currentBook.roadmap &&
-      currentBook.modules.length === currentBook.roadmap.modules.length &&
-      currentBook.modules.every((m) => m.status === 'completed');
-    const failedModules = currentBook.modules.filter((m) => m.status === 'error');
-    const completedModules = currentBook.modules.filter((m) => m.status === 'completed');
-    const isPaused = generationStatus?.status === 'paused';
-
-    return (
-      <div className="w-full max-w-3xl mx-auto px-6 py-10">
-        <div className="mb-8">
+        return (
+        <div className="w-full max-w-2xl mx-auto px-6 py-10 animate-fade-in-up">
           <button
             onClick={() => {
               setView('list');
-              onSelectBook(null);
-              setShowListInMain(true);
+              setShowListInMain(false);
             }}
-            className="flex items-center gap-2 text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors mb-5"
+            className="flex items-center gap-2 text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors mb-8 group"
           >
-            <ArrowLeft className="w-4 h-4" />
-            Back to My Books
-          </button>
-          <h1 className="text-3xl font-bold text-[var(--color-text-primary)] mb-1.5">{currentBook.title}</h1>
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1.5 text-sm font-medium text-[var(--color-text-secondary)]">
-              {getStatusIcon(currentBook.status)}
-              {getStatusText(currentBook.status)}
+            <div className="w-8 h-8 rounded-full bg-[var(--color-card)] border border-[var(--color-border)] flex items-center justify-center group-hover:border-orange-500/50 transition-colors">
+              <ArrowLeft className="w-4 h-4" />
             </div>
+            Back to Library
+          </button>
+
+          <div className="mb-10 text-center">
+            <div className="inline-flex items-center justify-center p-3 mb-4 rounded-2xl bg-orange-500/10 border border-orange-500/20 text-orange-500">
+              <Sparkles className="w-6 h-6" />
+            </div>
+            <h1 className="text-3xl md:text-4xl font-bold mb-3 text-[var(--color-text-primary)] tracking-tight">Create New Book</h1>
+            <p className="text-[var(--color-text-secondary)] text-lg max-w-lg mx-auto leading-relaxed">
+              Describe your idea, and our AI will craft a comprehensive, professional book for you.
+            </p>
+          </div>
+
+          <div className="space-y-8 bg-[var(--color-card)] backdrop-blur-xl border border-[var(--color-border)] p-8 rounded-3xl shadow-2xl">
+            {/* Main Input Section */}
+            <div>
+              <label htmlFor="goal" className="block text-sm font-semibold mb-2 text-[var(--color-text-primary)] flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
+                What would you like to write about?
+              </label>
+              <div className="relative group">
+                <textarea
+                  id="goal"
+                  value={formData.goal}
+                  onChange={(e) => setFormData((p) => ({ ...p, goal: e.target.value }))}
+                  placeholder="e.g., 'A comprehensive guide to organic gardening for beginners', 'The history of artificial intelligence', or 'Mastering personal finance in your 20s'"
+                  className="w-full bg-[var(--color-bg)] border-2 border-[var(--color-border)] rounded-xl p-4 text-[var(--color-text-primary)] placeholder-[var(--color-text-secondary)]/50 focus:border-orange-500/50 focus:ring-4 focus:ring-orange-500/10 transition-all outline-none resize-none text-base leading-relaxed"
+                  rows={4}
+                  required
+                />
+                <div className="absolute bottom-3 right-3">
+                  <button
+                    onClick={handleEnhanceWithAI}
+                    disabled={!formData.goal.trim() || isEnhancing}
+                    className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-orange-500/10 text-orange-500 hover:bg-orange-500 hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    title="Use AI to refine your idea into a detailed prompt"
+                  >
+                    {isEnhancing ? (
+                      <Loader2 className="animate-spin w-3 h-3" />
+                    ) : (
+                      <Sparkles className="w-3 h-3" />
+                    )}
+                    {isEnhancing ? 'Refining...' : 'Enhance with AI'}
+                  </button>
+                </div>
+              </div>
+              <p className="text-xs text-[var(--color-text-secondary)] mt-2 ml-1">
+                Tip: Be specific about your topic and target audience for the best results.
+              </p>
+            </div>
+
+            {/* SEPARATOR */}
+            <div className="relative py-2">
+              <div className="absolute inset-0 flex items-center" aria-hidden="true">
+                <div className="w-full border-t border-[var(--color-border)]" />
+              </div>
+              <div className="relative flex justify-center">
+                <span className="bg-[var(--color-card)] px-4 text-xs font-semibold uppercase tracking-wider text-[var(--color-text-secondary)]">Configuration</span>
+              </div>
+            </div>
+
+            {/* Configuration Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label htmlFor="audience" className="block text-sm font-semibold mb-2 text-[var(--color-text-primary)]">
+                  Target Audience
+                </label>
+                <input
+                  id="audience"
+                  type="text"
+                  value={formData.targetAudience}
+                  onChange={(e) =>
+                    setFormData((p) => ({ ...p, targetAudience: e.target.value }))
+                  }
+                  placeholder="e.g. Beginners, Professionals"
+                  className="w-full h-11 bg-[var(--color-bg)] border-2 border-[var(--color-border)] rounded-xl px-4 text-[var(--color-text-primary)] placeholder-[var(--color-text-secondary)]/50 focus:border-orange-500/50 focus:ring-4 focus:ring-orange-500/10 transition-all outline-none"
+                />
+              </div>
+              <div>
+                <label htmlFor="complexity" className="block text-sm font-semibold mb-2 text-[var(--color-text-primary)]">
+                  Complexity Level
+                </label>
+                <div className="relative">
+                  <CustomSelect
+                    value={formData.complexityLevel || 'intermediate'}
+                    onChange={(val) =>
+                      setFormData((p) => ({ ...p, complexityLevel: val as any }))
+                    }
+                    options={[
+                      { value: 'beginner', label: 'Beginner' },
+                      { value: 'intermediate', label: 'Intermediate' },
+                      { value: 'advanced', label: 'Advanced' },
+                    ]}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Advanced Options Toggle */}
+            <div className="pt-2">
+              <button
+                onClick={() => setShowAdvanced(!showAdvanced)}
+                className="group flex items-center gap-2 text-sm font-medium text-[var(--color-text-secondary)] hover:text-orange-500 transition-colors"
+              >
+                <div className={`p-1 rounded-md bg-[var(--color-bg)] border border-[var(--color-border)] group-hover:border-orange-500/30 transition-all ${showAdvanced ? 'bg-orange-500/10 text-orange-500' : ''} `}>
+                  <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${showAdvanced ? 'rotate-180' : ''} `} />
+                </div>
+                {showAdvanced ? 'Hide Advanced Options' : 'Show Advanced Options'}
+              </button>
+
+              {showAdvanced && (
+                <div className="mt-6 space-y-6 pt-6 border-t border-[var(--color-border)] animate-fade-in-down">
+                  <div>
+                    <label htmlFor="reasoning" className="block text-sm font-semibold mb-2 text-[var(--color-text-primary)]">
+                      Context & Goals (Optional)
+                    </label>
+                    <textarea
+                      id="reasoning"
+                      value={formData.reasoning}
+                      onChange={(e) => setFormData((p) => ({ ...p, reasoning: e.target.value }))}
+                      placeholder="Why are you writing this book? What should the reader achieve?"
+                      className="w-full bg-[var(--color-bg)] border-2 border-[var(--color-border)] rounded-xl p-4 text-[var(--color-text-primary)] placeholder-[var(--color-text-secondary)]/50 focus:border-orange-500/50 focus:ring-4 focus:ring-orange-500/10 transition-all outline-none resize-none text-sm"
+                      rows={3}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold mb-3 text-[var(--color-text-primary)]">
+                      Structure Preferences
+                    </label>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <label className={`flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-all ${formData.preferences?.includeExamples ? 'border-orange-500/50 bg-orange-500/5' : 'border-[var(--color-border)] bg-[var(--color-bg)] hover:border-[var(--color-text-secondary)]/30'} `}>
+                        <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-colors ${formData.preferences?.includeExamples ? 'border-orange-500 bg-orange-500 text-white' : 'border-[var(--color-text-secondary)]/50'} `}>
+                          {formData.preferences?.includeExamples && <Check size={12} strokeWidth={3} />}
+                        </div>
+                        <input
+                          type="checkbox"
+                          className="hidden"
+                          checked={formData.preferences?.includeExamples}
+                          onChange={(e) => setFormData((p) => ({ ...p, preferences: { ...p.preferences!, includeExamples: e.target.checked } }))}
+                        />
+                        <span className="text-sm font-medium text-[var(--color-text-primary)]">Include Examples</span>
+                      </label>
+
+                      <label className={`flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-all ${formData.preferences?.includePracticalExercises ? 'border-orange-500/50 bg-orange-500/5' : 'border-[var(--color-border)] bg-[var(--color-bg)] hover:border-[var(--color-text-secondary)]/30'} `}>
+                        <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-colors ${formData.preferences?.includePracticalExercises ? 'border-orange-500 bg-orange-500 text-white' : 'border-[var(--color-text-secondary)]/50'} `}>
+                          {formData.preferences?.includePracticalExercises && <Check size={12} strokeWidth={3} />}
+                        </div>
+                        <input
+                          type="checkbox"
+                          className="hidden"
+                          checked={formData.preferences?.includePracticalExercises}
+                          onChange={(e) => setFormData((p) => ({ ...p, preferences: { ...p.preferences!, includePracticalExercises: e.target.checked } }))}
+                        />
+                        <span className="text-sm font-medium text-[var(--color-text-primary)]">Practical Exercises</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <button
+              onClick={() => handleCreateRoadmap(formData)}
+              disabled={!formData.goal.trim() || !hasApiKey || localIsGenerating}
+              className="btn w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white text-lg font-bold py-4 rounded-xl shadow-xl shadow-orange-500/20 hover:shadow-orange-500/40 hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-3"
+            >
+              {localIsGenerating ? (
+                <>
+                  <Loader2 className="animate-spin w-5 h-5" />
+                  <span>Designing Roadmap...</span>
+                </>
+              ) : (
+                <>
+                  <Sparkles size={20} className="text-white/90" />
+                  <span>Generate Book Roadmap</span>
+                </>
+              )}
+            </button>
           </div>
         </div>
+        );
+  }
 
-        {currentBook.status === 'completed' && (
-          <div className="border-b border-[var(--color-border)] mb-8">
-            <div className="flex items-center gap-6">
-              <DetailTabButton
-                label="Overview"
-                Icon={ListChecks}
-                isActive={detailTab === 'overview'}
-                onClick={() => setDetailTab('overview')}
-              />
-              <DetailTabButton
-                label="Analytics"
-                Icon={BarChart3}
-                isActive={detailTab === 'analytics'}
-                onClick={() => setDetailTab('analytics')}
-              />
-              <DetailTabButton
-                label="Read Book"
-                Icon={BookText}
-                isActive={detailTab === 'read'}
-                onClick={() => setDetailTab('read')}
-              />
+        if (view === 'detail' && currentBook) {
+    const areAllModulesDone =
+        currentBook.roadmap &&
+        currentBook.modules.length === currentBook.roadmap.modules.length &&
+      currentBook.modules.every((m) => m.status === 'completed');
+    const failedModules = currentBook.modules.filter((m) => m.status === 'error');
+    const completedModules = currentBook.modules.filter((m) => m.status === 'completed');
+        const isPaused = generationStatus?.status === 'paused';
+
+        return (
+        <div className="w-full max-w-3xl mx-auto px-6 py-10">
+          <div className="mb-8">
+            <button
+              onClick={() => {
+                setView('list');
+                onSelectBook(null);
+                setShowListInMain(true);
+              }}
+              className="flex items-center gap-2 text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors mb-5"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Back to My Books
+            </button>
+            <h1 className="text-3xl font-bold text-[var(--color-text-primary)] mb-1.5">{currentBook.title}</h1>
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 text-sm font-medium text-[var(--color-text-secondary)]">
+                {getStatusIcon(currentBook.status)}
+                {getStatusText(currentBook.status)}
+              </div>
             </div>
           </div>
-        )}
 
-        <div className="space-y-6">
-          {detailTab === 'analytics' && currentBook.status === 'completed' ? (
-            <BookAnalytics book={currentBook} />
-          ) : detailTab === 'read' && currentBook.status === 'completed' ? (
-            <ReadingMode
-              content={currentBook.finalBook || ''}
-              isEditing={isEditing}
-              editedContent={editedContent}
-              onEdit={handleStartEditing}
-              onSave={handleSaveChanges}
-              onCancel={handleCancelEditing}
-              onContentChange={setEditedContent}
-              onGoBack={handleGoBackToLibrary}
-              theme={theme}
-              bookId={currentBook.id}
-              currentModuleIndex={0}
-            />
-          ) : (
-            <>
-              {(isGenerating || isPaused || generationStatus?.status === 'waiting_retry') &&
-                generationStatus &&
-                generationStats && (
-                  <EmbeddedProgressPanel
-                    generationStatus={generationStatus}
-                    stats={generationStats}
-                    onCancel={() => {
-                      if (window.confirm('Cancel generation? Progress will be saved.')) {
-                        bookService.cancelActiveRequests(currentBook.id);
-                      }
-                    }}
-                    onPause={handlePauseGeneration}
-                    onResume={handleResumeGeneration}
-                    onRetryDecision={onRetryDecision}
-                    availableModels={availableModels}
-                  />
+          {currentBook.status === 'completed' && (
+            <div className="border-b border-[var(--color-border)] mb-8">
+              <div className="flex items-center gap-6">
+                <DetailTabButton
+                  label="Overview"
+                  Icon={ListChecks}
+                  isActive={detailTab === 'overview'}
+                  onClick={() => setDetailTab('overview')}
+                />
+                <DetailTabButton
+                  label="Analytics"
+                  Icon={BarChart3}
+                  isActive={detailTab === 'analytics'}
+                  onClick={() => setDetailTab('analytics')}
+                />
+                <DetailTabButton
+                  label="Read Book"
+                  Icon={BookText}
+                  isActive={detailTab === 'read'}
+                  onClick={() => setDetailTab('read')}
+                />
+              </div>
+            </div>
+          )}
+
+          <div className="space-y-6">
+            {detailTab === 'analytics' && currentBook.status === 'completed' ? (
+              <BookAnalytics book={currentBook} />
+            ) : detailTab === 'read' && currentBook.status === 'completed' ? (
+              <ReadingMode
+                content={currentBook.finalBook || ''}
+                isEditing={isEditing}
+                editedContent={editedContent}
+                onEdit={handleStartEditing}
+                onSave={handleSaveChanges}
+                onCancel={handleCancelEditing}
+                onContentChange={setEditedContent}
+                onGoBack={handleGoBackToLibrary}
+                theme={theme}
+                bookId={currentBook.id}
+                currentModuleIndex={0}
+              />
+            ) : (
+              <>
+                {(isGenerating || isPaused || generationStatus?.status === 'waiting_retry') &&
+                  generationStatus &&
+                  generationStats && (
+                    <EmbeddedProgressPanel
+                      generationStatus={generationStatus}
+                      stats={generationStats}
+                      onCancel={() => {
+                        if (window.confirm('Cancel generation? Progress will be saved.')) {
+                          bookService.cancelActiveRequests(currentBook.id);
+                        }
+                      }}
+                      onPause={handlePauseGeneration}
+                      onResume={handleResumeGeneration}
+                      onRetryDecision={onRetryDecision}
+                      availableModels={availableModels}
+                    />
+                  )}
+
+                {currentBook.status === 'roadmap_completed' &&
+                  !areAllModulesDone &&
+                  !isGenerating &&
+                  !isPaused &&
+                  generationStatus?.status !== 'waiting_retry' && (
+                    <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-lg p-7">
+                      <div className="flex items-center gap-4 mb-5">
+                        <div className="w-10 h-10 flex items-center justify-center bg-gray-500/10 rounded-lg">
+                          <Play className="w-5 h-5 text-gray-400" />
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">
+                            Ready to Generate Content
+                          </h3>
+                          <p className="text-sm text-[var(--color-text-secondary)] mt-0.5">
+                            {completedModules.length > 0
+                              ? `Resume from ${completedModules.length} completed modules`
+                              : 'Start generating all modules'}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="bg-gray-500/5 border border-gray-500/20 rounded-lg p-4 mb-5">
+                        <div className="flex items-start gap-3">
+                          <Sparkles className="w-5 h-5 text-gray-400 shrink-0 mt-0.5" />
+                          <div className="text-sm text-[var(--color-text-secondary)]">
+                            <p className="font-medium text-[var(--color-text-primary)] mb-2">Smart Recovery Enabled</p>
+                            <ul className="space-y-1 text-xs text-[var(--color-text-secondary)]">
+                              <li>✓ Progress is saved automatically</li>
+                              <li>✓ Failed modules will be retried with smart options</li>
+                              <li>✓ You can safely close and resume later</li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                      <button
+                        onClick={handleStartGeneration}
+                        disabled={localIsGenerating}
+                        className="btn btn-primary w-full py-2.5"
+                      >
+                        {localIsGenerating ? (
+                          <><Loader2 className="animate-spin" /> Generating...</>
+                        ) : (
+                          <><Play className="w-4 h-4" />
+                            {completedModules.length > 0
+                              ? 'Resume Generation'
+                              : 'Generate All Modules'}
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  )}
+
+                {areAllModulesDone &&
+                  currentBook.status !== 'completed' &&
+                  !localIsGenerating &&
+                  !isGenerating &&
+                  !isPaused && (
+                    <div className="bg-[var(--color-card)] border border-green-500/30 rounded-lg p-7 space-y-5 animate-fade-in-up">
+                      <div className="text-center">
+                        <div className="w-12 h-12 flex items-center justify-center bg-green-500/10 rounded-full mx-auto mb-3">
+                          <CheckCircle className="w-7 h-7 text-green-400" />
+                        </div>
+                        <h3 className="text-xl font-bold text-[var(--color-text-primary)]">Generation Complete!</h3>
+                        <p className="text-sm text-[var(--color-text-secondary)] mt-1.5">
+                          All chapters written. Ready to assemble.
+                        </p>
+                      </div>
+                      <button onClick={handleStartAssembly} className="btn btn-primary w-full py-2.5">
+                        <Box className="w-5 h-5" />
+                        Assemble Final Book
+                      </button>
+                    </div>
+                  )}
+
+                {currentBook.status === 'assembling' && (
+                  <div className="bg-[var(--color-card)] backdrop-blur-xl border-2 border-[var(--color-border)] rounded-lg p-8 space-y-6 animate-assembling-glow text-center">
+                    <div className="relative w-14 h-14 mx-auto">
+                      <div className="absolute inset-0 bg-green-500/20 rounded-full animate-ping"></div>
+                      <div className="relative w-14 h-14 flex items-center justify-center bg-green-500/10 rounded-full">
+                        <Box className="w-7 h-7 text-green-400" />
+                      </div>
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-[var(--color-text-primary)]">Assembling Your Book</h3>
+                      <p className="text-gray-400 mb-6 max-w-sm mx-auto text-sm">
+                        Finalizing chapters and preparing for download...
+                      </p>
+                    </div>
+                    <div className="w-full bg-[var(--color-bg)] rounded-full h-2 overflow-hidden border border-[var(--color-border)]">
+                      <div className="h-full bg-gradient-to-r from-green-500 via-emerald-400 to-green-500 rounded-full animate-slide-in-out"></div>
+                    </div>
+                  </div>
                 )}
 
-              {currentBook.status === 'roadmap_completed' &&
-                !areAllModulesDone &&
-                !isGenerating &&
-                !isPaused &&
-                generationStatus?.status !== 'waiting_retry' && (
+                {currentBook.status === 'completed' && detailTab === 'overview' && (
                   <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-lg p-7">
-                    <div className="flex items-center gap-4 mb-5">
+                    <div className="flex items-center gap-3 mb-5">
                       <div className="w-10 h-10 flex items-center justify-center bg-gray-500/10 rounded-lg">
-                        <Play className="w-5 h-5 text-gray-400" />
+                        <Download className="w-5 h-5 text-gray-400" />
                       </div>
                       <div>
-                        <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">
-                          Ready to Generate Content
+                        <h3 className="text-lg font-bold text-[var(--color-text-primary)]">
+                          Download Your Book
                         </h3>
                         <p className="text-sm text-[var(--color-text-secondary)] mt-0.5">
-                          {completedModules.length > 0
-                            ? `Resume from ${completedModules.length} completed modules`
-                            : 'Start generating all modules'}
+                          Export as professional PDF or Markdown format
                         </p>
                       </div>
                     </div>
-                    <div className="bg-gray-500/5 border border-gray-500/20 rounded-lg p-4 mb-5">
-                      <div className="flex items-start gap-3">
-                        <Sparkles className="w-5 h-5 text-gray-400 shrink-0 mt-0.5" />
-                        <div className="text-sm text-[var(--color-text-secondary)]">
-                          <p className="font-medium text-[var(--color-text-primary)] mb-2">Smart Recovery Enabled</p>
-                          <ul className="space-y-1 text-xs text-[var(--color-text-secondary)]">
-                            <li>✓ Progress is saved automatically</li>
-                            <li>✓ Failed modules will be retried with smart options</li>
-                            <li>✓ You can safely close and resume later</li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-                    <button
-                      onClick={handleStartGeneration}
-                      disabled={localIsGenerating}
-                      className="btn btn-primary w-full py-2.5"
-                    >
-                      {localIsGenerating ? (
-                        <><Loader2 className="animate-spin" /> Generating...</>
-                      ) : (
-                        <><Play className="w-4 h-4" />
-                          {completedModules.length > 0
-                            ? 'Resume Generation'
-                            : 'Generate All Modules'}
-                        </>
-                      )}
-                    </button>
-                  </div>
-                )}
 
-              {areAllModulesDone &&
-                currentBook.status !== 'completed' &&
-                !localIsGenerating &&
-                !isGenerating &&
-                !isPaused && (
-                  <div className="bg-[var(--color-card)] border border-green-500/30 rounded-lg p-7 space-y-5 animate-fade-in-up">
-                    <div className="text-center">
-                      <div className="w-12 h-12 flex items-center justify-center bg-green-500/10 rounded-full mx-auto mb-3">
-                        <CheckCircle className="w-7 h-7 text-green-400" />
-                      </div>
-                      <h3 className="text-xl font-bold text-[var(--color-text-primary)]">Generation Complete!</h3>
-                      <p className="text-sm text-[var(--color-text-secondary)] mt-1.5">
-                        All chapters written. Ready to assemble.
-                      </p>
-                    </div>
-                    <button onClick={handleStartAssembly} className="btn btn-primary w-full py-2.5">
-                      <Box className="w-5 h-5" />
-                      Assemble Final Book
-                    </button>
-                  </div>
-                )}
-
-              {currentBook.status === 'assembling' && (
-                <div className="bg-[var(--color-card)] backdrop-blur-xl border-2 border-[var(--color-border)] rounded-lg p-8 space-y-6 animate-assembling-glow text-center">
-                  <div className="relative w-14 h-14 mx-auto">
-                    <div className="absolute inset-0 bg-green-500/20 rounded-full animate-ping"></div>
-                    <div className="relative w-14 h-14 flex items-center justify-center bg-green-500/10 rounded-full">
-                      <Box className="w-7 h-7 text-green-400" />
-                    </div>
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-[var(--color-text-primary)]">Assembling Your Book</h3>
-                    <p className="text-[var(--color-text-secondary)] mt-1.5 max-w-md mx-auto text-sm">
-                      Finalizing chapters and preparing for download...
-                    </p>
-                  </div>
-                  <div className="w-full bg-[var(--color-bg)] rounded-full h-2 overflow-hidden border border-[var(--color-border)]">
-                    <div className="h-full bg-gradient-to-r from-green-500 via-emerald-400 to-green-500 rounded-full animate-slide-in-out"></div>
-                  </div>
-                </div>
-              )}
-
-              {currentBook.status === 'completed' && detailTab === 'overview' && (
-                <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-lg p-7">
-                  <div className="flex items-center gap-3 mb-5">
-                    <div className="w-10 h-10 flex items-center justify-center bg-gray-500/10 rounded-lg">
-                      <Download className="w-5 h-5 text-gray-400" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-bold text-[var(--color-text-primary)]">
-                        Download Your Book
-                      </h3>
-                      <p className="text-sm text-[var(--color-text-secondary)] mt-0.5">
-                        Export as professional PDF or Markdown format
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <button
-                      onClick={handleDownloadPdf}
-                      disabled={pdfProgress > 0 && pdfProgress < 100}
-                      className="flex items-center justify-between p-4 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg hover:border-gray-400 transition-all group disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 flex items-center justify-center bg-gray-500/10 rounded-lg">
-                          <Download className="w-5 h-5 text-gray-400" />
-                        </div>
-                        <div className="text-left">
-                          <div className="font-semibold group-hover:text-gray-400 transition-colors text-[var(--color-text-primary)]">
-                            Professional PDF
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <button
+                        onClick={handleDownloadPdf}
+                        disabled={pdfProgress > 0 && pdfProgress < 100}
+                        className="flex items-center justify-between p-4 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg hover:border-gray-400 transition-all group disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 flex items-center justify-center bg-gray-500/10 rounded-lg">
+                            <Download className="w-5 h-5 text-gray-400" />
                           </div>
-                          <div className="text-sm text-[var(--color-text-secondary)]">
-                            {pdfProgress > 0 && pdfProgress < 100
-                              ? `Generating... ${pdfProgress}% `
-                              : 'Print-ready document'}
+                          <div className="text-left">
+                            <div className="font-semibold group-hover:text-gray-400 transition-colors text-[var(--color-text-primary)]">
+                              Professional PDF
+                            </div>
+                            <div className="text-sm text-[var(--color-text-secondary)]">
+                              {pdfProgress > 0 && pdfProgress < 100
+                                ? `Generating... ${pdfProgress}% `
+                                : 'Print-ready document'}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </button>
+                      </button>
 
-                    <button
-                      onClick={() => {
-                        if (currentBook.finalBook) {
-                          const blob = new Blob([currentBook.finalBook], { type: 'text/markdown;charset=utf-8' });
-                          const url = URL.createObjectURL(blob);
-                          const a = document.createElement('a');
-                          a.href = url;
-                          a.download = `${currentBook.title.replace(/[^a-z0-9\s-]/gi, '').replace(/\s+/g, '_').toLowerCase()} _book.md`;
-                          document.body.appendChild(a);
-                          a.click();
-                          document.body.removeChild(a);
-                          URL.revokeObjectURL(url);
-                        }
-                      }}
-                      className="flex items-center justify-between p-4 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg hover:border-green-500 transition-all group"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 flex items-center justify-center bg-green-500/10 rounded-lg">
-                          <Download className="w-5 h-5 text-green-500" />
-                        </div>
-                        <div className="text-left">
-                          <div className="font-semibold group-hover:text-green-400 transition-colors text-[var(--color-text-primary)]">
-                            Markdown File
+                      <button
+                        onClick={() => {
+                          if (currentBook.finalBook) {
+                            const blob = new Blob([currentBook.finalBook], { type: 'text/markdown;charset=utf-8' });
+                            const url = URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = `${currentBook.title.replace(/[^a-z0-9\s-]/gi, '').replace(/\s+/g, '_').toLowerCase()} _book.md`;
+                            document.body.appendChild(a);
+                            a.click();
+                            document.body.removeChild(a);
+                            URL.revokeObjectURL(url);
+                          }
+                        }}
+                        className="flex items-center justify-between p-4 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg hover:border-green-500 transition-all group"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 flex items-center justify-center bg-green-500/10 rounded-lg">
+                            <Download className="w-5 h-5 text-green-500" />
                           </div>
-                          <div className="text-sm text-[var(--color-text-secondary)]">
-                            Easy to edit & version
+                          <div className="text-left">
+                            <div className="font-semibold group-hover:text-green-400 transition-colors text-[var(--color-text-primary)]">
+                              Markdown File
+                            </div>
+                            <div className="text-sm text-[var(--color-text-secondary)]">
+                              Easy to edit & version
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </button>
-                  </div>
-
-                  {pdfProgress > 0 && pdfProgress < 100 && (
-                    <div className="mt-4">
-                      <div className="w-full bg-[var(--color-bg)] rounded-full h-2 overflow-hidden border border-[var(--color-border)]">
-                        <div
-                          className="h-full bg-gradient-to-r from-orange-500 via-purple-500 to-pink-500 rounded-full transition-all duration-300"
-                          style={{ width: `${pdfProgress}% ` }}
-                        />
-                      </div>
-                      <p className="text-xs text-[var(--color-text-secondary)] mt-2 text-center">
-                        Generating PDF... {pdfProgress}%
-                      </p>
+                      </button>
                     </div>
-                  )}
-                </div>
-              )}
 
-              {currentBook.roadmap && (
-                <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-lg p-7">
-                  <div className="flex items-center gap-3 mb-5">
-                    <ListChecks className="w-5 h-5 text-purple-400" />
-                    <h3 className="text-lg font-bold text-[var(--color-text-primary)]">Learning Roadmap</h3>
-                  </div>
-                  <div className="space-y-3">
-                    {currentBook.roadmap.modules.map((module, index) => {
-                      const completedModule = currentBook.modules.find(
-                        (m) => m.roadmapModuleId === module.id
-                      );
-                      const isActive =
-                        generationStatus?.currentModule?.id === module.id;
-                      return (
-                        <div
-                          key={module.id}
-                          className={`flex items-center gap-3.5 p-3.5 rounded-lg border transition-all ${isActive
-                            ? 'bg-gray-500/10 border-gray-500/40'
-                            : completedModule?.status === 'completed'
-                              ? 'bg-emerald-500/10 border-emerald-500/30'
-                              : completedModule?.status === 'error'
-                                ? 'border-red-500/30 bg-red-500/5'
-                                : 'bg-[var(--color-bg)] border-[var(--color-border)]'
-                            }`}
-                        >
+                    {pdfProgress > 0 && pdfProgress < 100 && (
+                      <div className="mt-4">
+                        <div className="w-full bg-[var(--color-bg)] rounded-full h-2 overflow-hidden border border-[var(--color-border)]">
                           <div
-                            className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 transition-all ${completedModule?.status === 'completed'
-                              ? 'bg-emerald-500 text-white'
-                              : completedModule?.status === 'error'
-                                ? 'bg-red-500 text-white'
-                                : isActive
-                                  ? 'bg-gray-600 text-white animate-pulse'
-                                  : 'bg-[var(--color-card)] text-[var(--color-text-secondary)]'
+                            className="h-full bg-gradient-to-r from-orange-500 via-purple-500 to-pink-500 rounded-full transition-all duration-300"
+                            style={{ width: `${pdfProgress}% ` }}
+                          />
+                        </div>
+                        <p className="text-xs text-[var(--color-text-secondary)] mt-2 text-center">
+                          Generating PDF... {pdfProgress}%
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {currentBook.roadmap && (
+                  <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-lg p-7">
+                    <div className="flex items-center gap-3 mb-5">
+                      <ListChecks className="w-5 h-5 text-purple-400" />
+                      <h3 className="text-lg font-bold text-[var(--color-text-primary)]">Learning Roadmap</h3>
+                    </div>
+                    <div className="space-y-3">
+                      {currentBook.roadmap.modules.map((module, index) => {
+                        const completedModule = currentBook.modules.find(
+                          (m) => m.roadmapModuleId === module.id
+                        );
+                        const isActive =
+                          generationStatus?.currentModule?.id === module.id;
+                        return (
+                          <div
+                            key={module.id}
+                            className={`flex items-center gap-3.5 p-3.5 rounded-lg border transition-all ${isActive
+                              ? 'bg-gray-500/10 border-gray-500/40'
+                              : completedModule?.status === 'completed'
+                                ? 'bg-emerald-500/10 border-emerald-500/30'
+                                : completedModule?.status === 'error'
+                                  ? 'border-red-500/30 bg-red-500/5'
+                                  : 'bg-[var(--color-bg)] border-[var(--color-border)]'
                               }`}
                           >
-                            {completedModule?.status === 'completed' ? (
-                              <Check size={14} />
-                            ) : completedModule?.status === 'error' ? (
-                              <X size={14} />
-                            ) : isActive ? (
-                              <Loader2 size={14} className="animate-spin" />
-                            ) : (
-                              index + 1
-                            )}
+                            <div
+                              className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 transition-all ${completedModule?.status === 'completed'
+                                ? 'bg-emerald-500 text-white'
+                                : completedModule?.status === 'error'
+                                  ? 'bg-red-500 text-white'
+                                  : isActive
+                                    ? 'bg-gray-600 text-white animate-pulse'
+                                    : 'bg-[var(--color-card)] text-[var(--color-text-secondary)]'
+                                }`}
+                            >
+                              {completedModule?.status === 'completed' ? (
+                                <Check size={14} />
+                              ) : completedModule?.status === 'error' ? (
+                                <X size={14} />
+                              ) : isActive ? (
+                                <Loader2 size={14} className="animate-spin" />
+                              ) : (
+                                index + 1
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <h4 className="font-medium text-base text-[var(--color-text-primary)]">
+                                {module.title}
+                              </h4>
+                              <p className="text-sm text-[var(--color-text-secondary)] mt-0.5">{module.estimatedTime}</p>
+                            </div>
                           </div>
-                          <div className="flex-1 min-w-0">
-                            <h4 className="font-medium text-base text-[var(--color-text-primary)]">
-                              {module.title}
-                            </h4>
-                            <p className="text-sm text-[var(--color-text-secondary)] mt-0.5">{module.estimatedTime}</p>
-                          </div>
-                        </div>
-                      );
-                    })}
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
-              )}
-            </>
-          )}
+                )}
+              </>
+            )}
+          </div>
         </div>
-      </div>
-    );
+        );
   }
-  return null;
+        return null;
 }
