@@ -782,28 +782,26 @@
     background: #fafafa;
   }
 
-  /* Grok-style pill input bar - slimmer, matching Grok's grey */
+  /* Grok-style pill input bar - thin, minimal, transparent */
   .grok-input-bar {
-    @apply flex items-center gap-3 w-full max-w-2xl mx-auto;
+    @apply flex items-center gap-2 w-full max-w-2xl mx-auto;
     @apply border rounded-full;
-    @apply px-4 py-2.5 transition-all duration-200;
-    background: #202020;
-    border-color: rgba(255, 255, 255, 0.08);
+    @apply px-4 py-2 transition-all duration-200;
+    background: transparent;
+    border-color: rgba(255, 255, 255, 0.12);
   }
 
   .grok-input-bar:focus-within {
     border-color: rgba(255, 255, 255, 0.25);
-    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.03);
   }
 
   .light .grok-input-bar {
-    background: #f0f0f0;
-    border-color: rgba(0, 0, 0, 0.08);
+    background: transparent;
+    border-color: rgba(0, 0, 0, 0.12);
   }
 
   .light .grok-input-bar:focus-within {
-    border-color: rgba(0, 0, 0, 0.2);
-    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.03);
+    border-color: rgba(0, 0, 0, 0.25);
   }
 
   .grok-input-bar input,
@@ -826,26 +824,26 @@
     @apply text-gray-500 hover:text-gray-900 hover:bg-black/5;
   }
 
-  /* Grok voice button (circular) */
+  /* Grok voice button - white circle like Grok */
   .grok-voice-btn {
     @apply w-9 h-9 rounded-full flex items-center justify-center transition-all;
-    background: #303030;
-    color: #888;
+    background: white;
+    color: black;
   }
 
   .grok-voice-btn:hover {
-    background: #404040;
-    color: white;
+    transform: scale(1.05);
+  }
+
+  .grok-voice-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
   }
 
   .light .grok-voice-btn {
-    background: #e0e0e0;
-    color: #666;
-  }
-
-  .light .grok-voice-btn:hover {
-    background: #d0d0d0;
-    color: black;
+    background: black;
+    color: white;
   }
 
   /* Grok-style action chips */

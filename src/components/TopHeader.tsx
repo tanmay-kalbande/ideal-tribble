@@ -124,11 +124,10 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
                                 <>
                                     <div className="fixed inset-0 z-40" onClick={() => setShowModelMenu(false)} />
                                     <div
-                                        className={`absolute top-full right-0 mt-2 w-64 rounded-2xl shadow-2xl overflow-hidden py-2 z-50
+                                        className={`absolute top-full right-0 mt-2 w-64 rounded-xl shadow-2xl overflow-hidden z-50
                                     ${theme === 'light'
-                                                ? 'bg-white border border-gray-100'
-                                                : 'bg-[#1a1a1a] border border-white/5'}
-                                `}
+                                                ? 'bg-white border border-gray-200'
+                                                : 'bg-[#0a0a0a] border border-white/10'}`}
                                         style={{
                                             animation: 'dropdownExpand 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
                                             transformOrigin: 'top right'
@@ -227,35 +226,40 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
                                 {showUserMenu && (
                                     <>
                                         <div className="fixed inset-0 z-40" onClick={() => setShowUserMenu(false)} />
-                                        <div className={`absolute top-full right-0 mt-2 w-48 rounded-xl border shadow-xl overflow-hidden py-1 z-50 animate-in fade-in zoom-in-95 duration-200
-                                    ${theme === 'light' ? 'bg-white border-gray-100' : 'bg-[#1a1a20] border-white/10'}
-                                `}>
+                                        <div className={`absolute top-full right-0 mt-2 w-52 rounded-xl border shadow-2xl overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200
+                                    ${theme === 'light' ? 'bg-white border-gray-200' : 'bg-[#0a0a0a] border-white/10'}`}
+                                            style={{
+                                                animation: 'dropdownExpand 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+                                                transformOrigin: 'top right'
+                                            }}
+                                        >
                                             <div className={`px-4 py-3 border-b ${theme === 'light' ? 'border-gray-100' : 'border-white/5'}`}>
-                                                <p className={`text-xs font-medium ${theme === 'light' ? 'text-gray-500' : 'text-gray-400'}`}>Signed in as</p>
-                                                <p className={`text-sm font-semibold truncate ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>{user?.email}</p>
+                                                <p className={`text-xs ${theme === 'light' ? 'text-gray-500' : 'text-gray-500'}`}>Signed in as</p>
+                                                <p className={`text-sm font-medium truncate mt-0.5 ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>{user?.email}</p>
                                             </div>
-                                            <button
-                                                onClick={() => {
-                                                    onOpenSettings();
-                                                    setShowUserMenu(false);
-                                                }}
-                                                className={`w-full text-left px-4 py-2 text-sm flex items-center gap-2 transition-colors
-                                            ${theme === 'light' ? 'text-gray-700 hover:bg-gray-50' : 'text-gray-300 hover:bg-white/5'}
-                                        `}
-                                            >
-                                                <Settings size={18} />
-                                                Settings
-                                            </button>
-                                            <button
-                                                onClick={() => {
-                                                    onSignOut();
-                                                    setShowUserMenu(false);
-                                                }}
-                                                className="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-500/10 flex items-center gap-2 transition-colors"
-                                            >
-                                                <LogOut size={18} />
-                                                Sign Out
-                                            </button>
+                                            <div className="py-1">
+                                                <button
+                                                    onClick={() => {
+                                                        onOpenSettings();
+                                                        setShowUserMenu(false);
+                                                    }}
+                                                    className={`w-full text-left px-4 py-2.5 text-sm flex items-center gap-3 transition-colors
+                                            ${theme === 'light' ? 'text-gray-700 hover:bg-gray-50' : 'text-gray-300 hover:bg-white/5'}`}
+                                                >
+                                                    <Settings size={16} />
+                                                    Settings
+                                                </button>
+                                                <button
+                                                    onClick={() => {
+                                                        onSignOut();
+                                                        setShowUserMenu(false);
+                                                    }}
+                                                    className="w-full text-left px-4 py-2.5 text-sm text-red-400 hover:bg-red-500/10 flex items-center gap-3 transition-colors"
+                                                >
+                                                    <LogOut size={16} />
+                                                    Sign Out
+                                                </button>
+                                            </div>
                                         </div>
                                     </>
                                 )}
