@@ -155,7 +155,7 @@ interface ReadingSettings {
 // ============================================================================
 const THEMES = {
   dark: {
-    bg: '#0F0F0F',
+    bg: '#000000',
     contentBg: '#1A1A1A',
     text: '#E5E5E5',
     secondary: '#A0A0A0',
@@ -619,9 +619,9 @@ const CodeBlock = React.memo(({ children, className, theme, readingTheme }: any)
 
   const themeStyles = {
     dark: {
-      containerBg: '#0D1117',
-      headerBg: 'rgba(22, 27, 34, 0.7)',
-      headerText: '#8B949E',
+      containerBg: '#121212',
+      headerBg: 'rgba(30, 30, 30, 0.7)',
+      headerText: '#9CA3AF',
       buttonHover: 'hover:bg-gray-700',
     },
     sepia: {
