@@ -1646,7 +1646,15 @@ export function BookView({
   };
 
   const handleGenerateAllModules = async (book: BookProject, session: BookSession) => {
-    if (!book.roadmap) { alert('No roadmap available.'); return; }
+    if (!book.roadmap) {
+      showAlertDialog({
+        type: 'warning',
+        title: 'Missing Roadmap',
+        message: 'No roadmap available to generate modules.',
+        confirmText: 'Got it'
+      });
+      return;
+    }
     await onGenerateAllModules(book, session);
   };
 
@@ -1657,7 +1665,15 @@ export function BookView({
   };
 
   const handleResumeGeneration = async () => {
-    if (!currentBook?.roadmap) { alert('No roadmap available'); return; }
+    if (!currentBook?.roadmap) {
+      showAlertDialog({
+        type: 'warning',
+        title: 'Missing Roadmap',
+        message: 'No roadmap available to resume generation. This book might be corrupted.',
+        confirmText: 'Got it'
+      });
+      return;
+    }
 
     const session: BookSession = {
       goal: currentBook.goal,
@@ -1703,8 +1719,19 @@ export function BookView({
   const handleDownloadPdf = async () => {
     if (!currentBook) return;
     setPdfProgress(1);
-    await pdfService.generatePdf(currentBook, setPdfProgress);
-    setTimeout(() => setPdfProgress(0), 2000);
+    try {
+      await pdfService.generatePdf(currentBook, setPdfProgress);
+      setTimeout(() => setPdfProgress(0), 2000);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'PDF generation failed';
+      showAlertDialog({
+        type: 'error',
+        title: 'PDF Generation Failed',
+        message: errorMessage + '\n\nTry these steps:\n1. Hard refresh the page (Ctrl+Shift+R)\n2. Clear browser cache\n3. Download Markdown (.md) version instead',
+        confirmText: 'Dismiss'
+      });
+      setPdfProgress(0);
+    }
   };
 
   const handleStartEditing = () => {

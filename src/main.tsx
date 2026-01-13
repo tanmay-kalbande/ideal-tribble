@@ -29,10 +29,14 @@ if ('serviceWorker' in navigator) {
       if (newWorker) {
         newWorker.addEventListener('statechange', () => {
           if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-            // New version available
-            if (confirm('A new version is available! Reload to update?')) {
-              newWorker.postMessage({ type: 'SKIP_WAITING' });
-              window.location.reload();
+            // New version available, activate it immediately and reload
+            if (registration.waiting) {
+              registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+
+              // Listen for the controlling service worker change, then reload
+              navigator.serviceWorker.addEventListener('controllerchange', () => {
+                window.location.reload();
+              });
             }
           }
         });

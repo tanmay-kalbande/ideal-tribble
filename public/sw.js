@@ -11,16 +11,12 @@ const urlsToCache = [
 
 // Install event - cache resources
 self.addEventListener('install', event => {
-  console.log('[SW] Installing version:', CACHE_VERSION);
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
         return Promise.allSettled(
           urlsToCache.map(url =>
-            cache.add(url).catch(err => {
-              console.warn(`[SW] Failed to cache ${url}:`, err);
-              return Promise.resolve();
-            })
+            cache.add(url).catch(() => Promise.resolve())
           )
         );
       })
@@ -31,7 +27,6 @@ self.addEventListener('install', event => {
 
 // Activate event - clean up ALL old caches
 self.addEventListener('activate', event => {
-  console.log('[SW] Activating version:', CACHE_VERSION);
   event.waitUntil(
     caches.keys().then(cacheNames => {
       return Promise.all(
@@ -39,7 +34,6 @@ self.addEventListener('activate', event => {
           // Delete old kitaab caches AND legacy ai-tutor caches
           if (cacheName !== CACHE_NAME &&
             (cacheName.startsWith('kitaab-') || cacheName.startsWith('ai-tutor-'))) {
-            console.log('[SW] Deleting old cache:', cacheName);
             return caches.delete(cacheName);
           }
         })
@@ -102,8 +96,8 @@ self.addEventListener('fetch', event => {
 
           const responseToCache = fetchResponse.clone();
           caches.open(CACHE_NAME).then(cache => {
-            cache.put(event.request, responseToCache).catch(err => {
-              console.warn('[SW] Failed to cache:', event.request.url, err);
+            cache.put(event.request, responseToCache).catch(() => {
+              // Silently fail cache operations
             });
           });
 
