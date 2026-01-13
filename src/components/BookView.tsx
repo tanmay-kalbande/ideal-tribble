@@ -1346,7 +1346,7 @@ const BookListGrid = ({
               setView('create');
               setShowListInMain(false);
             }}
-            className="btn bg-orange-500 hover:bg-orange-600 text-white rounded-lg shadow-lg hover:shadow-orange-500/20 transition-all btn-sm"
+            className="btn bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg shadow-lg hover:shadow-emerald-600/20 transition-all btn-sm"
           >
             <Plus className="w-4 h-4" /> New Book
           </button>
@@ -1355,8 +1355,8 @@ const BookListGrid = ({
 
       {books.length === 0 ? (
         <div className="text-center py-20 bg-[var(--color-card)] rounded-2xl border border-[var(--color-border)] border-dashed backdrop-blur-sm">
-          <div className="w-20 h-20 mx-auto mb-6 bg-orange-500/10 rounded-full flex items-center justify-center border border-orange-500/20">
-            <BookOpen className="w-8 h-8 text-orange-400" />
+          <div className="w-20 h-20 mx-auto mb-6 bg-emerald-500/10 rounded-full flex items-center justify-center border border-emerald-500/20">
+            <BookOpen className="w-8 h-8 text-emerald-400" />
           </div>
           <h3 className="text-xl font-semibold text-[var(--color-text-primary)] mb-2">No books yet</h3>
           <p className="text-[var(--color-text-secondary)] mb-6 max-w-sm mx-auto">Create your first AI-generated book to get started with Pustakam's powerful engine.</p>
@@ -1365,7 +1365,7 @@ const BookListGrid = ({
               setView('create');
               setShowListInMain(false);
             }}
-            className="btn bg-orange-500 hover:bg-orange-600 text-white rounded-xl px-6 py-3 font-semibold shadow-lg hover:shadow-orange-500/30 transition-all inline-flex items-center gap-2"
+            className="btn bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl px-6 py-3 font-semibold shadow-lg hover:shadow-emerald-600/30 transition-all inline-flex items-center gap-2"
           >
             <Sparkles className="w-4 h-4" />
             Create Your First Book
@@ -1423,7 +1423,7 @@ const BookListGrid = ({
                                 onUpdateBookStatus(book.id, status);
                                 setStatusDropdownOpen(null);
                               }}
-                              className={`w-full text-left px-2 py-1.5 rounded-lg text-xs flex items-center gap-2 hover:bg-[var(--color-card)] ${book.status === status ? 'text-orange-500 bg-[var(--color-card)]' : 'text-[var(--color-text-secondary)]'}`}
+                              className={`w-full text-left px-2 py-1.5 rounded-lg text-xs flex items-center gap-2 hover:bg-[var(--color-card)] ${book.status === status ? 'text-white bg-[var(--color-card)]' : 'text-[var(--color-text-secondary)]'}`}
                             >
                               {getStatusIcon(status)}
                               {getStatusText(status)}
@@ -1446,7 +1446,7 @@ const BookListGrid = ({
                   </div>
                 </div>
 
-                <h3 className="text-base font-semibold text-[var(--color-text-primary)] mb-1.5 line-clamp-1 group-hover:text-orange-400 transition-colors">
+                <h3 className="text-base font-semibold text-[var(--color-text-primary)] mb-1.5 line-clamp-1 group-hover:text-white transition-colors">
                   {book.title}
                 </h3>
 
@@ -1462,7 +1462,7 @@ const BookListGrid = ({
                     <div
                       className={`h-full rounded-full transition-all duration-500 ${book.status === 'completed' ? 'bg-green-500' :
                         book.status === 'error' ? 'bg-red-500' :
-                          'bg-gradient-to-r from-orange-500 to-yellow-500'
+                          'bg-gradient-to-r from-emerald-500 to-emerald-400'
                         }`}
                       style={{ width: `${percent}%` }}
                     />
@@ -1474,7 +1474,7 @@ const BookListGrid = ({
                     <Clock size={12} />
                     {new Date(book.updatedAt).toLocaleDateString()}
                   </div>
-                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0 text-orange-400 font-medium">
+                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0 text-white font-medium">
                     Open Project <ArrowRight size={12} />
                   </div>
                 </div>
