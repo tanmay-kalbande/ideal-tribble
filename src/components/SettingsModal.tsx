@@ -252,7 +252,7 @@ export function SettingsModal({ isOpen, onClose, settings, onSaveSettings, showA
 
           <div className="flex flex-1 overflow-hidden">
             {/* Sidebar Navigation */}
-            <div className="w-52 border-r border-gray-100 dark:border-white/[0.05] p-3 space-y-1 bg-gray-50/50 dark:bg-black/20">
+            <div className="w-52 border-r border-gray-100 dark:border-white/[0.05] p-3 space-y-1 bg-gray-50/50 dark:bg-[#050505]">
               <TabButton id="keys" label="API Keys" Icon={Shield} />
               <TabButton id="subscription" label="Subscription" Icon={CreditCard} />
               <TabButton id="data" label="Data Area" Icon={Database} />
