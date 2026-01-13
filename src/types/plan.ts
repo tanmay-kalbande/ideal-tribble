@@ -40,38 +40,6 @@ export const PLAN_PRICING = {
     yearly: 1299,
 };
 
-export interface PricingPlan {
-    id: string;
-    name: string;
-    price: number | string;
-    features: string[];
-    popular?: boolean;
-}
-
-export const planPricing: PricingPlan[] = [
-    {
-        id: 'free',
-        name: 'Starter',
-        price: '0',
-        features: ['3 Books / Month', 'Standard Generation', 'Basic Export Formats', 'Community Support'],
-        popular: false
-    },
-    {
-        id: 'pro',
-        name: 'Pro Author',
-        price: '29',
-        features: ['Unlimited Books', 'Advanced Concept Analysis', 'Priority Generation', 'All Export Formats', 'Commercial Rights'],
-        popular: true
-    },
-    {
-        id: 'team',
-        name: 'Publisher',
-        price: '99',
-        features: ['Everything in Pro', 'Team Collaboration', 'API Access', 'White-label Export', 'Dedicated Success Manager'],
-        popular: false
-    }
-];
-
 export interface UserPlan {
     plan: PlanType;
     planExpiresAt: Date | null;
@@ -79,35 +47,3 @@ export interface UserPlan {
     isActive: boolean;
 }
 
-/**
- * Check if a plan is currently active
- */
-export function isPlanActive(plan: PlanType, expiresAt: string | null): boolean {
-    if (plan === 'free') return true;
-    if (!expiresAt) return false;
-    return new Date(expiresAt) > new Date();
-}
-
-/**
- * Get remaining books for a user
- */
-export function getBooksRemaining(plan: PlanType, booksCreated: number): number {
-    const limits = PLAN_CONFIG[plan];
-    if (limits.maxBooks === -1) return Infinity;
-    return Math.max(0, limits.maxBooks - booksCreated);
-}
-
-/**
- * Check if user can create a book
- */
-export function canCreateBook(plan: PlanType, booksCreated: number, expiresAt: string | null): boolean {
-    // Check if plan is active
-    if (!isPlanActive(plan, expiresAt)) {
-        // Fallback to free tier if expired
-        return booksCreated < PLAN_CONFIG.free.maxBooks;
-    }
-
-    const limits = PLAN_CONFIG[plan];
-    if (limits.maxBooks === -1) return true;
-    return booksCreated < limits.maxBooks;
-}
