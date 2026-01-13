@@ -1085,17 +1085,24 @@ const HomeView = ({
           </svg>
         </button>
 
-        <input
-          type="text"
+        <textarea
           value={formData.goal}
-          onChange={(e) => setFormData((p: any) => ({ ...p, goal: e.target.value }))}
+          onChange={(e) => {
+            setFormData((p: any) => ({ ...p, goal: e.target.value }));
+            // Auto-resize the textarea
+            e.target.style.height = 'auto';
+            e.target.style.height = Math.min(e.target.scrollHeight, 200) + 'px';
+          }}
           onKeyDown={(e) => {
-            if (e.key === 'Enter' && formData.goal.trim() && hasApiKey && !localIsGenerating) {
+            if (e.key === 'Enter' && !e.shiftKey && formData.goal.trim() && hasApiKey && !localIsGenerating) {
+              e.preventDefault();
               handleCreateRoadmap(formData);
             }
           }}
           placeholder="What do you want to learn?"
-          className="flex-1 bg-transparent border-none outline-none text-[var(--color-text-primary)] placeholder-[var(--color-text-secondary)] text-base"
+          className="flex-1 bg-transparent border-none outline-none text-[var(--color-text-primary)] placeholder-[var(--color-text-secondary)] text-base resize-none"
+          rows={1}
+          style={{ minHeight: '24px', maxHeight: '200px' }}
         />
 
         {/* Enhance Idea button (moved here from chips) */}
@@ -1161,7 +1168,13 @@ const HomeView = ({
 
       {/* Advanced Options Dropdown */}
       {showAdvanced && (
-        <div className="mt-6 p-6 bg-[var(--color-card)] border border-[var(--color-border)] rounded-2xl animate-fade-in-down">
+        <div
+          className="mt-6 p-6 bg-[#1a1a1a] border border-white/10 rounded-2xl shadow-xl"
+          style={{
+            animation: 'dropdownSlideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
+            transformOrigin: 'top center'
+          }}
+        >
           {/* Configuration Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>

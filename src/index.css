@@ -102,6 +102,18 @@
   }
 }
 
+@keyframes dropdownSlideIn {
+  from {
+    opacity: 0;
+    transform: scaleY(0.9) translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scaleY(1) translateY(0);
+  }
+}
+
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -782,13 +794,14 @@
     background: #fafafa;
   }
 
-  /* Grok-style pill input bar - thin, minimal, transparent */
+  /* Grok-style pill input bar - rounded with grey bg like model badge */
   .grok-input-bar {
     @apply flex items-center gap-2 w-full max-w-2xl mx-auto;
-    @apply border rounded-full;
-    @apply px-4 py-2 transition-all duration-200;
-    background: transparent;
+    @apply border rounded-3xl;
+    @apply px-5 py-3 transition-all duration-200;
+    background: #1a1a1a;
     border-color: rgba(255, 255, 255, 0.12);
+    min-height: 52px;
   }
 
   .grok-input-bar:focus-within {
@@ -796,7 +809,7 @@
   }
 
   .light .grok-input-bar {
-    background: transparent;
+    background: #f5f5f5;
     border-color: rgba(0, 0, 0, 0.12);
   }
 
@@ -808,6 +821,9 @@
   .grok-input-bar textarea {
     @apply flex-1 bg-transparent border-none outline-none resize-none;
     @apply text-white placeholder-gray-500 text-base leading-relaxed;
+    min-height: 24px;
+    max-height: 200px;
+    overflow-y: auto;
   }
 
   .light .grok-input-bar input,

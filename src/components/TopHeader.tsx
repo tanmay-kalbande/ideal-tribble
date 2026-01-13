@@ -127,7 +127,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
                                         className={`absolute top-full right-0 mt-2 w-64 rounded-xl shadow-2xl overflow-hidden z-50
                                     ${theme === 'light'
                                                 ? 'bg-white border border-gray-200'
-                                                : 'bg-[#0a0a0a] border border-white/10'}`}
+                                                : 'bg-[#1a1a1a] border border-white/10'}`}
                                         style={{
                                             animation: 'dropdownExpand 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
                                             transformOrigin: 'top right'
@@ -227,7 +227,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
                                     <>
                                         <div className="fixed inset-0 z-40" onClick={() => setShowUserMenu(false)} />
                                         <div className={`absolute top-full right-0 mt-2 w-52 rounded-xl border shadow-2xl overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200
-                                    ${theme === 'light' ? 'bg-white border-gray-200' : 'bg-[#0a0a0a] border-white/10'}`}
+                                    ${theme === 'light' ? 'bg-white border-gray-200' : 'bg-[#1a1a1a] border-white/10'}`}
                                             style={{
                                                 animation: 'dropdownExpand 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
                                                 transformOrigin: 'top right'
