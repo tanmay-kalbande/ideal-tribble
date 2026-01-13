@@ -233,18 +233,18 @@ export function SettingsModal({ isOpen, onClose, settings, onSaveSettings, showA
     <>
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/40 backdrop-blur-sm" onClick={onClose}>
         <div
-          className="relative w-full max-w-2xl bg-white dark:bg-[#0a0a0f] border border-gray-200 dark:border-white/[0.08] rounded-xl shadow-2xl flex flex-col max-h-[85vh] overflow-hidden"
+          className="relative w-full max-w-2xl bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/[0.1] rounded-xl shadow-2xl flex flex-col max-h-[85vh] overflow-hidden"
           onClick={e => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="px-6 py-4 flex items-center justify-between border-b border-gray-100 dark:border-white/[0.05]">
+          <div className="px-6 py-4 flex items-center justify-between border-b border-gray-100 dark:border-white/[0.08]">
             <div className="flex items-center gap-3">
               <Settings size={18} className="text-gray-400" />
               <h2 className="text-sm font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">System Preferences</h2>
             </div>
             <button
               onClick={onClose}
-              className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-white/[0.05] transition-colors text-gray-400 hover:text-gray-900 dark:hover:text-white"
+              className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-white/[0.08] transition-colors text-gray-400 hover:text-gray-900 dark:hover:text-white"
             >
               <X size={18} />
             </button>
@@ -252,7 +252,7 @@ export function SettingsModal({ isOpen, onClose, settings, onSaveSettings, showA
 
           <div className="flex flex-1 overflow-hidden">
             {/* Sidebar Navigation */}
-            <div className="w-52 border-r border-gray-100 dark:border-white/[0.05] p-3 space-y-1 bg-gray-50/50 dark:bg-black/20">
+            <div className="w-52 border-r border-gray-100 dark:border-white/[0.08] p-3 space-y-1 bg-gray-50/50 dark:bg-[#121212]">
               <TabButton id="keys" label="API Keys" Icon={Shield} />
               <TabButton id="subscription" label="Subscription" Icon={CreditCard} />
               <TabButton id="data" label="Data Area" Icon={Database} />

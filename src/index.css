@@ -798,10 +798,10 @@
   .grok-input-bar {
     @apply flex items-center gap-2 w-full max-w-2xl mx-auto;
     @apply border rounded-3xl;
-    @apply px-5 py-3 transition-all duration-200;
+    @apply px-4 py-2.5 transition-all duration-200;
     background: #1a1a1a;
     border-color: rgba(255, 255, 255, 0.12);
-    min-height: 52px;
+    min-height: 46px;
   }
 
   .grok-input-bar:focus-within {
