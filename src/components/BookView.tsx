@@ -1061,184 +1061,192 @@ const HomeView = ({
   localIsGenerating: boolean;
   onOpenSettings: () => void;
 }) => (
-  <div className="grok-hero-container grok-fade-in">
-    {/* Hero Title */}
-    <h1 className="grok-hero-title">
-      <span className="block text-[var(--color-text-primary)]/90">Create</span>
-      <span className="block text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-amber-400 to-orange-500">Knowledge.</span>
-      <span className="block text-[var(--color-text-secondary)] text-[0.65em] mt-2 font-medium">Not Documents.</span>
-    </h1>
-
-    {/* Main Input - Grok Style */}
-    <div className="grok-input-wrapper">
-      <textarea
-        value={formData.goal}
-        onChange={(e) => setFormData((p: any) => ({ ...p, goal: e.target.value }))}
-        placeholder="What do you want to learn?"
-        className="grok-input"
-        rows={1}
-        onInput={(e) => {
-          const target = e.target as HTMLTextAreaElement;
-          target.style.height = 'auto';
-          target.style.height = Math.min(target.scrollHeight, 200) + 'px';
-        }}
-        required
-      />
-      <button
-        onClick={handleEnhanceWithAI}
-        disabled={!formData.goal.trim() || isEnhancing || !hasApiKey}
-        className="grok-input-action-btn"
-        title="Enhance with AI"
-      >
-        {isEnhancing ? (
-          <Loader2 className="animate-spin w-5 h-5" />
-        ) : (
-          <Sparkles className="w-5 h-5" />
-        )}
-      </button>
-    </div>
-
-    {/* Quick Actions Row */}
-    <div className="grok-quick-actions">
-      <button
-        onClick={() => handleCreateRoadmap(formData)}
-        disabled={!formData.goal.trim() || localIsGenerating || !hasApiKey}
-        className="grok-quick-action-btn"
-      >
-        <Zap size={16} />
-        <span>Quick Start</span>
-      </button>
-      <button
-        onClick={() => setShowAdvanced(!showAdvanced)}
-        className="grok-quick-action-btn"
-      >
-        <Settings size={16} />
-        <span>{showAdvanced ? 'Hide' : 'Show'} Advanced</span>
-      </button>
-      {bookCount > 0 && (
-        <button
-          onClick={onShowList}
-          className="grok-quick-action-btn"
-        >
-          <List size={16} />
-          <span>Library ({bookCount})</span>
-        </button>
-      )}
-    </div>
-
-    {/* Generate Button - Full Width */}
-    {hasApiKey ? (
-      <button
-        onClick={() => handleCreateRoadmap(formData)}
-        disabled={!formData.goal.trim() || localIsGenerating}
-        className="grok-generate-btn"
-      >
-        {localIsGenerating ? (
-          <>
-            <Loader2 className="animate-spin w-5 h-5" />
-            <span>Creating...</span>
-          </>
-        ) : (
-          <>
-            <Sparkles size={18} />
-            <span>Generate Book</span>
-          </>
-        )}
-      </button>
-    ) : (
-      <button
-        onClick={onOpenSettings}
-        className="grok-generate-btn"
-      >
-        <Settings size={18} />
-        <span>Add API Key to Start</span>
-      </button>
-    )}
-
-    {/* Advanced Options */}
-    {showAdvanced && (
-      <div className="grok-advanced-container">
-        {/* Configuration Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-          <div>
-            <label htmlFor="audience" className="block text-sm font-semibold mb-2 text-[var(--color-text-primary)]" style={{ fontFamily: 'Inter, sans-serif' }}>
-              Target Audience
-            </label>
-            <input
-              id="audience"
-              type="text"
-              value={formData.targetAudience}
-              onChange={(e) => setFormData((p: any) => ({ ...p, targetAudience: e.target.value }))}
-              placeholder="e.g. Beginners, Professionals"
-              className="grok-input-field"
-            />
-          </div>
-          <div>
-            <label htmlFor="complexity" className="block text-sm font-semibold mb-2 text-[var(--color-text-primary)]" style={{ fontFamily: 'Inter, sans-serif' }}>
-              Complexity Level
-            </label>
-            <CustomSelect
-              value={formData.complexityLevel || 'intermediate'}
-              onChange={(val) => setFormData((p: any) => ({ ...p, complexityLevel: val as any }))}
-              options={[
-                { value: 'beginner', label: 'Beginner' },
-                { value: 'intermediate', label: 'Intermediate' },
-                { value: 'advanced', label: 'Advanced' },
-              ]}
-            />
-          </div>
-        </div>
-
-        {/* Context & Goals */}
-        <div className="mb-4">
-          <label htmlFor="reasoning" className="block text-sm font-semibold mb-2 text-[var(--color-text-primary)]" style={{ fontFamily: 'Inter, sans-serif' }}>
-            Context & Goals (Optional)
-          </label>
-          <textarea
-            id="reasoning"
-            value={formData.reasoning}
-            onChange={(e) => setFormData((p: any) => ({ ...p, reasoning: e.target.value }))}
-            placeholder="Why are you writing this book? What should the reader achieve?"
-            className="grok-textarea-field"
-            rows={3}
-          />
-        </div>
-
-        {/* Structure Preferences */}
-        <div>
-          <label className="block text-sm font-semibold mb-3 text-[var(--color-text-primary)]" style={{ fontFamily: 'Inter, sans-serif' }}>
-            Structure Preferences
-          </label>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <label className={`flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-all ${formData.preferences?.includeExamples ? 'border-[var(--color-text-secondary)]/50 bg-[var(--color-text-secondary)]/5' : 'border-[var(--color-border)] bg-[var(--color-bg)] hover:border-[var(--color-text-secondary)]/30'}`}>
-              <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-colors ${formData.preferences?.includeExamples ? 'border-[var(--color-text-primary)] bg-[var(--color-text-primary)] text-[var(--color-bg)]' : 'border-[var(--color-text-secondary)]/50'}`}>
-                {formData.preferences?.includeExamples && <Check size={12} strokeWidth={3} />}
-              </div>
-              <input
-                type="checkbox"
-                className="hidden"
-                checked={formData.preferences?.includeExamples}
-                onChange={(e) => setFormData((p: any) => ({ ...p, preferences: { ...p.preferences!, includeExamples: e.target.checked } }))}
-              />
-              <span className="text-sm font-medium text-[var(--color-text-primary)]" style={{ fontFamily: 'Inter, sans-serif' }}>Include Examples</span>
-            </label>
-
-            <label className={`flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-all ${formData.preferences?.includePracticalExercises ? 'border-[var(--color-text-secondary)]/50 bg-[var(--color-text-secondary)]/5' : 'border-[var(--color-border)] bg-[var(--color-bg)] hover:border-[var(--color-text-secondary)]/30'}`}>
-              <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-colors ${formData.preferences?.includePracticalExercises ? 'border-[var(--color-text-primary)] bg-[var(--color-text-primary)] text-[var(--color-bg)]' : 'border-[var(--color-text-secondary)]/50'}`}>
-                {formData.preferences?.includePracticalExercises && <Check size={12} strokeWidth={3} />}
-              </div>
-              <input
-                type="checkbox"
-                className="hidden"
-                checked={formData.preferences?.includePracticalExercises}
-                onChange={(e) => setFormData((p: any) => ({ ...p, preferences: { ...p.preferences!, includePracticalExercises: e.target.checked } }))}
-              />
-              <span className="text-sm font-medium text-[var(--color-text-primary)]" style={{ fontFamily: 'Inter, sans-serif' }}>Practical Exercises</span>
-            </label>
-          </div>
-        </div>
+  <div className="flex-1 flex flex-col items-center justify-center px-6 py-12 min-h-[calc(100vh-48px)]" style={{ background: theme === 'dark' ? '#000000' : '#fafafa' }}>
+    <div className="w-full max-w-2xl mx-auto animate-fade-in-up">
+      {/* Centered Logo & Brand */}
+      <div className="text-center mb-10">
+        <img
+          src="/white-logo.png"
+          alt="Pustakam"
+          className={`w-16 h-16 mx-auto mb-4 ${theme === 'light' ? 'invert' : ''}`}
+        />
+        <h1 className="text-3xl font-bold text-[var(--color-text-primary)] tracking-tight">Pustakam</h1>
       </div>
-    )}
+
+      {/* Grok-style Pill Input Bar */}
+      <div className="grok-input-bar">
+        <button
+          className="grok-input-icon shrink-0"
+          title="Attach file (coming soon)"
+          disabled
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48" />
+          </svg>
+        </button>
+
+        <input
+          type="text"
+          value={formData.goal}
+          onChange={(e) => setFormData((p: any) => ({ ...p, goal: e.target.value }))}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && formData.goal.trim() && hasApiKey && !localIsGenerating) {
+              handleCreateRoadmap(formData);
+            }
+          }}
+          placeholder="What do you want to learn?"
+          className="flex-1 bg-transparent border-none outline-none text-[var(--color-text-primary)] placeholder-[var(--color-text-secondary)] text-base"
+        />
+
+        {/* Model selector (simplified) */}
+        <button
+          onClick={() => setShowAdvanced(!showAdvanced)}
+          className="grok-input-icon shrink-0 flex items-center gap-1.5 text-sm"
+          title="Advanced options"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+            <circle cx="12" cy="12" r="3" />
+          </svg>
+          <span className="hidden sm:inline">Auto</span>
+          <ChevronDown size={14} className={`transition-transform ${showAdvanced ? 'rotate-180' : ''}`} />
+        </button>
+
+        {/* Generate button */}
+        <button
+          onClick={() => {
+            if (hasApiKey) {
+              handleCreateRoadmap(formData);
+            } else {
+              onOpenSettings();
+            }
+          }}
+          disabled={!formData.goal.trim() || localIsGenerating}
+          className="grok-voice-btn shrink-0"
+          title={hasApiKey ? 'Generate book' : 'Add API key first'}
+        >
+          {localIsGenerating ? (
+            <Loader2 className="w-5 h-5 animate-spin" />
+          ) : (
+            <Sparkles className="w-5 h-5" />
+          )}
+        </button>
+      </div>
+
+      {/* Action Chips */}
+      <div className="grok-chips">
+        <button
+          onClick={handleEnhanceWithAI}
+          disabled={!formData.goal.trim() || isEnhancing || !hasApiKey}
+          className="grok-chip"
+        >
+          <Sparkles size={16} />
+          {isEnhancing ? 'Refining...' : 'Enhance Idea'}
+        </button>
+
+        {bookCount > 0 && (
+          <button onClick={onShowList} className="grok-chip">
+            <List size={16} />
+            My Library ({bookCount})
+          </button>
+        )}
+
+        <button onClick={onOpenSettings} className="grok-chip">
+          <Settings size={16} />
+          Settings
+        </button>
+      </div>
+
+      {/* Advanced Options Dropdown */}
+      {showAdvanced && (
+        <div className="mt-6 p-6 bg-[var(--color-card)] border border-[var(--color-border)] rounded-2xl animate-fade-in-down">
+          {/* Configuration Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label htmlFor="audience" className="block text-sm font-semibold mb-2 text-[var(--color-text-primary)]">
+                Target Audience
+              </label>
+              <input
+                id="audience"
+                type="text"
+                value={formData.targetAudience}
+                onChange={(e) => setFormData((p: any) => ({ ...p, targetAudience: e.target.value }))}
+                placeholder="e.g. Beginners, Professionals"
+                className="w-full h-11 bg-[var(--color-bg)] border-2 border-[var(--color-border)] rounded-xl px-4 text-[var(--color-text-primary)] placeholder-[var(--color-text-secondary)]/50 focus:border-[var(--color-text-secondary)]/50 focus:ring-4 focus:ring-[var(--color-text-secondary)]/10 transition-all outline-none"
+              />
+            </div>
+            <div>
+              <label htmlFor="complexity" className="block text-sm font-semibold mb-2 text-[var(--color-text-primary)]">
+                Complexity Level
+              </label>
+              <CustomSelect
+                value={formData.complexityLevel || 'intermediate'}
+                onChange={(val) => setFormData((p: any) => ({ ...p, complexityLevel: val as any }))}
+                options={[
+                  { value: 'beginner', label: 'Beginner' },
+                  { value: 'intermediate', label: 'Intermediate' },
+                  { value: 'advanced', label: 'Advanced' },
+                ]}
+              />
+            </div>
+          </div>
+
+          {/* Context & Goals */}
+          <div className="mb-4">
+            <label htmlFor="reasoning" className="block text-sm font-semibold mb-2 text-[var(--color-text-primary)]">
+              Context & Goals (Optional)
+            </label>
+            <textarea
+              id="reasoning"
+              value={formData.reasoning}
+              onChange={(e) => setFormData((p: any) => ({ ...p, reasoning: e.target.value }))}
+              placeholder="Why are you writing this book? What should the reader achieve?"
+              className="w-full bg-[var(--color-bg)] border-2 border-[var(--color-border)] rounded-xl p-4 text-[var(--color-text-primary)] placeholder-[var(--color-text-secondary)]/50 focus:border-[var(--color-text-secondary)]/50 focus:ring-4 focus:ring-[var(--color-text-secondary)]/10 transition-all outline-none resize-none text-sm"
+              rows={3}
+            />
+          </div>
+
+          {/* Structure Preferences */}
+          <div>
+            <label className="block text-sm font-semibold mb-3 text-[var(--color-text-primary)]">
+              Structure Preferences
+            </label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <label className={`flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-all ${formData.preferences?.includeExamples ? 'border-[var(--color-text-secondary)]/50 bg-[var(--color-text-secondary)]/5' : 'border-[var(--color-border)] bg-[var(--color-bg)] hover:border-[var(--color-text-secondary)]/30'}`}>
+                <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-colors ${formData.preferences?.includeExamples ? 'border-[var(--color-text-primary)] bg-[var(--color-text-primary)] text-[var(--color-bg)]' : 'border-[var(--color-text-secondary)]/50'}`}>
+                  {formData.preferences?.includeExamples && <Check size={12} strokeWidth={3} />}
+                </div>
+                <input
+                  type="checkbox"
+                  className="hidden"
+                  checked={formData.preferences?.includeExamples}
+                  onChange={(e) => setFormData((p: any) => ({ ...p, preferences: { ...p.preferences!, includeExamples: e.target.checked } }))}
+                />
+                <span className="text-sm font-medium text-[var(--color-text-primary)]">Include Examples</span>
+              </label>
+
+              <label className={`flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-all ${formData.preferences?.includePracticalExercises ? 'border-[var(--color-text-secondary)]/50 bg-[var(--color-text-secondary)]/5' : 'border-[var(--color-border)] bg-[var(--color-bg)] hover:border-[var(--color-text-secondary)]/30'}`}>
+                <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-colors ${formData.preferences?.includePracticalExercises ? 'border-[var(--color-text-primary)] bg-[var(--color-text-primary)] text-[var(--color-bg)]' : 'border-[var(--color-text-secondary)]/50'}`}>
+                  {formData.preferences?.includePracticalExercises && <Check size={12} strokeWidth={3} />}
+                </div>
+                <input
+                  type="checkbox"
+                  className="hidden"
+                  checked={formData.preferences?.includePracticalExercises}
+                  onChange={(e) => setFormData((p: any) => ({ ...p, preferences: { ...p.preferences!, includePracticalExercises: e.target.checked } }))}
+                />
+                <span className="text-sm font-medium text-[var(--color-text-primary)]">Practical Exercises</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Footer hint */}
+      <p className="text-center text-xs text-[var(--color-text-secondary)] mt-8 opacity-60">
+        Press Enter to generate • Bring your own API key
+      </p>
+    </div>
   </div>
 );
 

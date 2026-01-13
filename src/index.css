@@ -1,6 +1,6 @@
 /* src/index.css */
-/* Google Fonts - Outfit for branding, Inter for body text */
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+/* Google Fonts - Outfit for branding */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -766,6 +766,126 @@
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
     }
+  }
+
+  /* ==========================================================================
+    Grok-Inspired Styles
+    ========================================================================== */
+
+  /* Grok-style home container - ultra minimal */
+  .grok-home {
+    @apply min-h-screen flex flex-col items-center justify-center px-6;
+    background: #000000;
+  }
+
+  .light .grok-home {
+    background: #fafafa;
+  }
+
+  /* Grok-style pill input bar */
+  .grok-input-bar {
+    @apply flex items-center gap-3 w-full max-w-2xl mx-auto;
+    @apply border rounded-full;
+    @apply px-5 py-3.5 transition-all duration-200;
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.15);
+  }
+
+  .grok-input-bar:focus-within {
+    border-color: rgba(255, 255, 255, 0.35);
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.05);
+  }
+
+  .light .grok-input-bar {
+    background: rgba(0, 0, 0, 0.03);
+    border-color: rgba(0, 0, 0, 0.12);
+  }
+
+  .light .grok-input-bar:focus-within {
+    border-color: rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.05);
+  }
+
+  .grok-input-bar input,
+  .grok-input-bar textarea {
+    @apply flex-1 bg-transparent border-none outline-none resize-none;
+    @apply text-white placeholder-gray-500 text-base leading-relaxed;
+  }
+
+  .light .grok-input-bar input,
+  .light .grok-input-bar textarea {
+    @apply text-gray-900 placeholder-gray-400;
+  }
+
+  /* Grok input icon buttons */
+  .grok-input-icon {
+    @apply p-2 rounded-full transition-all text-gray-400 hover:text-white hover:bg-white/10;
+  }
+
+  .light .grok-input-icon {
+    @apply text-gray-500 hover:text-gray-900 hover:bg-black/5;
+  }
+
+  /* Grok voice button (white circle on right) */
+  .grok-voice-btn {
+    @apply w-10 h-10 rounded-full flex items-center justify-center transition-all;
+    background: white;
+    color: black;
+  }
+
+  .grok-voice-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+  }
+
+  .light .grok-voice-btn {
+    background: black;
+    color: white;
+  }
+
+  .light .grok-voice-btn:hover {
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Grok-style action chips */
+  .grok-chips {
+    @apply flex flex-wrap items-center justify-center gap-3 mt-6;
+  }
+
+  .grok-chip {
+    @apply inline-flex items-center gap-2 px-4 py-2;
+    @apply border rounded-full cursor-pointer;
+    @apply text-sm font-medium;
+    @apply transition-all duration-200;
+    background: transparent;
+    border-color: rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .grok-chip:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.25);
+    color: white;
+  }
+
+  .light .grok-chip {
+    border-color: rgba(0, 0, 0, 0.1);
+    color: rgba(0, 0, 0, 0.6);
+  }
+
+  .light .grok-chip:hover {
+    background: rgba(0, 0, 0, 0.04);
+    border-color: rgba(0, 0, 0, 0.2);
+    color: black;
+  }
+
+  /* Grok chip with icon */
+  .grok-chip svg {
+    @apply w-4 h-4 opacity-70;
+  }
+
+  .grok-chip:hover svg {
+    @apply opacity-100;
   }
 
   /* ==========================================================================
@@ -1724,368 +1844,4 @@ article a:hover {
 
 html.light .header-with-fade::after {
   background: linear-gradient(to bottom, #ffffff, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.5), transparent);
-}
-
-/* ==========================================================================
-   Grok-Inspired Minimalist UI Styles
-   ========================================================================== */
-
-/* Hero Container - Centered, Minimalist Layout */
-.grok-hero-container {
-  max-width: 680px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: calc(100vh - 120px);
-  padding: 0 24px;
-}
-
-/* Hero Title Styling */
-.grok-hero-title {
-  font-family: 'Outfit', sans-serif;
-  font-weight: 600;
-  font-size: clamp(40px, 7vw, 56px);
-  line-height: 1.1;
-  text-align: center;
-  margin-bottom: 60px;
-  letter-spacing: -0.02em;
-}
-
-/* Pill-Shaped Input (Grok Style) */
-.grok-input-wrapper {
-  position: relative;
-  width: 100%;
-  margin-bottom: 20px;
-}
-
-.grok-input {
-  width: 100%;
-  min-height: 56px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1.5px solid rgba(255, 255, 255, 0.12);
-  border-radius: 28px;
-  padding: 16px 64px 16px 24px;
-  font-family: 'Inter', -apple-system, sans-serif;
-  font-size: 16px;
-  font-weight: 400;
-  color: #ffffff;
-  resize: none;
-  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
-  outline: none;
-}
-
-.grok-input::placeholder {
-  color: #9ca3af;
-}
-
-.grok-input:focus {
-  border-color: rgba(255, 255, 255, 0.25);
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.grok-input:hover:not(:focus) {
-  background: rgba(255, 255, 255, 0.07);
-}
-
-/* Circular Action Button Inside Input */
-.grok-input-action-btn {
-  position: absolute;
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: #ffffff;
-  color: #000000;
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.grok-input-action-btn:hover {
-  background: #f3f4f6;
-  transform: translateY(-50%) scale(1.05);
-}
-
-.grok-input-action-btn:active {
-  transform: translateY(-50%) scale(0.95);
-}
-
-/* Quick Actions Row */
-.grok-quick-actions {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 32px;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.grok-quick-action-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 20px;
-  font-family: 'Inter', sans-serif;
-  font-size: 13px;
-  font-weight: 500;
-  color: #d1d5db;
-  cursor: pointer;
-  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
-  white-space: nowrap;
-}
-
-.grok-quick-action-btn:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.15);
-  color: #ffffff;
-}
-
-.grok-quick-action-btn svg {
-  width: 16px;
-  height: 16px;
-  opacity: 0.8;
-}
-
-/* Generate Button - Full Width, Minimalist */
-.grok-generate-btn {
-  width: 100%;
-  height: 52px;
-  background: #ffffff;
-  color: #000000;
-  border: none;
-  border-radius: 26px;
-  font-family: 'Inter', sans-serif;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  margin-bottom: 24px;
-}
-
-.grok-generate-btn:hover:not(:disabled) {
-  background: #f3f4f6;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
-}
-
-.grok-generate-btn:active:not(:disabled) {
-  transform: translateY(0);
-}
-
-.grok-generate-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* Library Link - Subtle */
-.grok-library-link {
-  font-family: 'Inter', sans-serif;
-  font-size: 14px;
-  font-weight: 500;
-  color: #9ca3af;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  transition: color 200ms cubic-bezier(0.4, 0, 0.2, 1);
-  margin-top: 16px;
-}
-
-.grok-library-link:hover {
-  color: #f97316;
-}
-
-/* Advanced Options - Minimal Styling */
-.grok-advanced-container {
-  width: 100%;
-  margin-top: 24px;
-  padding: 24px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 20px;
-  animation: fadeInDown 300ms cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.grok-input-field {
-  width: 100%;
-  height: 44px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  padding: 0 16px;
-  font-family: 'Inter', sans-serif;
-  font-size: 14px;
-  color: #ffffff;
-  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.grok-input-field::placeholder {
-  color: #6b7280;
-}
-
-.grok-input-field:focus {
-  outline: none;
-  border-color: rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.07);
-}
-
-.grok-textarea-field {
-  width: 100%;
-  min-height: 80px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  padding: 12px 16px;
-  font-family: 'Inter', sans-serif;
-  font-size: 14px;
-  color: #ffffff;
-  resize: none;
-  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.grok-textarea-field::placeholder {
-  color: #6b7280;
-}
-
-.grok-textarea-field:focus {
-  outline: none;
-  border-color: rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.07);
-}
-
-/* Fade-in Animation for Elements */
-@keyframes grokFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.grok-fade-in {
-  animation: grokFadeIn 400ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
-/* Responsive Adjustments */
-@media (max-width: 768px) {
-  .grok-hero-container {
-    padding: 0 20px;
-    min-height: calc(100vh - 100px);
-  }
-
-  .grok-hero-title {
-    margin-bottom: 40px;
-  }
-
-  .grok-input {
-    padding: 14px 60px 14px 20px;
-  }
-
-  .grok-quick-actions {
-    gap: 8px;
-  }
-
-  .grok-quick-action-btn {
-    padding: 8px 16px;
-    font-size: 12px;
-  }
-
-  .grok-generate-btn {
-    height: 48px;
-    font-size: 14px;
-  }
-}
-
-/* Light Theme Overrides for Grok-Style Components */
-html.light .grok-input {
-  background: rgba(0, 0, 0, 0.04);
-  border-color: rgba(0, 0, 0, 0.1);
-  color: #000000;
-}
-
-html.light .grok-input::placeholder {
-  color: #6b7280;
-}
-
-html.light .grok-input:focus {
-  border-color: rgba(0, 0, 0, 0.2);
-  background: rgba(0, 0, 0, 0.06);
-}
-
-html.light .grok-input-action-btn {
-  background: #000000;
-  color: #ffffff;
-}
-
-html.light .grok-input-action-btn:hover {
-  background: #1f2937;
-}
-
-html.light .grok-quick-action-btn {
-  background: rgba(0, 0, 0, 0.04);
-  border-color: rgba(0, 0, 0, 0.08);
-  color: #4b5563;
-}
-
-html.light .grok-quick-action-btn:hover {
-  background: rgba(0, 0, 0, 0.08);
-  border-color: rgba(0, 0, 0, 0.12);
-  color: #000000;
-}
-
-html.light .grok-generate-btn {
-  background: #000000;
-  color: #ffffff;
-}
-
-html.light .grok-generate-btn:hover:not(:disabled) {
-  background: #1f2937;
-}
-
-html.light .grok-library-link {
-  color: #6b7280;
-}
-
-html.light .grok-library-link:hover {
-  color: #f97316;
-}
-
-html.light .grok-advanced-container {
-  background: rgba(0, 0, 0, 0.02);
-  border-color: rgba(0, 0, 0, 0.06);
-}
-
-html.light .grok-input-field,
-html.light .grok-textarea-field {
-  background: rgba(0, 0, 0, 0.03);
-  border-color: rgba(0, 0, 0, 0.08);
-  color: #000000;
-}
-
-html.light .grok-input-field::placeholder,
-html.light .grok-textarea-field::placeholder {
-  color: #9ca3af;
-}
-
-html.light .grok-input-field:focus,
-html.light .grok-textarea-field:focus {
-  border-color: rgba(0, 0, 0, 0.15);
-  background: rgba(0, 0, 0, 0.05);
 }
