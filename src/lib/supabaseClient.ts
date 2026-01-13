@@ -4,12 +4,7 @@
 import { createClient } from '@supabase/supabase-js';
 import config from '../config';
 
-// Debug logging
-console.log('🔧 Supabase Config:', {
-  url: config.supabase.url ? '✓ Set' : '✗ Missing',
-  key: config.supabase.anonKey ? '✓ Set' : '✗ Missing',
-  configured: config.isSupabaseConfigured
-});
+// Debug logging removed for production
 
 if (!config.isSupabaseConfigured) {
   console.warn(

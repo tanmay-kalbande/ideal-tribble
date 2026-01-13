@@ -6,6 +6,8 @@ export const config = {
     supabase: {
         url: import.meta.env.K_SUPABASE_URL || '',
         anonKey: import.meta.env.K_SUPABASE_ANON_KEY || '',
+        // NOTE: The anon key is safe to expose in the browser IF AND ONLY IF 
+        // Row Level Security (RLS) is properly configured on the Supabase dashboard.
     },
 
     // Payment/Contact

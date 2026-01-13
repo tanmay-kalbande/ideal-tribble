@@ -4,6 +4,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Mail, Lock, User, Loader2, ArrowRight, Eye, EyeOff, BookOpen, MessageCircle, Send } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import config from '../config';
 
 interface AuthModalProps {
     isOpen: boolean;
@@ -83,14 +84,14 @@ export function AuthModal({ isOpen, onClose, onSuccess, initialMode = 'signin' }
 
     const handleWhatsApp = () => {
         const message = encodeURIComponent('Hi! I want to subscribe to Pustakam premium plan.');
-        window.open(`https://wa.me/919876543210?text=${message}`, '_blank');
+        window.open(`https://wa.me/${config.payment.whatsappNumber}?text=${message}`, '_blank');
         onClose();
     };
 
     const handleEmail = () => {
         const subject = encodeURIComponent('Pustakam Premium Subscription');
         const body = encodeURIComponent('Hi,\n\nI want to subscribe to Pustakam premium plan.\n\nThanks!');
-        window.open(`mailto:support@pustakam.com?subject=${subject}&body=${body}`, '_blank');
+        window.open(`mailto:${config.payment.supportEmail}?subject=${subject}&body=${body}`, '_blank');
         onClose();
     };
 

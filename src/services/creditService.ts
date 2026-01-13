@@ -84,9 +84,8 @@ export const creditService = {
     },
 
     /**
-     * Use 1 credit to generate a book
-     * Returns success/failure and remaining credits
-     * Note: Paid plan users (monthly/yearly) have unlimited books - no credit deduction
+     * Start book generation securely via server-side RPC
+     * The server handles credit deduction and plan verification atomically
      */
     async useCredit(bookId: string, title: string, goal: string): Promise<UseCreditResult> {
         if (!supabase || !isSupabaseConfigured()) {
@@ -98,57 +97,40 @@ export const creditService = {
             return { success: false, error: 'Not authenticated' };
         }
 
-        // Check if user has an active paid plan (unlimited books)
-        const isPaidUser = await this.hasPaidPlan();
-        if (isPaidUser) {
-            // Paid users don't use credits - just log the book generation
-            const { error: logError } = await supabase
-                .from('book_generations')
-                .insert({
-                    user_id: user.id,
-                    book_id: bookId,
-                    title: title,
-                    goal: goal,
-                    status: 'generating',
-                    credits_used: 0 // No credits used for paid plans
-                });
-
-            if (logError) {
-                console.error('Error logging book generation:', logError);
-            }
-
-            // Increment books_created counter
-            await supabase.rpc('increment_books_created', { p_user_id: user.id });
-
-            return { success: true, remainingCredits: -1 }; // -1 indicates unlimited
-        }
-
-        // Free tier user - deduct credit using the stored function
+        // Call the secure RPC function
+        // This handles:
+        // 1. Checking if user has valid paid plan
+        // 2. OR checking if user has credits
+        // 3. Deducting credit if needed
+        // 4. Logging the transaction
+        // 5. Creating the book_generation record
         const { data, error } = await supabase
-            .rpc('use_credit', {
-                p_user_id: user.id,
+            .rpc('start_book_generation', {
                 p_book_id: bookId,
                 p_title: title,
                 p_goal: goal,
             });
 
         if (error) {
-            console.error('Error using credit:', error);
+            console.error('Error starting generation:', error);
+            // Handle specific database errors with user-friendly messages
+            if (error.message.includes('Insufficient credits')) {
+                return { success: false, error: 'Insufficient credits' };
+            }
             return { success: false, error: error.message };
         }
 
-        if (!data) {
-            return { success: false, error: 'Insufficient credits' };
+        if (!data || !data.success) {
+            return {
+                success: false,
+                error: data?.error || 'Failed to start generation'
+            };
         }
 
-        // Increment books_created counter for free tier users too
-        // This ensures ALL users have accurate book count tracking
-        await supabase.rpc('increment_books_created', { p_user_id: user.id });
-
-        // Fetch updated credits
-        const remainingCredits = await this.getCredits();
-
-        return { success: true, remainingCredits };
+        return {
+            success: true,
+            remainingCredits: data.remainingCredits
+        };
     },
 
     /**

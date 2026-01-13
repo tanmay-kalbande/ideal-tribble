@@ -70,10 +70,9 @@ export const storageUtils = {
       }
 
       localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-      console.log('Settings saved successfully');
     } catch (error) {
       console.error('Error saving settings:', error);
-      alert('Failed to save settings. Please try again.');
+      // Silently fail - the app will use defaults
     }
   },
 
@@ -98,7 +97,7 @@ export const storageUtils = {
       localStorage.setItem(BOOKS_KEY, JSON.stringify(books));
     } catch (error) {
       console.error('Error saving books:', error);
-      alert('Failed to save books. Please try again.');
+      // Silently fail - books are also saved in state
     }
   },
 
