@@ -1062,7 +1062,7 @@ const HomeView = ({
   localIsGenerating: boolean;
   onOpenSettings: () => void;
 }) => (
-  <div className="flex-1 flex flex-col items-center justify-center px-6 py-12 min-h-[calc(100vh-48px)]" style={{ background: theme === 'dark' ? '#000000' : '#fafafa' }}>
+  <div className="flex-1 flex flex-col items-center justify-center px-6 py-12 min-h-[calc(100vh-48px)]" style={{ background: theme === 'dark' ? '#000000' : '#fafafa', fontFamily: 'Rubik, sans-serif' }}>
     <div className="w-full max-w-2xl mx-auto animate-fade-in-up">
       {/* Centered Logo & Brand */}
       <div className="text-center mb-10">
@@ -2205,330 +2205,332 @@ export function BookView({
     const isPaused = generationStatus?.status === 'paused';
 
     return (
-      <div className="w-full max-w-3xl mx-auto px-6 py-10">
-        <div className="mb-8">
-          <button
-            onClick={() => {
-              setView('list');
-              onSelectBook(null);
-              setShowListInMain(true);
-            }}
-            className="flex items-center gap-2 text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors mb-5"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to My Books
-          </button>
-          <h1 className="text-3xl font-bold text-[var(--color-text-primary)] mb-1.5">{currentBook.title}</h1>
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1.5 text-sm font-medium text-[var(--color-text-secondary)]">
-              {getStatusIcon(currentBook.status)}
-              {getStatusText(currentBook.status)}
+      <div className="min-h-[calc(100vh-48px)]" style={{ background: theme === 'dark' ? '#000000' : '#fafafa', fontFamily: 'Rubik, sans-serif' }}>
+        <div className="w-full max-w-3xl mx-auto px-6 py-10">
+          <div className="mb-8">
+            <button
+              onClick={() => {
+                setView('list');
+                onSelectBook(null);
+                setShowListInMain(true);
+              }}
+              className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors mb-5"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Back to My Books
+            </button>
+            <h1 className="text-3xl font-bold text-white mb-1.5">{currentBook.title}</h1>
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 text-sm font-medium text-gray-400">
+                {getStatusIcon(currentBook.status)}
+                {getStatusText(currentBook.status)}
+              </div>
             </div>
           </div>
-        </div>
 
-        {currentBook.status === 'completed' && (
-          <div className="border-b border-[var(--color-border)] mb-8">
-            <div className="flex items-center gap-6">
-              <DetailTabButton
-                label="Overview"
-                Icon={ListChecks}
-                isActive={detailTab === 'overview'}
-                onClick={() => setDetailTab('overview')}
-              />
-              <DetailTabButton
-                label="Analytics"
-                Icon={BarChart3}
-                isActive={detailTab === 'analytics'}
-                onClick={() => setDetailTab('analytics')}
-              />
-              <DetailTabButton
-                label="Read Book"
-                Icon={BookText}
-                isActive={detailTab === 'read'}
-                onClick={() => setDetailTab('read')}
-              />
+          {currentBook.status === 'completed' && (
+            <div className="border-b border-white/10 mb-8">
+              <div className="flex items-center gap-6">
+                <DetailTabButton
+                  label="Overview"
+                  Icon={ListChecks}
+                  isActive={detailTab === 'overview'}
+                  onClick={() => setDetailTab('overview')}
+                />
+                <DetailTabButton
+                  label="Analytics"
+                  Icon={BarChart3}
+                  isActive={detailTab === 'analytics'}
+                  onClick={() => setDetailTab('analytics')}
+                />
+                <DetailTabButton
+                  label="Read Book"
+                  Icon={BookText}
+                  isActive={detailTab === 'read'}
+                  onClick={() => setDetailTab('read')}
+                />
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        <div className="space-y-6">
-          {detailTab === 'analytics' && currentBook.status === 'completed' ? (
-            <BookAnalytics book={currentBook} />
-          ) : detailTab === 'read' && currentBook.status === 'completed' ? (
-            <ReadingMode
-              content={currentBook.finalBook || ''}
-              isEditing={isEditing}
-              editedContent={editedContent}
-              onEdit={handleStartEditing}
-              onSave={handleSaveChanges}
-              onCancel={handleCancelEditing}
-              onContentChange={setEditedContent}
-              onGoBack={handleGoBackToLibrary}
-              theme={theme}
-              bookId={currentBook.id}
-              currentModuleIndex={0}
-            />
-          ) : (
-            <>
-              {(isGenerating || isPaused || generationStatus?.status === 'waiting_retry') &&
-                generationStatus &&
-                generationStats && (
-                  <EmbeddedProgressPanel
-                    generationStatus={generationStatus}
-                    stats={generationStats}
-                    onCancel={() => {
-                      if (window.confirm('Cancel generation? Progress will be saved.')) {
-                        bookService.cancelActiveRequests(currentBook.id);
-                      }
-                    }}
-                    onPause={handlePauseGeneration}
-                    onResume={handleResumeGeneration}
-                    onRetryDecision={onRetryDecision}
-                    availableModels={availableModels}
-                  />
+          <div className="space-y-6">
+            {detailTab === 'analytics' && currentBook.status === 'completed' ? (
+              <BookAnalytics book={currentBook} />
+            ) : detailTab === 'read' && currentBook.status === 'completed' ? (
+              <ReadingMode
+                content={currentBook.finalBook || ''}
+                isEditing={isEditing}
+                editedContent={editedContent}
+                onEdit={handleStartEditing}
+                onSave={handleSaveChanges}
+                onCancel={handleCancelEditing}
+                onContentChange={setEditedContent}
+                onGoBack={handleGoBackToLibrary}
+                theme={theme}
+                bookId={currentBook.id}
+                currentModuleIndex={0}
+              />
+            ) : (
+              <>
+                {(isGenerating || isPaused || generationStatus?.status === 'waiting_retry') &&
+                  generationStatus &&
+                  generationStats && (
+                    <EmbeddedProgressPanel
+                      generationStatus={generationStatus}
+                      stats={generationStats}
+                      onCancel={() => {
+                        if (window.confirm('Cancel generation? Progress will be saved.')) {
+                          bookService.cancelActiveRequests(currentBook.id);
+                        }
+                      }}
+                      onPause={handlePauseGeneration}
+                      onResume={handleResumeGeneration}
+                      onRetryDecision={onRetryDecision}
+                      availableModels={availableModels}
+                    />
+                  )}
+
+                {currentBook.status === 'roadmap_completed' &&
+                  !areAllModulesDone &&
+                  !isGenerating &&
+                  !isPaused &&
+                  generationStatus?.status !== 'waiting_retry' && (
+                    <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-lg p-7">
+                      <div className="flex items-center gap-4 mb-5">
+                        <div className="w-10 h-10 flex items-center justify-center bg-gray-500/10 rounded-lg">
+                          <Play className="w-5 h-5 text-gray-400" />
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">
+                            Ready to Generate Content
+                          </h3>
+                          <p className="text-sm text-[var(--color-text-secondary)] mt-0.5">
+                            {completedModules.length > 0
+                              ? `Resume from ${completedModules.length} completed modules`
+                              : 'Start generating all modules'}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="bg-gray-500/5 border border-gray-500/20 rounded-lg p-4 mb-5">
+                        <div className="flex items-start gap-3">
+                          <Sparkles className="w-5 h-5 text-gray-400 shrink-0 mt-0.5" />
+                          <div className="text-sm text-[var(--color-text-secondary)]">
+                            <p className="font-medium text-[var(--color-text-primary)] mb-2">Smart Recovery Enabled</p>
+                            <ul className="space-y-1 text-xs text-[var(--color-text-secondary)]">
+                              <li>✓ Progress is saved automatically</li>
+                              <li>✓ Failed modules will be retried with smart options</li>
+                              <li>✓ You can safely close and resume later</li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                      <button
+                        onClick={handleStartGeneration}
+                        disabled={localIsGenerating}
+                        className="btn btn-primary w-full py-2.5"
+                      >
+                        {localIsGenerating ? (
+                          <><Loader2 className="animate-spin" /> Generating...</>
+                        ) : (
+                          <><Play className="w-4 h-4" />
+                            {completedModules.length > 0
+                              ? 'Resume Generation'
+                              : 'Generate All Modules'}
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  )}
+
+                {areAllModulesDone &&
+                  currentBook.status !== 'completed' &&
+                  !localIsGenerating &&
+                  !isGenerating &&
+                  !isPaused && (
+                    <div className="bg-[var(--color-card)] border border-green-500/30 rounded-lg p-7 space-y-5 animate-fade-in-up">
+                      <div className="text-center">
+                        <div className="w-12 h-12 flex items-center justify-center bg-green-500/10 rounded-full mx-auto mb-3">
+                          <CheckCircle className="w-7 h-7 text-green-400" />
+                        </div>
+                        <h3 className="text-xl font-bold text-[var(--color-text-primary)]">Generation Complete!</h3>
+                        <p className="text-sm text-[var(--color-text-secondary)] mt-1.5">
+                          All chapters written. Ready to assemble.
+                        </p>
+                      </div>
+                      <button onClick={handleStartAssembly} className="btn btn-primary w-full py-2.5">
+                        <Box className="w-5 h-5" />
+                        Assemble Final Book
+                      </button>
+                    </div>
+                  )}
+
+                {currentBook.status === 'assembling' && (
+                  <div className="bg-[var(--color-card)] backdrop-blur-xl border-2 border-[var(--color-border)] rounded-lg p-8 space-y-6 animate-assembling-glow text-center">
+                    <div className="relative w-14 h-14 mx-auto">
+                      <div className="absolute inset-0 bg-green-500/20 rounded-full animate-ping"></div>
+                      <div className="relative w-14 h-14 flex items-center justify-center bg-green-500/10 rounded-full">
+                        <Box className="w-7 h-7 text-green-400" />
+                      </div>
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-[var(--color-text-primary)]">Assembling Your Book</h3>
+                      <p className="text-gray-400 mb-6 max-w-sm mx-auto text-sm">
+                        Finalizing chapters and preparing for download...
+                      </p>
+                    </div>
+                    <div className="w-full bg-[var(--color-bg)] rounded-full h-2 overflow-hidden border border-[var(--color-border)]">
+                      <div className="h-full bg-gradient-to-r from-green-500 via-emerald-400 to-green-500 rounded-full animate-slide-in-out"></div>
+                    </div>
+                  </div>
                 )}
 
-              {currentBook.status === 'roadmap_completed' &&
-                !areAllModulesDone &&
-                !isGenerating &&
-                !isPaused &&
-                generationStatus?.status !== 'waiting_retry' && (
+                {currentBook.status === 'completed' && detailTab === 'overview' && (
                   <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-lg p-7">
-                    <div className="flex items-center gap-4 mb-5">
+                    <div className="flex items-center gap-3 mb-5">
                       <div className="w-10 h-10 flex items-center justify-center bg-gray-500/10 rounded-lg">
-                        <Play className="w-5 h-5 text-gray-400" />
+                        <Download className="w-5 h-5 text-gray-400" />
                       </div>
                       <div>
-                        <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">
-                          Ready to Generate Content
+                        <h3 className="text-lg font-bold text-[var(--color-text-primary)]">
+                          Download Your Book
                         </h3>
                         <p className="text-sm text-[var(--color-text-secondary)] mt-0.5">
-                          {completedModules.length > 0
-                            ? `Resume from ${completedModules.length} completed modules`
-                            : 'Start generating all modules'}
+                          Export as professional PDF or Markdown format
                         </p>
                       </div>
                     </div>
-                    <div className="bg-gray-500/5 border border-gray-500/20 rounded-lg p-4 mb-5">
-                      <div className="flex items-start gap-3">
-                        <Sparkles className="w-5 h-5 text-gray-400 shrink-0 mt-0.5" />
-                        <div className="text-sm text-[var(--color-text-secondary)]">
-                          <p className="font-medium text-[var(--color-text-primary)] mb-2">Smart Recovery Enabled</p>
-                          <ul className="space-y-1 text-xs text-[var(--color-text-secondary)]">
-                            <li>✓ Progress is saved automatically</li>
-                            <li>✓ Failed modules will be retried with smart options</li>
-                            <li>✓ You can safely close and resume later</li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-                    <button
-                      onClick={handleStartGeneration}
-                      disabled={localIsGenerating}
-                      className="btn btn-primary w-full py-2.5"
-                    >
-                      {localIsGenerating ? (
-                        <><Loader2 className="animate-spin" /> Generating...</>
-                      ) : (
-                        <><Play className="w-4 h-4" />
-                          {completedModules.length > 0
-                            ? 'Resume Generation'
-                            : 'Generate All Modules'}
-                        </>
-                      )}
-                    </button>
-                  </div>
-                )}
 
-              {areAllModulesDone &&
-                currentBook.status !== 'completed' &&
-                !localIsGenerating &&
-                !isGenerating &&
-                !isPaused && (
-                  <div className="bg-[var(--color-card)] border border-green-500/30 rounded-lg p-7 space-y-5 animate-fade-in-up">
-                    <div className="text-center">
-                      <div className="w-12 h-12 flex items-center justify-center bg-green-500/10 rounded-full mx-auto mb-3">
-                        <CheckCircle className="w-7 h-7 text-green-400" />
-                      </div>
-                      <h3 className="text-xl font-bold text-[var(--color-text-primary)]">Generation Complete!</h3>
-                      <p className="text-sm text-[var(--color-text-secondary)] mt-1.5">
-                        All chapters written. Ready to assemble.
-                      </p>
-                    </div>
-                    <button onClick={handleStartAssembly} className="btn btn-primary w-full py-2.5">
-                      <Box className="w-5 h-5" />
-                      Assemble Final Book
-                    </button>
-                  </div>
-                )}
-
-              {currentBook.status === 'assembling' && (
-                <div className="bg-[var(--color-card)] backdrop-blur-xl border-2 border-[var(--color-border)] rounded-lg p-8 space-y-6 animate-assembling-glow text-center">
-                  <div className="relative w-14 h-14 mx-auto">
-                    <div className="absolute inset-0 bg-green-500/20 rounded-full animate-ping"></div>
-                    <div className="relative w-14 h-14 flex items-center justify-center bg-green-500/10 rounded-full">
-                      <Box className="w-7 h-7 text-green-400" />
-                    </div>
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-[var(--color-text-primary)]">Assembling Your Book</h3>
-                    <p className="text-gray-400 mb-6 max-w-sm mx-auto text-sm">
-                      Finalizing chapters and preparing for download...
-                    </p>
-                  </div>
-                  <div className="w-full bg-[var(--color-bg)] rounded-full h-2 overflow-hidden border border-[var(--color-border)]">
-                    <div className="h-full bg-gradient-to-r from-green-500 via-emerald-400 to-green-500 rounded-full animate-slide-in-out"></div>
-                  </div>
-                </div>
-              )}
-
-              {currentBook.status === 'completed' && detailTab === 'overview' && (
-                <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-lg p-7">
-                  <div className="flex items-center gap-3 mb-5">
-                    <div className="w-10 h-10 flex items-center justify-center bg-gray-500/10 rounded-lg">
-                      <Download className="w-5 h-5 text-gray-400" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-bold text-[var(--color-text-primary)]">
-                        Download Your Book
-                      </h3>
-                      <p className="text-sm text-[var(--color-text-secondary)] mt-0.5">
-                        Export as professional PDF or Markdown format
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <button
-                      onClick={handleDownloadPdf}
-                      disabled={pdfProgress > 0 && pdfProgress < 100}
-                      className="flex items-center justify-between p-4 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg hover:border-gray-400 transition-all group disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 flex items-center justify-center bg-gray-500/10 rounded-lg">
-                          <Download className="w-5 h-5 text-gray-400" />
-                        </div>
-                        <div className="text-left">
-                          <div className="font-semibold group-hover:text-gray-400 transition-colors text-[var(--color-text-primary)]">
-                            Professional PDF
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <button
+                        onClick={handleDownloadPdf}
+                        disabled={pdfProgress > 0 && pdfProgress < 100}
+                        className="flex items-center justify-between p-4 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg hover:border-gray-400 transition-all group disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 flex items-center justify-center bg-gray-500/10 rounded-lg">
+                            <Download className="w-5 h-5 text-gray-400" />
                           </div>
-                          <div className="text-sm text-[var(--color-text-secondary)]">
-                            {pdfProgress > 0 && pdfProgress < 100
-                              ? `Generating... ${pdfProgress}% `
-                              : 'Print-ready document'}
+                          <div className="text-left">
+                            <div className="font-semibold group-hover:text-gray-400 transition-colors text-[var(--color-text-primary)]">
+                              Professional PDF
+                            </div>
+                            <div className="text-sm text-[var(--color-text-secondary)]">
+                              {pdfProgress > 0 && pdfProgress < 100
+                                ? `Generating... ${pdfProgress}% `
+                                : 'Print-ready document'}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </button>
+                      </button>
 
-                    <button
-                      onClick={() => {
-                        if (currentBook.finalBook) {
-                          const blob = new Blob([currentBook.finalBook], { type: 'text/markdown;charset=utf-8' });
-                          const url = URL.createObjectURL(blob);
-                          const a = document.createElement('a');
-                          a.href = url;
-                          a.download = `${currentBook.title.replace(/[^a-z0-9\s-]/gi, '').replace(/\s+/g, '_').toLowerCase()} _book.md`;
-                          document.body.appendChild(a);
-                          a.click();
-                          document.body.removeChild(a);
-                          URL.revokeObjectURL(url);
-                        }
-                      }}
-                      className="flex items-center justify-between p-4 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg hover:border-green-500 transition-all group"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 flex items-center justify-center bg-green-500/10 rounded-lg">
-                          <Download className="w-5 h-5 text-green-500" />
-                        </div>
-                        <div className="text-left">
-                          <div className="font-semibold group-hover:text-green-400 transition-colors text-[var(--color-text-primary)]">
-                            Markdown File
+                      <button
+                        onClick={() => {
+                          if (currentBook.finalBook) {
+                            const blob = new Blob([currentBook.finalBook], { type: 'text/markdown;charset=utf-8' });
+                            const url = URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = `${currentBook.title.replace(/[^a-z0-9\s-]/gi, '').replace(/\s+/g, '_').toLowerCase()} _book.md`;
+                            document.body.appendChild(a);
+                            a.click();
+                            document.body.removeChild(a);
+                            URL.revokeObjectURL(url);
+                          }
+                        }}
+                        className="flex items-center justify-between p-4 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg hover:border-green-500 transition-all group"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 flex items-center justify-center bg-green-500/10 rounded-lg">
+                            <Download className="w-5 h-5 text-green-500" />
                           </div>
-                          <div className="text-sm text-[var(--color-text-secondary)]">
-                            Easy to edit & version
+                          <div className="text-left">
+                            <div className="font-semibold group-hover:text-green-400 transition-colors text-[var(--color-text-primary)]">
+                              Markdown File
+                            </div>
+                            <div className="text-sm text-[var(--color-text-secondary)]">
+                              Easy to edit & version
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </button>
-                  </div>
-
-                  {pdfProgress > 0 && pdfProgress < 100 && (
-                    <div className="mt-4">
-                      <div className="w-full bg-[var(--color-bg)] rounded-full h-2 overflow-hidden border border-[var(--color-border)]">
-                        <div
-                          className="h-full bg-gradient-to-r from-orange-500 via-purple-500 to-pink-500 rounded-full transition-all duration-300"
-                          style={{ width: `${pdfProgress}% ` }}
-                        />
-                      </div>
-                      <p className="text-xs text-[var(--color-text-secondary)] mt-2 text-center">
-                        Generating PDF... {pdfProgress}%
-                      </p>
+                      </button>
                     </div>
-                  )}
-                </div>
-              )}
 
-              {currentBook.roadmap && (
-                <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-lg p-7">
-                  <div className="flex items-center gap-3 mb-5">
-                    <ListChecks className="w-5 h-5 text-purple-400" />
-                    <h3 className="text-lg font-bold text-[var(--color-text-primary)]">Learning Roadmap</h3>
-                  </div>
-                  <div className="space-y-3">
-                    {currentBook.roadmap.modules.map((module, index) => {
-                      const completedModule = currentBook.modules.find(
-                        (m) => m.roadmapModuleId === module.id
-                      );
-                      const isActive =
-                        generationStatus?.currentModule?.id === module.id;
-                      return (
-                        <div
-                          key={module.id}
-                          className={`flex items-center gap-3.5 p-3.5 rounded-lg border transition-all ${isActive
-                            ? 'bg-gray-500/10 border-gray-500/40'
-                            : completedModule?.status === 'completed'
-                              ? 'bg-emerald-500/10 border-emerald-500/30'
-                              : completedModule?.status === 'error'
-                                ? 'border-red-500/30 bg-red-500/5'
-                                : 'bg-[var(--color-bg)] border-[var(--color-border)]'
-                            }`}
-                        >
+                    {pdfProgress > 0 && pdfProgress < 100 && (
+                      <div className="mt-4">
+                        <div className="w-full bg-[var(--color-bg)] rounded-full h-2 overflow-hidden border border-[var(--color-border)]">
                           <div
-                            className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 transition-all ${completedModule?.status === 'completed'
-                              ? 'bg-emerald-500 text-white'
-                              : completedModule?.status === 'error'
-                                ? 'bg-red-500 text-white'
-                                : isActive
-                                  ? 'bg-gray-600 text-white animate-pulse'
-                                  : 'bg-[var(--color-card)] text-[var(--color-text-secondary)]'
+                            className="h-full bg-gradient-to-r from-orange-500 via-purple-500 to-pink-500 rounded-full transition-all duration-300"
+                            style={{ width: `${pdfProgress}% ` }}
+                          />
+                        </div>
+                        <p className="text-xs text-[var(--color-text-secondary)] mt-2 text-center">
+                          Generating PDF... {pdfProgress}%
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {currentBook.roadmap && (
+                  <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-lg p-7">
+                    <div className="flex items-center gap-3 mb-5">
+                      <ListChecks className="w-5 h-5 text-purple-400" />
+                      <h3 className="text-lg font-bold text-[var(--color-text-primary)]">Learning Roadmap</h3>
+                    </div>
+                    <div className="space-y-3">
+                      {currentBook.roadmap.modules.map((module, index) => {
+                        const completedModule = currentBook.modules.find(
+                          (m) => m.roadmapModuleId === module.id
+                        );
+                        const isActive =
+                          generationStatus?.currentModule?.id === module.id;
+                        return (
+                          <div
+                            key={module.id}
+                            className={`flex items-center gap-3.5 p-3.5 rounded-lg border transition-all ${isActive
+                              ? 'bg-gray-500/10 border-gray-500/40'
+                              : completedModule?.status === 'completed'
+                                ? 'bg-emerald-500/10 border-emerald-500/30'
+                                : completedModule?.status === 'error'
+                                  ? 'border-red-500/30 bg-red-500/5'
+                                  : 'bg-[var(--color-bg)] border-[var(--color-border)]'
                               }`}
                           >
-                            {completedModule?.status === 'completed' ? (
-                              <Check size={14} />
-                            ) : completedModule?.status === 'error' ? (
-                              <X size={14} />
-                            ) : isActive ? (
-                              <Loader2 size={14} className="animate-spin" />
-                            ) : (
-                              index + 1
-                            )}
+                            <div
+                              className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 transition-all ${completedModule?.status === 'completed'
+                                ? 'bg-emerald-500 text-white'
+                                : completedModule?.status === 'error'
+                                  ? 'bg-red-500 text-white'
+                                  : isActive
+                                    ? 'bg-gray-600 text-white animate-pulse'
+                                    : 'bg-[var(--color-card)] text-[var(--color-text-secondary)]'
+                                }`}
+                            >
+                              {completedModule?.status === 'completed' ? (
+                                <Check size={14} />
+                              ) : completedModule?.status === 'error' ? (
+                                <X size={14} />
+                              ) : isActive ? (
+                                <Loader2 size={14} className="animate-spin" />
+                              ) : (
+                                index + 1
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <h4 className="font-medium text-base text-[var(--color-text-primary)]">
+                                {module.title}
+                              </h4>
+                              <p className="text-sm text-[var(--color-text-secondary)] mt-0.5">{module.estimatedTime}</p>
+                            </div>
                           </div>
-                          <div className="flex-1 min-w-0">
-                            <h4 className="font-medium text-base text-[var(--color-text-primary)]">
-                              {module.title}
-                            </h4>
-                            <p className="text-sm text-[var(--color-text-secondary)] mt-0.5">{module.estimatedTime}</p>
-                          </div>
-                        </div>
-                      );
-                    })}
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
-              )}
-            </>
-          )}
+                )}
+              </>
+            )}
+          </div>
         </div>
       </div>
     );
