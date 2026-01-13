@@ -81,7 +81,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
     return (
         <>
             {/* Exact same style as landing page header */}
-            <header className={`fixed top-0 left-0 right-0 z-50 px-6 md:px-12 py-4 ${theme === 'light' ? 'bg-gradient-to-b from-white via-white/95 to-transparent' : 'bg-gradient-to-b from-[#0a0a0f] via-[#0a0a0f]/95 to-transparent'}`}>
+            <header className={`fixed top-0 left-0 right-0 z-50 px-6 md:px-12 py-4 ${theme === 'light' ? 'bg-gradient-to-b from-white via-white/95 to-transparent' : 'bg-gradient-to-b from-black via-black/95 to-transparent'}`}>
                 <div className="flex items-center justify-between">
                     {/* Brand / Logo */}
                     <div className="flex items-center gap-2 select-none">
