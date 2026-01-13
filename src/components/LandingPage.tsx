@@ -247,32 +247,31 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin, onGetStarted, onSubs
             <section className="pt-24 min-h-[70vh] flex items-center px-6 md:px-12 pb-8">
                 <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-10 items-center w-full">
                     <div>
-                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-xs font-medium tracking-wider uppercase mb-6">
-                            <Sparkles size={12} />
-                            <span>AI-Powered Generation</span>
+                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-sm mb-5">
+                            <Star size={14} />
+                            <span>AI-Powered Book Generation</span>
                         </div>
-                        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 leading-[1.1] tracking-tight">
-                            <span className="block text-white/90">Create</span>
-                            <span className="block bg-gradient-to-r from-orange-400 via-amber-400 to-orange-500 bg-clip-text text-transparent">Knowledge.</span>
-                            <span className="block text-white/50 text-3xl sm:text-4xl lg:text-5xl mt-2 font-medium">Not Documents.</span>
+                        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+                            Transform Ideas Into
+                            <span className="block text-orange-400">Complete Books</span>
                         </h1>
-                        <p className="text-base text-gray-500 mb-8 max-w-md leading-relaxed">
-                            Transform any topic into structured, comprehensive books. <span className="text-gray-400">Powered by your API keys.</span>
+                        <p className="text-lg text-gray-400 mb-6 max-w-lg">
+                            Generate comprehensive, well-structured books on any topic using AI. Bring your own API keys and create unlimited knowledge.
                         </p>
                         <div className="flex flex-wrap gap-4">
-                            <button onClick={onGetStarted} className="group bg-white text-black px-6 py-3 font-semibold rounded-lg transition-all hover:bg-orange-500 hover:text-white flex items-center gap-2">
-                                Start Building <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                            <button onClick={onGetStarted} className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 font-semibold rounded-lg transition-colors flex items-center gap-2">
+                                Start Creating Free <ArrowRight size={18} />
                             </button>
-                            <button onClick={() => navigateTo('collection')} className="text-gray-500 hover:text-white px-6 py-3 font-medium transition-colors border border-white/10 rounded-lg hover:border-white/20 hover:bg-white/5">
-                                View Examples
+                            <button onClick={() => navigateTo('features')} className="text-gray-400 hover:text-white px-6 py-3 font-medium transition-colors border border-white/10 rounded-lg hover:border-white/20">
+                                Learn More
                             </button>
                         </div>
-                        <div className="mt-12 flex items-center gap-8">
-                            <div><div className="text-2xl font-bold text-white">5+</div><div className="text-xs text-gray-600 uppercase tracking-wider">Models</div></div>
-                            <div className="w-px h-10 bg-white/10" />
-                            <div><div className="text-2xl font-bold text-white">BYOK</div><div className="text-xs text-gray-600 uppercase tracking-wider">Your Keys</div></div>
-                            <div className="w-px h-10 bg-white/10" />
-                            <div><div className="text-2xl font-bold text-white">∞</div><div className="text-xs text-gray-600 uppercase tracking-wider">Possibilities</div></div>
+                        <div className="mt-10 flex items-center gap-6">
+                            <div><div className="text-xl font-bold">5+</div><div className="text-xs text-gray-500">AI Models</div></div>
+                            <div className="w-px h-8 bg-white/10" />
+                            <div><div className="text-xl font-bold">100%</div><div className="text-xs text-gray-500">Privacy</div></div>
+                            <div className="w-px h-8 bg-white/10" />
+                            <div><div className="text-xl font-bold">Free</div><div className="text-xs text-gray-500">To Start</div></div>
                         </div>
                     </div>
                     <div className="hidden lg:block">

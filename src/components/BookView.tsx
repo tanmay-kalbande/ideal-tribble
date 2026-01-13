@@ -1064,9 +1064,10 @@ const HomeView = ({
   <div className="flex-1 flex flex-col items-center justify-start p-6 md:p-8 pt-16 text-center relative overflow-y-auto">
     <div className="relative z-10 w-full max-w-xl mx-auto my-auto animate-fade-in-up">
       {/* Hero with Landing Page Style */}
-      <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-center">
-        Transform Ideas Into
-        <span className="block text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-yellow-400">Complete Books</span>
+      <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 leading-[1.1] tracking-tight text-center">
+        <span className="block text-[var(--color-text-primary)]/90">Create</span>
+        <span className="block text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-amber-400 to-orange-500">Knowledge.</span>
+        <span className="block text-[var(--color-text-secondary)] text-3xl sm:text-4xl lg:text-5xl mt-2 font-medium">Not Documents.</span>
       </h1>
 
 
