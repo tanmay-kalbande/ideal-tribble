@@ -36,8 +36,8 @@
 
   /* DARK THEME (DEFAULT) - Matching Landing Page Exactly */
   :root {
-    --color-bg: #0a0a0f;
-    --color-sidebar: #0a0a0f;
+    --color-bg: #000000;
+    --color-sidebar: #000000;
     --color-card: rgba(255, 255, 255, 0.02);
     --color-border: rgba(255, 255, 255, 0.1);
     --color-text-primary: #FFFFFF;

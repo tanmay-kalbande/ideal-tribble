@@ -155,7 +155,7 @@ interface ReadingSettings {
 // ============================================================================
 const THEMES = {
   dark: {
-    bg: '#000000',
+    bg: '#0F0F0F',
     contentBg: '#1A1A1A',
     text: '#E5E5E5',
     secondary: '#A0A0A0',
@@ -619,9 +619,9 @@ const CodeBlock = React.memo(({ children, className, theme, readingTheme }: any)
 
   const themeStyles = {
     dark: {
-      containerBg: '#121212',
-      headerBg: 'rgba(30, 30, 30, 0.7)',
-      headerText: '#9CA3AF',
+      containerBg: '#0D1117',
+      headerBg: 'rgba(22, 27, 34, 0.7)',
+      headerText: '#8B949E',
       buttonHover: 'hover:bg-gray-700',
     },
     sepia: {
@@ -1267,6 +1267,7 @@ const BookListGrid = ({
   onUpdateBookStatus,
   setView,
   setShowListInMain,
+  theme,
 }: {
   books: BookProject[];
   onSelectBook: (id: string) => void;
@@ -1274,6 +1275,7 @@ const BookListGrid = ({
   onUpdateBookStatus: (id: string, status: BookProject['status']) => void;
   setView: (view: AppView) => void;
   setShowListInMain: (show: boolean) => void;
+  theme: 'light' | 'dark';
 }) => {
   const [hoveredBookId, setHoveredBookId] = useState<string | null>(null);
   const [statusDropdownOpen, setStatusDropdownOpen] = useState<string | null>(null);
@@ -1346,12 +1348,12 @@ const BookListGrid = ({
   }, [books, searchQuery, statusFilter]);
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen" style={{ background: theme === 'dark' ? '#000000' : '#fafafa', fontFamily: 'Rubik, sans-serif' }}>
       <div className="w-full max-w-[1400px] mx-auto px-6 py-10 animate-fade-in-up">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-white tracking-tight" style={{ fontFamily: 'Rubik, sans-serif' }}>My Library</h1>
+            <h1 className="text-3xl font-bold text-[var(--color-text-primary)] tracking-tight">My Library</h1>
             <p className="text-gray-400 mt-1 text-sm">{books.length} {books.length === 1 ? 'project' : 'projects'}</p>
           </div>
           <div className="flex items-center gap-3">
@@ -1867,6 +1869,7 @@ export function BookView({
           onUpdateBookStatus={onUpdateBookStatus}
           setView={setView}
           setShowListInMain={setShowListInMain}
+          theme={theme}
         />
       );
 
