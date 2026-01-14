@@ -1471,7 +1471,7 @@ const BookListGrid = ({
                     onMouseEnter={() => setHoveredBookId(book.id)}
                     onMouseLeave={() => setHoveredBookId(null)}
                     onClick={() => onSelectBook(book.id)}
-                    className="group relative bg-white dark:bg-gradient-to-br dark:from-white/[0.03] dark:to-white/[0.01] rounded-xl border border-gray-200 dark:border-white/5 p-5 transition-all duration-200 cursor-pointer hover:border-indigo-500/20 hover:shadow-lg hover:shadow-indigo-500/5 shadow-sm"
+                    className="group relative bg-white dark:bg-zinc-900 rounded-xl border border-gray-200 dark:border-white/5 p-5 transition-all duration-200 cursor-pointer hover:border-indigo-500/20 hover:shadow-lg hover:shadow-indigo-500/5 shadow-sm"
                   >
                     {/* Delete button - appears on hover */}
                     <button

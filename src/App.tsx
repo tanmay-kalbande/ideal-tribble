@@ -690,8 +690,8 @@ function App() {
         userProfile={profile}
         onSignOut={signOut}
         showModelSelector={!showListInMain && !currentBookId && !isReadingMode}
-        centerContent={showListInMain ? (
-          <h1 className="text-sm font-semibold text-[var(--color-text-primary)] tracking-tight opacity-80">My Books</h1>
+        centerContent={showListInMain && !currentBookId ? (
+          <h1 className="text-xl font-bold text-[var(--color-text-primary)] tracking-tight">My Books</h1>
         ) : null}
       />
 
