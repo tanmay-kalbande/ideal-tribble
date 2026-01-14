@@ -1555,6 +1555,7 @@ export function BookView({
   theme,
   onOpenSettings, // ✅ Destructure prop
   showAlertDialog,
+  onReadingModeChange
 }: BookViewProps) {
   const [detailTab, setDetailTab] = useState<'overview' | 'analytics' | 'read'>('overview');
   const [localIsGenerating, setLocalIsGenerating] = useState(false);
@@ -1642,6 +1643,13 @@ export function BookView({
       setDetailTab('overview');
     }
   }, [currentBook]);
+
+  // Notify parent about reading mode state
+  useEffect(() => {
+    if (onReadingModeChange) {
+      onReadingModeChange(detailTab === 'read' && view === 'detail' && !!currentBook);
+    }
+  }, [detailTab, view, currentBook, onReadingModeChange]);
 
   useEffect(() => {
     return () => {

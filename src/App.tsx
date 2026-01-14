@@ -50,6 +50,7 @@ function App() {
   const [showModelSwitch, setShowModelSwitch] = useState(false);
   const [modelSwitchOptions, setModelSwitchOptions] = useState<Array<{ provider: ModelProvider; model: string; name: string }>>([]);
   const [theme, setTheme] = useState<Theme>(() => (localStorage.getItem('pustakam-theme') as Theme) || 'dark');
+  const [isReadingMode, setIsReadingMode] = useState(false);
 
   // Auth & Credit Modal State
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -674,7 +675,8 @@ function App() {
         <div className="sun-background" />
       )}
 
-      <TopHeader
+      {/* Hide TopHeader in Library view ("My Books" section) */}
+      {!showListInMain && <TopHeader
         settings={settings}
         books={books}
         currentBookId={currentBookId}
@@ -694,7 +696,8 @@ function App() {
         user={user}
         userProfile={profile}
         onSignOut={signOut}
-      />
+        showModelSelector={!isReadingMode}
+      />}
 
       <main id="main-scroll-area" className="main-content">
         {showOfflineMessage && (
@@ -733,6 +736,7 @@ function App() {
           theme={theme}
           onOpenSettings={() => setSettingsOpen(true)}
           showAlertDialog={showAlertDialog}
+          onReadingModeChange={setIsReadingMode}
         />
       </main>
 

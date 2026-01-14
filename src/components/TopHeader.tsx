@@ -21,6 +21,7 @@ interface TopHeaderProps {
     user: SupabaseUser | null;
     userProfile: any | null;
     onSignOut: () => void;
+    showModelSelector?: boolean;
 }
 
 // All supported models configuration
@@ -53,7 +54,8 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
     isAuthenticated,
     user,
     userProfile,
-    onSignOut
+    onSignOut,
+    showModelSelector = true
 }) => {
     const [showUserMenu, setShowUserMenu] = useState(false);
     const [showModelMenu, setShowModelMenu] = useState(false);
@@ -104,96 +106,97 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
 
                     {/* Right Controls */}
                     <div className="flex items-center gap-3">
-
                         {/* Grok-style Model Selector */}
-                        <div className="relative hidden md:block">
-                            <button
-                                onClick={() => setShowModelMenu(!showModelMenu)}
-                                className={`flex items-center gap-2 pl-4 pr-3 py-2 rounded-full transition-all text-sm font-medium
+                        {showModelSelector && (
+                            <div className="relative hidden md:block">
+                                <button
+                                    onClick={() => setShowModelMenu(!showModelMenu)}
+                                    className={`flex items-center gap-2 pl-4 pr-3 py-2 rounded-full transition-all text-sm font-medium
                             ${theme === 'light'
-                                        ? 'bg-gray-100 hover:bg-gray-200 text-gray-900'
-                                        : 'bg-[#1a1a1a] hover:bg-[#252525] text-gray-200'}
+                                            ? 'bg-gray-100 hover:bg-gray-200 text-gray-900'
+                                            : 'bg-[#1a1a1a] hover:bg-[#252525] text-gray-200'}
                         `}
-                            >
-                                <span>{currentModelName}</span>
-                                <ChevronDown size={14} className={`opacity-50 transition-transform ${showModelMenu ? 'rotate-180' : ''}`} />
-                            </button>
+                                >
+                                    <span>{currentModelName}</span>
+                                    <ChevronDown size={14} className={`opacity-50 transition-transform ${showModelMenu ? 'rotate-180' : ''}`} />
+                                </button>
 
-                            {/* Model Dropdown */}
-                            {showModelMenu && (
-                                <>
-                                    <div className="fixed inset-0 z-40" onClick={() => setShowModelMenu(false)} />
-                                    <div
-                                        className={`absolute top-full right-0 mt-2 w-64 rounded-xl shadow-2xl overflow-hidden z-50
+                                {/* Model Dropdown */}
+                                {showModelMenu && (
+                                    <>
+                                        <div className="fixed inset-0 z-40" onClick={() => setShowModelMenu(false)} />
+                                        <div
+                                            className={`absolute top-full right-0 mt-2 w-64 rounded-xl shadow-2xl overflow-hidden z-50
                                     ${theme === 'light'
-                                                ? 'bg-white border border-gray-200'
-                                                : 'bg-[#1a1a1a] border border-white/10'}`}
-                                        style={{
-                                            animation: 'dropdownExpand 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
-                                            transformOrigin: 'top right'
-                                        }}
-                                    >
-                                        <div className={`px-4 py-2 border-b ${theme === 'light' ? 'border-gray-100' : 'border-white/5'}`}>
-                                            <p className={`text-xs font-medium uppercase tracking-wider ${theme === 'light' ? 'text-gray-500' : 'text-gray-500'}`}>Model</p>
-                                        </div>
-                                        <div className="max-h-[300px] overflow-y-auto py-1">
-                                            {availableModels.length === 0 ? (
-                                                <div className={`px-4 py-8 text-center ${theme === 'light' ? 'text-gray-500' : 'text-gray-400'}`}>
-                                                    <p className="text-sm mb-3">No API keys configured</p>
-                                                    <button
-                                                        onClick={() => { onOpenSettings(); setShowModelMenu(false); }}
-                                                        className="text-xs font-semibold px-3 py-1.5 rounded-full bg-orange-500/10 text-orange-500 hover:bg-orange-500/20 transition-colors"
-                                                    >
-                                                        Configure Keys
-                                                    </button>
-                                                </div>
-                                            ) : (
-                                                availableModels.map((option) => {
-                                                    const isSelected = settings.selectedModel === option.model;
-                                                    return (
+                                                    ? 'bg-white border border-gray-200'
+                                                    : 'bg-[#1a1a1a] border border-white/10'}`}
+                                            style={{
+                                                animation: 'dropdownExpand 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+                                                transformOrigin: 'top right'
+                                            }}
+                                        >
+                                            <div className={`px-4 py-2 border-b ${theme === 'light' ? 'border-gray-100' : 'border-white/5'}`}>
+                                                <p className={`text-xs font-medium uppercase tracking-wider ${theme === 'light' ? 'text-gray-500' : 'text-gray-500'}`}>Model</p>
+                                            </div>
+                                            <div className="max-h-[300px] overflow-y-auto py-1">
+                                                {availableModels.length === 0 ? (
+                                                    <div className={`px-4 py-8 text-center ${theme === 'light' ? 'text-gray-500' : 'text-gray-400'}`}>
+                                                        <p className="text-sm mb-3">No API keys configured</p>
                                                         <button
-                                                            key={`${option.provider}-${option.model}`}
-                                                            onClick={() => {
-                                                                onModelChange(option.model, option.provider);
-                                                                setShowModelMenu(false);
-                                                            }}
-                                                            className={`w-full text-left px-4 py-2.5 text-sm flex items-center justify-between transition-colors
-                                                        ${isSelected
-                                                                    ? (theme === 'light' ? 'bg-gray-50 text-gray-900' : 'bg-white/5 text-white')
-                                                                    : (theme === 'light' ? 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' : 'text-gray-400 hover:bg-white/5 hover:text-gray-200')}
-                                                    `}
+                                                            onClick={() => { onOpenSettings(); setShowModelMenu(false); }}
+                                                            className="text-xs font-semibold px-3 py-1.5 rounded-full bg-orange-500/10 text-orange-500 hover:bg-orange-500/20 transition-colors"
                                                         >
-                                                            <div>
-                                                                <div className="font-medium">{option.name}</div>
-                                                                <div className="text-[10px] opacity-50 uppercase tracking-wider mt-0.5">
-                                                                    {option.provider}
-                                                                </div>
-                                                            </div>
-                                                            {isSelected && (
-                                                                <div className="w-1.5 h-1.5 rounded-full bg-orange-500" />
-                                                            )}
+                                                            Configure Keys
                                                         </button>
-                                                    );
-                                                })
-                                            )}
-                                        </div>
-                                        <div className={`border-t ${theme === 'light' ? 'border-gray-100' : 'border-white/5'} p-2`}>
-                                            <button
-                                                onClick={() => {
-                                                    onOpenSettings();
-                                                    setShowModelMenu(false);
-                                                }}
-                                                className={`w-full text-center px-3 py-2 text-xs font-medium rounded-lg transition-colors
+                                                    </div>
+                                                ) : (
+                                                    availableModels.map((option) => {
+                                                        const isSelected = settings.selectedModel === option.model;
+                                                        return (
+                                                            <button
+                                                                key={`${option.provider}-${option.model}`}
+                                                                onClick={() => {
+                                                                    onModelChange(option.model, option.provider);
+                                                                    setShowModelMenu(false);
+                                                                }}
+                                                                className={`w-full text-left px-4 py-2.5 text-sm flex items-center justify-between transition-colors
+                                                        ${isSelected
+                                                                        ? (theme === 'light' ? 'bg-gray-50 text-gray-900' : 'bg-white/5 text-white')
+                                                                        : (theme === 'light' ? 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' : 'text-gray-400 hover:bg-white/5 hover:text-gray-200')}
+                                                    `}
+                                                            >
+                                                                <div>
+                                                                    <div className="font-medium">{option.name}</div>
+                                                                    <div className="text-[10px] opacity-50 uppercase tracking-wider mt-0.5">
+                                                                        {option.provider}
+                                                                    </div>
+                                                                </div>
+                                                                {isSelected && (
+                                                                    <div className="w-1.5 h-1.5 rounded-full bg-orange-500" />
+                                                                )}
+                                                            </button>
+                                                        );
+                                                    })
+                                                )}
+                                            </div>
+                                            <div className={`border-t ${theme === 'light' ? 'border-gray-100' : 'border-white/5'} p-2`}>
+                                                <button
+                                                    onClick={() => {
+                                                        onOpenSettings();
+                                                        setShowModelMenu(false);
+                                                    }}
+                                                    className={`w-full text-center px-3 py-2 text-xs font-medium rounded-lg transition-colors
                                             ${theme === 'light' ? 'text-gray-500 hover:bg-gray-100 hover:text-gray-900' : 'text-gray-400 hover:bg-white/5 hover:text-white'}
                                         `}
-                                            >
-                                                Manage Models
-                                            </button>
+                                                >
+                                                    Manage Models
+                                                </button>
+                                            </div>
                                         </div>
-                                    </div>
-                                </>
-                            )}
-                        </div>
+                                    </>
+                                )}
+                            </div>
+                        )}
 
                         {/* Theme Toggle */}
                         <button
