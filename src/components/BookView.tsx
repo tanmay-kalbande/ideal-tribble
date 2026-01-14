@@ -212,18 +212,20 @@ const GradientProgressBar = ({ progress = 0, active = true }) => (
   </div>
 );
 
-// Modern Writing Loader Component - Premium glowing orb animation
-const WritingLoader = ({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) => {
-  const sizeClasses = {
-    sm: { container: 'w-4 h-4', core: 'inset-[4px]' },
-    md: { container: 'w-6 h-6', core: 'inset-[6px]' },
-    lg: { container: 'w-8 h-8', core: 'inset-[8px]' },
-  };
-
+// Grok-Style Dot Grid Loader - 3x3 spiral animation
+const GrokLoader = ({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) => {
+  const sizeClass = size === 'sm' ? 'grok-loader-sm' : 'grok-loader';
   return (
-    <div className={`glow-orb-loader ${sizeClasses[size].container}`}>
-      <div className="glow-orb-loader-ring" />
-      <div className={`glow-orb-loader-core ${sizeClasses[size].core}`} />
+    <div className={sizeClass}>
+      <div className="dot" />
+      <div className="dot" />
+      <div className="dot" />
+      <div className="dot" />
+      <div className="dot" />
+      <div className="dot" />
+      <div className="dot" />
+      <div className="dot" />
+      <div className="dot" />
     </div>
   );
 };
@@ -237,10 +239,17 @@ const WritingDots = () => (
   </span>
 );
 
-// Modern status loader for sidebar/list view
+// Modern status loader for sidebar/list view - Grok style 3x3 dots
 const StatusLoader = () => (
   <div className="status-loader">
-    <div className="status-loader-ring" />
+    <div className="status-loader-dot" />
+    <div className="status-loader-dot" />
+    <div className="status-loader-dot" />
+    <div className="status-loader-dot" />
+    <div className="status-loader-dot" />
+    <div className="status-loader-dot" />
+    <div className="status-loader-dot" />
+    <div className="status-loader-dot" />
     <div className="status-loader-dot" />
   </div>
 );

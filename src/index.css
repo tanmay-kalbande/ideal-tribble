@@ -368,184 +368,285 @@
   }
 
   /* ==========================================================================
-     Modern Writing/Loading Animation Styles
+     Modern Writing/Loading Animation Styles - Grok-Style Dot Grid
      ========================================================================== */
 
-  /* Premium Gradient Ring Spinner */
-  @keyframes gradient-spin {
-    0% {
-      transform: rotate(0deg);
-    }
-
-    100% {
-      transform: rotate(360deg);
-    }
-  }
-
-  @keyframes gradient-pulse {
+  /* Grok-style spiral animation - 9 dots fading in sequence */
+  @keyframes dot-fade-1 {
 
     0%,
     100% {
-      opacity: 0.6;
-      transform: scale(1);
+      opacity: 0.2;
     }
 
-    50% {
-      opacity: 1;
-      transform: scale(1.05);
-    }
-  }
-
-  @keyframes orb-glow {
-
-    0%,
-    100% {
-      box-shadow:
-        0 0 10px rgba(249, 115, 22, 0.4),
-        0 0 20px rgba(249, 115, 22, 0.2),
-        0 0 30px rgba(249, 115, 22, 0.1);
-    }
-
-    50% {
-      box-shadow:
-        0 0 15px rgba(249, 115, 22, 0.6),
-        0 0 30px rgba(249, 115, 22, 0.4),
-        0 0 45px rgba(249, 115, 22, 0.2);
-    }
-  }
-
-  @keyframes writing-dots {
-
-    0%,
-    20% {
-      opacity: 0;
-    }
-
-    40% {
+    11%,
+    22% {
       opacity: 1;
     }
+  }
 
+  @keyframes dot-fade-2 {
+
+    0%,
     100% {
-      opacity: 0;
+      opacity: 0.2;
+    }
+
+    22%,
+    33% {
+      opacity: 1;
     }
   }
 
-  @keyframes flow-gradient {
-    0% {
-      background-position: 0% 50%;
-    }
+  @keyframes dot-fade-3 {
 
-    50% {
-      background-position: 100% 50%;
-    }
-
+    0%,
     100% {
-      background-position: 0% 50%;
+      opacity: 0.2;
+    }
+
+    33%,
+    44% {
+      opacity: 1;
     }
   }
 
-  @keyframes text-shimmer {
-    0% {
-      background-position: -200% center;
-    }
+  @keyframes dot-fade-4 {
 
+    0%,
     100% {
-      background-position: 200% center;
+      opacity: 0.2;
+    }
+
+    44%,
+    55% {
+      opacity: 1;
     }
   }
 
-  /* Modern Writing Indicator Component */
-  .writing-indicator {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+  @keyframes dot-fade-5 {
+
+    0%,
+    100% {
+      opacity: 0.2;
+    }
+
+    55%,
+    66% {
+      opacity: 1;
+    }
   }
 
-  .writing-orb {
-    position: relative;
-    width: 20px;
-    height: 20px;
+  @keyframes dot-fade-6 {
+
+    0%,
+    100% {
+      opacity: 0.2;
+    }
+
+    66%,
+    77% {
+      opacity: 1;
+    }
   }
 
-  .writing-orb::before {
-    content: '';
-    position: absolute;
-    inset: 0;
+  @keyframes dot-fade-7 {
+
+    0%,
+    100% {
+      opacity: 0.2;
+    }
+
+    77%,
+    88% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes dot-fade-8 {
+
+    0%,
+    100% {
+      opacity: 0.2;
+    }
+
+    88%,
+    100% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes dot-fade-9 {
+
+    0%,
+    11% {
+      opacity: 1;
+    }
+
+    22%,
+    100% {
+      opacity: 0.2;
+    }
+  }
+
+  /* Grok-Style 3x3 Dot Grid Loader */
+  .grok-loader {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3px;
+    width: 18px;
+    height: 18px;
+  }
+
+  .grok-loader .dot {
+    width: 4px;
+    height: 4px;
     border-radius: 50%;
-    background: conic-gradient(from 0deg,
-        transparent 0deg,
-        rgba(249, 115, 22, 0.8) 90deg,
-        transparent 180deg);
-    animation: gradient-spin 1.2s linear infinite;
+    background: #9ca3af;
+    opacity: 0.2;
   }
 
-  .writing-orb::after {
-    content: '';
-    position: absolute;
-    inset: 3px;
+  /* Spiral animation order: top-right -> right -> bottom-right -> bottom -> bottom-left -> left -> top-left -> top -> center */
+  .grok-loader .dot:nth-child(3) {
+    animation: dot-fade-1 1.2s ease-in-out infinite;
+  }
+
+  .grok-loader .dot:nth-child(6) {
+    animation: dot-fade-2 1.2s ease-in-out infinite;
+  }
+
+  .grok-loader .dot:nth-child(9) {
+    animation: dot-fade-3 1.2s ease-in-out infinite;
+  }
+
+  .grok-loader .dot:nth-child(8) {
+    animation: dot-fade-4 1.2s ease-in-out infinite;
+  }
+
+  .grok-loader .dot:nth-child(7) {
+    animation: dot-fade-5 1.2s ease-in-out infinite;
+  }
+
+  .grok-loader .dot:nth-child(4) {
+    animation: dot-fade-6 1.2s ease-in-out infinite;
+  }
+
+  .grok-loader .dot:nth-child(1) {
+    animation: dot-fade-7 1.2s ease-in-out infinite;
+  }
+
+  .grok-loader .dot:nth-child(2) {
+    animation: dot-fade-8 1.2s ease-in-out infinite;
+  }
+
+  .grok-loader .dot:nth-child(5) {
+    animation: dot-fade-9 1.2s ease-in-out infinite;
+  }
+
+  /* Small variant for sidebar */
+  .grok-loader-sm {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    width: 14px;
+    height: 14px;
+  }
+
+  .grok-loader-sm .dot {
+    width: 3px;
+    height: 3px;
     border-radius: 50%;
-    background: var(--color-bg);
+    background: #6b7280;
+    opacity: 0.2;
   }
 
-  .writing-orb-inner {
-    position: absolute;
-    inset: 5px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-    animation: gradient-pulse 2s ease-in-out infinite;
-    z-index: 1;
+  .grok-loader-sm .dot:nth-child(3) {
+    animation: dot-fade-1 1.2s ease-in-out infinite;
   }
 
-  /* Glowing Orb Loader - Premium Style */
-  .glow-orb-loader {
-    position: relative;
-    width: 24px;
-    height: 24px;
+  .grok-loader-sm .dot:nth-child(6) {
+    animation: dot-fade-2 1.2s ease-in-out infinite;
   }
 
-  .glow-orb-loader-ring {
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    border: 2px solid transparent;
-    border-top-color: #f97316;
-    border-right-color: rgba(249, 115, 22, 0.4);
-    animation: gradient-spin 1s linear infinite;
+  .grok-loader-sm .dot:nth-child(9) {
+    animation: dot-fade-3 1.2s ease-in-out infinite;
   }
 
-  .glow-orb-loader-core {
-    position: absolute;
-    inset: 6px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #f97316 0%, #fb923c 100%);
-    animation: orb-glow 2s ease-in-out infinite;
+  .grok-loader-sm .dot:nth-child(8) {
+    animation: dot-fade-4 1.2s ease-in-out infinite;
   }
 
-  /* Minimal Status Loader - Matches sidebar */
+  .grok-loader-sm .dot:nth-child(7) {
+    animation: dot-fade-5 1.2s ease-in-out infinite;
+  }
+
+  .grok-loader-sm .dot:nth-child(4) {
+    animation: dot-fade-6 1.2s ease-in-out infinite;
+  }
+
+  .grok-loader-sm .dot:nth-child(1) {
+    animation: dot-fade-7 1.2s ease-in-out infinite;
+  }
+
+  .grok-loader-sm .dot:nth-child(2) {
+    animation: dot-fade-8 1.2s ease-in-out infinite;
+  }
+
+  .grok-loader-sm .dot:nth-child(5) {
+    animation: dot-fade-9 1.2s ease-in-out infinite;
+  }
+
+  /* Keep status-loader for backward compatibility but use dot grid style */
   .status-loader {
-    position: relative;
-    width: 16px;
-    height: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .status-loader-ring {
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    border: 2px solid rgba(249, 115, 22, 0.2);
-    border-top-color: #f97316;
-    animation: gradient-spin 0.8s linear infinite;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    width: 14px;
+    height: 14px;
   }
 
   .status-loader-dot {
-    width: 6px;
-    height: 6px;
+    width: 3px;
+    height: 3px;
     border-radius: 50%;
-    background: #f97316;
-    animation: gradient-pulse 1.5s ease-in-out infinite;
+    background: #6b7280;
+    opacity: 0.2;
+  }
+
+  .status-loader .status-loader-dot:nth-child(3) {
+    animation: dot-fade-1 1.2s ease-in-out infinite;
+  }
+
+  .status-loader .status-loader-dot:nth-child(6) {
+    animation: dot-fade-2 1.2s ease-in-out infinite;
+  }
+
+  .status-loader .status-loader-dot:nth-child(9) {
+    animation: dot-fade-3 1.2s ease-in-out infinite;
+  }
+
+  .status-loader .status-loader-dot:nth-child(8) {
+    animation: dot-fade-4 1.2s ease-in-out infinite;
+  }
+
+  .status-loader .status-loader-dot:nth-child(7) {
+    animation: dot-fade-5 1.2s ease-in-out infinite;
+  }
+
+  .status-loader .status-loader-dot:nth-child(4) {
+    animation: dot-fade-6 1.2s ease-in-out infinite;
+  }
+
+  .status-loader .status-loader-dot:nth-child(1) {
+    animation: dot-fade-7 1.2s ease-in-out infinite;
+  }
+
+  .status-loader .status-loader-dot:nth-child(2) {
+    animation: dot-fade-8 1.2s ease-in-out infinite;
+  }
+
+  .status-loader .status-loader-dot:nth-child(5) {
+    animation: dot-fade-9 1.2s ease-in-out infinite;
   }
 
   /* Writing Dots Animation */
@@ -560,7 +661,7 @@
     height: 4px;
     border-radius: 50%;
     background: currentColor;
-    animation: writing-dots 1.4s infinite;
+    animation: dot-fade-1 1.4s infinite;
   }
 
   .writing-dots span:nth-child(1) {
