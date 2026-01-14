@@ -1865,3 +1865,384 @@ article a:hover {
 html.light .header-with-fade::after {
   background: linear-gradient(to bottom, #ffffff, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.5), transparent);
 }
+
+/* ==========================================================================
+   Grok-Inspired Library Styles
+   ========================================================================== */
+
+/* Library container with subtle gradient background */
+.grok-library-container {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #000000 0%, #0a0a0a 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.grok-library-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 300px;
+  background: radial-gradient(ellipse at top, rgba(16, 185, 129, 0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Library header section */
+.grok-library-header {
+  position: relative;
+  z-index: 1;
+  margin-bottom: 2rem;
+}
+
+.grok-library-title {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #ffffff 0%, #a3a3a3 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.grok-library-subtitle {
+  color: #6b7280;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  font-weight: 400;
+}
+
+/* Search and filter controls */
+.grok-search-input {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.grok-search-input:focus {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(16, 185, 129, 0.4);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.08);
+}
+
+/* Book card - Glassmorphism with subtle borders */
+.grok-book-card {
+  position: relative;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.02) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px);
+  border-radius: 16px;
+  padding: 1.25rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.grok-book-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, transparent 50%, rgba(16, 185, 129, 0.1) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.grok-book-card:hover {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.03) 100%);
+  border-color: rgba(16, 185, 129, 0.3);
+  transform: translateY(-4px);
+  box-shadow:
+    0 12px 32px -8px rgba(0, 0, 0, 0.4),
+    0 0 24px rgba(16, 185, 129, 0.08);
+}
+
+.grok-book-card:hover::before {
+  opacity: 1;
+}
+
+/* Book card header with icon */
+.grok-book-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.08) 100%);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  transition: all 0.3s ease;
+}
+
+.grok-book-card:hover .grok-book-icon {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.25) 0%, rgba(16, 185, 129, 0.15) 100%);
+  border-color: rgba(16, 185, 129, 0.4);
+  transform: scale(1.05);
+}
+
+.grok-book-icon.completed {
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(34, 197, 94, 0.08) 100%);
+  border-color: rgba(34, 197, 94, 0.2);
+}
+
+.grok-book-icon.error {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(239, 68, 68, 0.08) 100%);
+  border-color: rgba(239, 68, 68, 0.2);
+}
+
+/* Status badge */
+.grok-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  transition: all 0.2s ease;
+}
+
+.grok-status-badge:hover {
+  background: rgba(0, 0, 0, 0.5);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Book title */
+.grok-book-title {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: #ffffff;
+  letter-spacing: -0.01em;
+  line-height: 1.4;
+  transition: color 0.2s ease;
+}
+
+.grok-book-card:hover .grok-book-title {
+  color: rgba(16, 185, 129, 0.95);
+}
+
+/* Progress section */
+.grok-progress-wrapper {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.grok-progress-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: #9ca3af;
+  margin-bottom: 0.5rem;
+}
+
+.grok-progress-percentage {
+  font-family: 'SF Mono', 'Monaco', monospace;
+  font-size: 0.6875rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.125rem 0.5rem;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.grok-progress-bar {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 9999px;
+  overflow: hidden;
+  position: relative;
+}
+
+.grok-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+  border-radius: 9999px;
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.grok-progress-fill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.3) 50%, transparent 100%);
+  animation: progress-shimmer 2s infinite;
+}
+
+@keyframes progress-shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.grok-progress-fill.error {
+  background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%);
+}
+
+/* Book footer metadata */
+.grok-book-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.grok-book-date {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.grok-book-action {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  opacity: 0;
+  transform: translateX(8px);
+  transition: all 0.25s ease;
+  color: #10b981;
+  font-weight: 500;
+}
+
+.grok-book-card:hover .grok-book-action {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Empty state */
+.grok-empty-state {
+  text-align: center;
+  padding: 6rem 1.5rem;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 16px;
+  border: 2px dashed rgba(255, 255, 255, 0.08);
+}
+
+.grok-empty-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 1.5rem;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(16, 185, 129, 0.15);
+}
+
+.grok-empty-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 0.5rem;
+}
+
+.grok-empty-description {
+  color: #9ca3af;
+  margin-bottom: 1.5rem;
+  max-width: 28rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Action buttons */
+.grok-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  border-radius: 10px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid;
+}
+
+.grok-button-primary {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border-color: rgba(16, 185, 129, 0.3);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+}
+
+.grok-button-primary:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
+  transform: translateY(-1px);
+}
+
+.grok-button-secondary {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #9ca3af;
+  backdrop-filter: blur(10px);
+}
+
+.grok-button-secondary:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+/* Light theme overrides */
+html.light .grok-library-container {
+  background: linear-gradient(180deg, #fafafa 0%, #f5f5f5 100%);
+}
+
+html.light .grok-library-container::before {
+  background: radial-gradient(ellipse at top, rgba(16, 185, 129, 0.05) 0%, transparent 70%);
+}
+
+html.light .grok-library-title {
+  background: linear-gradient(135deg, #1f2937 0%, #6b7280 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+html.light .grok-book-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+html.light .grok-book-card:hover {
+  background: #ffffff;
+  border-color: rgba(16, 185, 129, 0.3);
+  box-shadow:
+    0 12px 32px -8px rgba(0, 0, 0, 0.1),
+    0 0 24px rgba(16, 185, 129, 0.08);
+}
+
+html.light .grok-search-input {
+  background: rgba(0, 0, 0, 0.02);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+html.light .grok-search-input:focus {
+  background: #ffffff;
+  border-color: rgba(16, 185, 129, 0.4);
+}
+
+html.light .grok-empty-state {
+  background: rgba(0, 0, 0, 0.02);
+  border-color: rgba(0, 0, 0, 0.08);
+}
