@@ -1109,9 +1109,8 @@ const HomeView = ({
         <img
           src="/white-logo.png"
           alt="Pustakam"
-          className={`w-16 h-16 mx-auto mb-4 ${theme === 'dark' ? 'invert' : ''}`}
+          className={`w-16 h-16 mx-auto ${theme === 'dark' ? 'invert' : ''}`}
         />
-        <h1 className="text-3xl font-bold text-[var(--color-text-primary)] tracking-tight">Pustakam</h1>
       </div>
 
       {/* Grok-style Pill Input Bar */}
