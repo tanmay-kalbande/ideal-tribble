@@ -90,6 +90,20 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
                     {/* Brand / Logo */}
                     <div className="flex items-center gap-2 select-none">
                         <img src={theme === 'light' ? '/black-logo.png' : '/white-logo.png'} alt="Pustakam" className="w-8 h-8" />
+                        <div className="flex flex-col">
+                            <span
+                                className={`text-lg tracking-tight leading-none ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}
+                                style={{ fontFamily: "'Aptos-Mono', monospace", fontWeight: 700 }}
+                            >
+                                Pustakam
+                            </span>
+                            <span
+                                className={`text-[10px] tracking-wide ${theme === 'light' ? 'text-gray-400' : 'text-gray-500'}`}
+                                style={{ fontFamily: "'Aptos-Mono', monospace" }}
+                            >
+                                injin
+                            </span>
+                        </div>
                     </div>
 
                     {/* Center Content */}

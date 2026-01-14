@@ -1107,9 +1107,9 @@ const HomeView = ({
       {/* Centered Logo & Brand */}
       <div className="text-center mb-10">
         <img
-          src="/white-logo.png"
+          src={theme === 'dark' ? '/white-logo.png' : '/black-logo.png'}
           alt="Pustakam"
-          className={`w-16 h-16 mx-auto ${theme === 'dark' ? 'invert' : ''}`}
+          className="w-16 h-16 mx-auto"
         />
       </div>
 
