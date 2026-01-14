@@ -22,6 +22,7 @@ interface TopHeaderProps {
     userProfile: any | null;
     onSignOut: () => void;
     showModelSelector?: boolean;
+    centerContent?: React.ReactNode;
 }
 
 // All supported models configuration
@@ -55,7 +56,8 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
     user,
     userProfile,
     onSignOut,
-    showModelSelector = true
+    showModelSelector = true,
+    centerContent
 }) => {
     const [showUserMenu, setShowUserMenu] = useState(false);
     const [showModelMenu, setShowModelMenu] = useState(false);
@@ -102,6 +104,11 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
                                 injin
                             </span>
                         </div>
+                    </div>
+
+                    {/* Center Content */}
+                    <div className="flex-1 flex justify-center">
+                        {centerContent}
                     </div>
 
                     {/* Right Controls */}

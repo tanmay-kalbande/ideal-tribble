@@ -675,29 +675,25 @@ function App() {
         <div className="sun-background" />
       )}
 
-      {/* Hide TopHeader in Library view ("My Books" section) */}
-      {!showListInMain && <TopHeader
+      <TopHeader
         settings={settings}
         books={books}
         currentBookId={currentBookId}
         onModelChange={handleModelChange}
         onOpenSettings={() => setSettingsOpen(true)}
-        onSelectBook={handleSelectBook}
-        onDeleteBook={handleDeleteBook}
-        onNewBook={() => {
-          setView('create');
-          setCurrentBookId(null);
-        }}
         theme={theme}
         onToggleTheme={toggleTheme}
         onOpenAuth={() => setShowAuthModal(true)}
         onOpenCreditGate={() => setShowCreditGate(true)}
-        isAuthenticated={isAuthenticated}
+        isAuthenticated={!!user}
         user={user}
         userProfile={profile}
         onSignOut={signOut}
-        showModelSelector={!isReadingMode}
-      />}
+        showModelSelector={!showListInMain && !currentBookId && !isReadingMode}
+        centerContent={showListInMain ? (
+          <h1 className="text-sm font-semibold text-[var(--color-text-primary)] tracking-tight opacity-80">My Books</h1>
+        ) : null}
+      />
 
       <main id="main-scroll-area" className="main-content">
         {showOfflineMessage && (

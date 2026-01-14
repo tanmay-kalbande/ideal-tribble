@@ -1306,6 +1306,8 @@ const BookListGrid = ({
 }: {
   books: BookProject[];
   onSelectBook: (id: string) => void;
+  onSaveSettings?: (settings: any) => void;
+  onReadingModeChange?: (isReading: boolean) => void;
   onDeleteBook: (id: string) => void;
   onUpdateBookStatus: (id: string, status: BookProject['status']) => void;
   setView: (view: AppView) => void;
@@ -1387,8 +1389,8 @@ const BookListGrid = ({
       <div className="flex-shrink-0 w-full max-w-[1400px] mx-auto px-8 lg:px-12 pt-10 pb-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-semibold text-[var(--color-text-primary)] tracking-tight">My Books</h1>
-            <p className="text-gray-500 mt-1 text-sm">{books.length} {books.length === 1 ? 'project' : 'projects'}</p>
+            {/* Title moved to TopHeader */}
+            <p className="text-gray-500 text-sm">{books.length} {books.length === 1 ? 'project' : 'projects'}</p>
           </div>
           <div className="flex items-center gap-4">
             {/* Search */}
