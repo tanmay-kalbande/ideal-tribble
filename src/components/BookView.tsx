@@ -1340,123 +1340,127 @@ const BookListGrid = ({
   }, [books, searchQuery, statusFilter]);
 
   return (
-    <div className="min-h-screen" style={{ background: theme === 'dark' ? '#000000' : '#fafafa', fontFamily: 'Rubik, sans-serif' }}>
-      <div className="w-full max-w-[1400px] mx-auto px-8 lg:px-12 py-10 animate-fade-in-up">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+    <div className="h-screen flex flex-col" style={{ background: theme === 'dark' ? '#000000' : '#fafafa', fontFamily: 'Rubik, sans-serif' }}>
+      {/* Fixed Header */}
+      <div className="flex-shrink-0 w-full max-w-[1400px] mx-auto px-8 lg:px-12 pt-10 pb-6">
+        <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-semibold text-[var(--color-text-primary)] tracking-tight">My Library</h1>
+            <h1 className="text-xl font-semibold text-[var(--color-text-primary)] tracking-tight">My Books</h1>
             <p className="text-gray-500 mt-1 text-sm">{books.length} {books.length === 1 ? 'project' : 'projects'}</p>
           </div>
-          <button onClick={() => setShowListInMain(false)} className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white border border-white/10 hover:border-white/20 rounded-full transition-all">
-            <ArrowLeft className="w-4 h-4 inline mr-2" /> Back
-          </button>
-        </div>
-
-        {/* Search */}
-        <div className="mb-8">
-          <div className="relative max-w-md">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-            <input
-              type="text"
-              placeholder="Search books..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-white/[0.03] border border-white/10 rounded-full pl-11 pr-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-white/20 transition-all"
-            />
-          </div>
-        </div>
-
-        {filteredBooks.length === 0 ? (
-          <div className="text-center py-24 bg-white/[0.02] rounded-2xl border border-white/5 border-dashed">
-            <div className="w-16 h-16 mx-auto mb-6 bg-white/5 rounded-full flex items-center justify-center border border-white/10">
-              <BookOpen className="w-6 h-6 text-gray-400" />
+          <div className="flex items-center gap-4">
+            {/* Search */}
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+              <input
+                type="text"
+                placeholder="Search..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-48 bg-white/[0.03] border border-white/10 rounded-full pl-10 pr-4 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-white/20 focus:w-64 transition-all"
+              />
             </div>
-            <h3 className="text-lg font-medium text-white mb-2">{searchQuery || statusFilter !== 'all' ? 'No books found' : 'No books yet'}</h3>
-            <p className="text-gray-500 mb-6 max-w-sm mx-auto text-sm">
-              {searchQuery || statusFilter !== 'all'
-                ? 'Try adjusting your search or filter settings.'
-                : 'Create your first AI-generated book to get started.'}
-            </p>
-            <button
-              onClick={() => {
-                setView('create');
-                setShowListInMain(false);
-              }}
-              className="px-5 py-2.5 text-sm font-medium text-gray-400 hover:text-white border border-white/10 hover:border-white/20 rounded-full transition-all inline-flex items-center gap-2"
-            >
-              <Sparkles className="w-4 h-4" />
-              Create Book
+            <button onClick={() => setShowListInMain(false)} className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white border border-white/10 hover:border-white/20 rounded-full transition-all">
+              <ArrowLeft className="w-4 h-4 inline mr-2" /> Back
             </button>
           </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-            {filteredBooks.map((book) => {
-              const progress = book.modules.filter((m) => m.status === 'completed').length;
-              const total = book.modules.length;
-              const percent = total > 0 ? (progress / total) * 100 : 0;
+        </div>
+      </div>
 
-              return (
-                <div
-                  key={book.id}
-                  onMouseEnter={() => setHoveredBookId(book.id)}
-                  onMouseLeave={() => setHoveredBookId(null)}
-                  onClick={() => onSelectBook(book.id)}
-                  className="group relative bg-gradient-to-br from-white/[0.03] to-white/[0.01] rounded-xl border border-white/5 p-5 transition-all duration-200 cursor-pointer hover:border-indigo-500/20 hover:shadow-lg hover:shadow-indigo-500/5"
-                >
-                  {/* Delete button - appears on hover */}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (window.confirm('Delete this book?')) {
-                        onDeleteBook(book.id);
-                      }
-                    }}
-                    className="absolute top-3 right-3 p-1.5 rounded-lg text-gray-500 hover:text-red-400 hover:bg-red-500/10 opacity-0 group-hover:opacity-100 transition-all"
+      {/* Scrollable Content Area */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="w-full max-w-[1400px] mx-auto px-8 lg:px-12 pb-10">
+          {filteredBooks.length === 0 ? (
+            <div className="text-center py-24 bg-white/[0.02] rounded-2xl border border-white/5 border-dashed">
+              <div className="w-16 h-16 mx-auto mb-6 bg-white/5 rounded-full flex items-center justify-center border border-white/10">
+                <BookOpen className="w-6 h-6 text-gray-400" />
+              </div>
+              <h3 className="text-lg font-medium text-white mb-2">{searchQuery || statusFilter !== 'all' ? 'No books found' : 'No books yet'}</h3>
+              <p className="text-gray-500 mb-6 max-w-sm mx-auto text-sm">
+                {searchQuery || statusFilter !== 'all'
+                  ? 'Try adjusting your search.'
+                  : 'Create your first AI-generated book to get started.'}
+              </p>
+              <button
+                onClick={() => {
+                  setView('create');
+                  setShowListInMain(false);
+                }}
+                className="px-5 py-2.5 text-sm font-medium text-gray-400 hover:text-white border border-white/10 hover:border-white/20 rounded-full transition-all inline-flex items-center gap-2"
+              >
+                <Sparkles className="w-4 h-4" />
+                Create Book
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+              {filteredBooks.map((book) => {
+                const completedModules = book.modules.filter((m) => m.status === 'completed').length;
+                const totalModules = book.modules.length;
+
+                return (
+                  <div
+                    key={book.id}
+                    onMouseEnter={() => setHoveredBookId(book.id)}
+                    onMouseLeave={() => setHoveredBookId(null)}
+                    onClick={() => onSelectBook(book.id)}
+                    className="group relative bg-gradient-to-br from-white/[0.03] to-white/[0.01] rounded-xl border border-white/5 p-5 transition-all duration-200 cursor-pointer hover:border-indigo-500/20 hover:shadow-lg hover:shadow-indigo-500/5"
                   >
-                    <Trash2 size={14} />
-                  </button>
+                    {/* Delete button - appears on hover */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (window.confirm('Delete this book?')) {
+                          onDeleteBook(book.id);
+                        }
+                      }}
+                      className="absolute top-3 right-3 p-1.5 rounded-lg text-gray-500 hover:text-red-400 hover:bg-red-500/10 opacity-0 group-hover:opacity-100 transition-all"
+                    >
+                      <Trash2 size={14} />
+                    </button>
 
-                  {/* Book icon */}
-                  <div className="p-2 rounded-lg bg-white/5 w-fit mb-3">
-                    <Book className="w-4 h-4 text-gray-400" />
-                  </div>
+                    {/* Book icon */}
+                    <div className="p-2 rounded-lg bg-white/5 w-fit mb-3">
+                      <Book className="w-4 h-4 text-gray-400" />
+                    </div>
 
-                  {/* Title */}
-                  <h3 className="text-sm font-medium text-white mb-3 line-clamp-2 leading-snug" style={{ fontFamily: 'Rubik, sans-serif' }}>
-                    {book.title}
-                  </h3>
+                    {/* Title */}
+                    <h3 className="text-sm font-medium text-white mb-4 line-clamp-2 leading-snug" style={{ fontFamily: 'Rubik, sans-serif' }}>
+                      {book.title}
+                    </h3>
 
-                  {/* Progress */}
-                  <div className="space-y-2 mb-4">
+                    {/* Stats - Clean chips */}
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/5 text-xs text-gray-400">
+                        <FileText size={12} />
+                        {totalModules} modules
+                      </span>
+                      {completedModules > 0 && (
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/5 text-xs text-gray-400">
+                          <CheckCircle size={12} />
+                          {completedModules} done
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Footer */}
                     <div className="flex items-center justify-between text-xs text-gray-500">
-                      <span>{book.modules.length} Modules</span>
-                      <span>{progress}/{total}</span>
-                    </div>
-                    <div className="w-full bg-white/5 rounded-full h-1 overflow-hidden">
-                      <div
-                        className="h-full rounded-full transition-all duration-500 bg-gradient-to-r from-indigo-500/60 to-purple-500/60"
-                        style={{ width: `${percent}%` }}
-                      />
+                      <span>{new Date(book.updatedAt).toLocaleDateString()}</span>
+                      <span className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400">
+                        Open →
+                      </span>
                     </div>
                   </div>
-
-                  {/* Footer */}
-                  <div className="flex items-center justify-between text-xs text-gray-500">
-                    <span>{new Date(book.updatedAt).toLocaleDateString()}</span>
-                    <span className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400">
-                      Open →
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
+                );
+              })}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
 };
+
 
 
 const DetailTabButton = ({
