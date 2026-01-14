@@ -1318,15 +1318,15 @@ const BookListGrid = ({
 
   const getStatusColor = (status: BookProject['status']) => {
     const colors = {
-      completed: 'text-green-400 border-green-500/30',
-      generating_content: 'text-cyan-400 border-cyan-500/30',
-      assembling: 'text-cyan-400 border-cyan-500/30',
-      roadmap_completed: 'text-emerald-400 border-emerald-500/30',
-      error: 'text-red-400 border-red-500/30',
-      planning: 'text-gray-400 border-gray-500/30',
-      generating_roadmap: 'text-cyan-400 border-cyan-500/30',
+      completed: 'border-[var(--color-border)]',
+      generating_content: 'border-cyan-500/30',
+      assembling: 'border-cyan-500/30',
+      roadmap_completed: 'border-green-500/30',
+      error: 'border-red-500/30',
+      planning: 'border-[var(--color-border)]',
+      generating_roadmap: 'border-cyan-500/30',
     };
-    return colors[status] || 'text-gray-400 border-gray-500/30';
+    return colors[status] || 'border-[var(--color-border)]';
   };
 
   const getReadingProgress = (bookId: string) => {
@@ -1348,50 +1348,47 @@ const BookListGrid = ({
   }, [books, searchQuery, statusFilter]);
 
   return (
-    <div className="grok-library-container" style={{ fontFamily: 'Rubik, sans-serif' }}>
-      <div className="w-full max-w-[1400px] mx-auto px-6 py-10 animate-fade-in-up">
-        {/* Header with gradient title */}
-        <div className="grok-library-header flex items-center justify-between mb-8">
+    <div className="min-h-screen" style={{ background: theme === 'dark' ? '#000000' : '#fafafa', fontFamily: 'Rubik, sans-serif' }}>
+      <div className="w-full max-w-[1400px] mx-auto px-8 lg:px-12 py-10 animate-fade-in-up">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="grok-library-title">My Library</h1>
-            <p className="grok-library-subtitle">{books.length} {books.length === 1 ? 'project' : 'projects'}</p>
+            <h1 className="text-xl font-semibold text-[var(--color-text-primary)] tracking-tight">My Library</h1>
+            <p className="text-gray-400 mt-1 text-sm">{books.length} {books.length === 1 ? 'project' : 'projects'}</p>
           </div>
           <div className="flex items-center gap-3">
-            <button
-              onClick={() => setShowListInMain(false)}
-              className="grok-button grok-button-secondary flex items-center"
-            >
-              <ArrowLeft className="w-4 h-4" /> Back
+            <button onClick={() => setShowListInMain(false)} className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white border border-white/10 hover:border-white/20 rounded-lg transition-all">
+              <ArrowLeft className="w-4 h-4 inline mr-2" /> Back
             </button>
             <button
               onClick={() => {
                 setView('create');
                 setShowListInMain(false);
               }}
-              className="grok-button grok-button-primary flex items-center"
+              className="px-4 py-2 text-sm font-medium bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-all inline-flex items-center gap-2"
             >
               <Plus className="w-4 h-4" /> New Book
             </button>
           </div>
         </div>
 
-        {/* Search and Filter with glassmorphism */}
+        {/* Search and Filter */}
         <div className="flex flex-col sm:flex-row gap-4 mb-8">
           <div className="flex-1 relative">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
             <input
               type="text"
               placeholder="Search books..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="grok-search-input w-full rounded-xl pl-11 pr-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none"
+              className="w-full bg-white/5 border border-white/10 rounded-lg pl-10 pr-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-white/20 focus:bg-white/[0.07] transition-all"
             />
           </div>
           <div className="relative">
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value as any)}
-              className="grok-search-input rounded-xl px-4 py-3 pr-10 text-sm text-white focus:outline-none appearance-none cursor-pointer"
+              className="bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 pr-10 text-sm text-white focus:outline-none focus:border-white/20 focus:bg-white/[0.07] transition-all appearance-none cursor-pointer"
               style={{ minWidth: '160px' }}
             >
               <option value="all">All Books</option>
@@ -1404,12 +1401,12 @@ const BookListGrid = ({
         </div>
 
         {filteredBooks.length === 0 ? (
-          <div className="grok-empty-state">
-            <div className="grok-empty-icon">
+          <div className="text-center py-24 bg-white/[0.02] rounded-2xl border border-white/10 border-dashed">
+            <div className="w-20 h-20 mx-auto mb-6 bg-emerald-500/10 rounded-full flex items-center justify-center border border-emerald-500/20">
               <BookOpen className="w-8 h-8 text-emerald-400" />
             </div>
-            <h3 className="grok-empty-title">{searchQuery || statusFilter !== 'all' ? 'No books found' : 'No books yet'}</h3>
-            <p className="grok-empty-description">
+            <h3 className="text-xl font-semibold text-white mb-2">{searchQuery || statusFilter !== 'all' ? 'No books found' : 'No books yet'}</h3>
+            <p className="text-gray-400 mb-6 max-w-sm mx-auto">
               {searchQuery || statusFilter !== 'all'
                 ? 'Try adjusting your search or filter settings.'
                 : 'Create your first AI-generated book to get started with Pustakam.'}
@@ -1419,14 +1416,14 @@ const BookListGrid = ({
                 setView('create');
                 setShowListInMain(false);
               }}
-              className="grok-button grok-button-primary flex items-center mx-auto"
+              className="btn bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl px-6 py-3 font-semibold shadow-lg hover:shadow-emerald-600/30 transition-all inline-flex items-center gap-2"
             >
               <Sparkles className="w-4 h-4" />
               Create Your First Book
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredBooks.map((book) => {
               const progress = book.modules.filter((m) => m.status === 'completed').length;
               const total = book.modules.length;
@@ -1442,12 +1439,14 @@ const BookListGrid = ({
                     setStatusDropdownOpen(null);
                   }}
                   onClick={() => onSelectBook(book.id)}
-                  className="grok-book-card group"
+                  className={`group relative bg-white/[0.03] backdrop-blur-md rounded-xl border border-white/10 p-4 transition-all duration-300 cursor-pointer hover:bg-white/[0.05] hover:border-white/20 hover:shadow-lg hover:shadow-emerald-500/5 hover:-translate-y-1`}
                 >
-                  {/* Card Header - Icon & Status Badge */}
-                  <div className="flex justify-between items-start mb-3">
-                    <div className={`grok-book-icon ${book.status === 'completed' ? 'completed' : book.status === 'error' ? 'error' : ''}`}>
-                      <Book className="w-5 h-5 text-emerald-400" />
+                  <div className="flex justify-between items-start mb-2">
+                    <div className={`p-1.5 rounded-md transition-colors ${book.status === 'completed' ? 'bg-green-500/10 text-green-500' :
+                      book.status === 'error' ? 'bg-red-500/10 text-red-500' :
+                        'bg-white/10 text-gray-400'
+                      }`}>
+                      <Book className="w-4 h-4" />
                     </div>
                     <div className="relative">
                       <button
@@ -1455,41 +1454,26 @@ const BookListGrid = ({
                           e.stopPropagation();
                           setStatusDropdownOpen(statusDropdownOpen === book.id ? null : book.id);
                         }}
-                        className={`grok-status-badge ${getStatusColor(book.status)}`}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${getStatusColor(book.status)} bg-black/50 text-gray-300 hover:bg-white/5 hover:border-white/20`}
                       >
                         {getStatusIcon(book.status)}
                         <span>{getStatusText(book.status)}</span>
-                        <ChevronDown size={12} className="opacity-60" />
+                        <ChevronDown size={12} className="opacity-50" />
                       </button>
 
-                      {/* Status Dropdown */}
+                      {/* Status Dropdown - Simplified to only Delete */}
                       {statusDropdownOpen === book.id && (
-                        <div className="absolute right-0 top-full mt-2 w-48 bg-[#1a1a1a] border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden animate-fade-in-up" onClick={(e) => e.stopPropagation()}>
-                          <div className="p-2">
-                            <div className="text-xs font-semibold text-gray-400 px-2 py-1 mb-1 uppercase tracking-wider">Set Status</div>
-                            {availableStatuses.map(status => (
-                              <button
-                                key={status}
-                                onClick={() => {
-                                  onUpdateBookStatus(book.id, status);
-                                  setStatusDropdownOpen(null);
-                                }}
-                                className={`w-full text-left px-2 py-1.5 rounded-lg text-xs flex items-center gap-2 hover:bg-white/5 ${book.status === status ? 'text-white bg-white/10' : 'text-gray-400'}`}
-                              >
-                                {getStatusIcon(status)}
-                                {getStatusText(status)}
-                              </button>
-                            ))}
-                            <div className="h-px bg-white/10 my-1" />
+                        <div className="absolute right-0 top-full mt-2 w-40 bg-[#1a1a1a] border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden animate-fade-in-up" onClick={(e) => e.stopPropagation()}>
+                          <div className="p-1.5">
                             <button
                               onClick={() => {
                                 if (window.confirm('Delete this book project?')) {
                                   onDeleteBook(book.id);
                                 }
                               }}
-                              className="w-full text-left px-2 py-1.5 rounded-lg text-xs flex items-center gap-2 text-red-400 hover:bg-red-500/10 hover:text-red-300"
+                              className="w-full text-left px-3 py-2 rounded-lg text-xs flex items-center gap-2 text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors"
                             >
-                              <Trash2 size={12} /> Delete Project
+                              <Trash2 size={14} /> Delete
                             </button>
                           </div>
                         </div>
@@ -1497,35 +1481,35 @@ const BookListGrid = ({
                     </div>
                   </div>
 
-                  {/* Book Title */}
-                  <h3 className="grok-book-title mb-1 line-clamp-2">
+                  <h3 className="text-base font-semibold text-white mb-1.5 line-clamp-1 group-hover:text-white transition-colors" style={{ fontFamily: 'Rubik, sans-serif' }}>
                     {book.title}
                   </h3>
 
-                  {/* Progress Section */}
-                  <div className="grok-progress-wrapper">
-                    <div className="grok-progress-label">
+                  <div className="space-y-3 mb-3">
+                    <div className="flex items-center justify-between text-xs text-gray-400">
                       <span className="flex items-center gap-1.5">
                         <ListChecks size={13} />
                         {book.modules.length} Modules
                       </span>
-                      <span className="grok-progress-percentage">{Math.round(percent)}%</span>
+                      <span className="font-mono bg-white/5 px-2 py-0.5 rounded-md border border-white/10">{Math.round(percent)}%</span>
                     </div>
-                    <div className="grok-progress-bar">
+                    <div className="w-full bg-white/5 rounded-full h-1.5 overflow-hidden border border-white/10">
                       <div
-                        className={`grok-progress-fill ${book.status === 'error' ? 'error' : ''}`}
+                        className={`h-full rounded-full transition-all duration-500 ${book.status === 'completed' ? 'bg-green-500' :
+                          book.status === 'error' ? 'bg-red-500' :
+                            'bg-gradient-to-r from-emerald-500 to-emerald-400'
+                          }`}
                         style={{ width: `${percent}%` }}
                       />
                     </div>
                   </div>
 
-                  {/* Footer with Date & Action */}
-                  <div className="grok-book-footer">
-                    <div className="grok-book-date">
+                  <div className="flex items-center justify-between pt-4 border-t border-white/10 text-xs text-gray-400">
+                    <div className="flex items-center gap-1.5">
                       <Clock size={12} />
                       {new Date(book.updatedAt).toLocaleDateString()}
                     </div>
-                    <div className="grok-book-action">
+                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0 text-white font-medium">
                       Open Project <ArrowRight size={12} />
                     </div>
                   </div>
