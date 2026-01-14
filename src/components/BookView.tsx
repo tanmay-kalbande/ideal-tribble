@@ -1353,9 +1353,9 @@ const BookListGrid = ({
           </button>
         </div>
 
-        {/* Search and Filter */}
-        <div className="flex flex-col sm:flex-row gap-4 mb-8">
-          <div className="flex-1 relative">
+        {/* Search */}
+        <div className="mb-8">
+          <div className="relative max-w-md">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
             <input
               type="text"
@@ -1364,20 +1364,6 @@ const BookListGrid = ({
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full bg-white/[0.03] border border-white/10 rounded-full pl-11 pr-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-white/20 transition-all"
             />
-          </div>
-          <div className="relative">
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value as any)}
-              className="bg-white/[0.03] border border-white/10 rounded-full px-4 py-2.5 pr-10 text-sm text-gray-400 focus:outline-none focus:border-white/20 transition-all appearance-none cursor-pointer"
-              style={{ minWidth: '140px' }}
-            >
-              <option value="all">All Books</option>
-              <option value="in-progress">In Progress</option>
-              <option value="completed">Completed</option>
-              <option value="error">Error</option>
-            </select>
-            <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
           </div>
         </div>
 
@@ -1416,7 +1402,7 @@ const BookListGrid = ({
                   onMouseEnter={() => setHoveredBookId(book.id)}
                   onMouseLeave={() => setHoveredBookId(null)}
                   onClick={() => onSelectBook(book.id)}
-                  className="group relative bg-white/[0.02] rounded-xl border border-white/5 p-5 transition-all duration-200 cursor-pointer hover:bg-white/[0.04] hover:border-white/10"
+                  className="group relative bg-gradient-to-br from-white/[0.03] to-white/[0.01] rounded-xl border border-white/5 p-5 transition-all duration-200 cursor-pointer hover:border-indigo-500/20 hover:shadow-lg hover:shadow-indigo-500/5"
                 >
                   {/* Delete button - appears on hover */}
                   <button
@@ -1445,11 +1431,11 @@ const BookListGrid = ({
                   <div className="space-y-2 mb-4">
                     <div className="flex items-center justify-between text-xs text-gray-500">
                       <span>{book.modules.length} Modules</span>
-                      <span>{Math.round(percent)}%</span>
+                      <span>{progress}/{total}</span>
                     </div>
                     <div className="w-full bg-white/5 rounded-full h-1 overflow-hidden">
                       <div
-                        className="h-full rounded-full transition-all duration-500 bg-white/40"
+                        className="h-full rounded-full transition-all duration-500 bg-gradient-to-r from-indigo-500/60 to-purple-500/60"
                         style={{ width: `${percent}%` }}
                       />
                     </div>
