@@ -212,6 +212,39 @@ const GradientProgressBar = ({ progress = 0, active = true }) => (
   </div>
 );
 
+// Modern Writing Loader Component - Premium glowing orb animation
+const WritingLoader = ({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) => {
+  const sizeClasses = {
+    sm: { container: 'w-4 h-4', core: 'inset-[4px]' },
+    md: { container: 'w-6 h-6', core: 'inset-[6px]' },
+    lg: { container: 'w-8 h-8', core: 'inset-[8px]' },
+  };
+
+  return (
+    <div className={`glow-orb-loader ${sizeClasses[size].container}`}>
+      <div className="glow-orb-loader-ring" />
+      <div className={`glow-orb-loader-core ${sizeClasses[size].core}`} />
+    </div>
+  );
+};
+
+// Animated writing dots for status text
+const WritingDots = () => (
+  <span className="writing-dots">
+    <span />
+    <span />
+    <span />
+  </span>
+);
+
+// Modern status loader for sidebar/list view
+const StatusLoader = () => (
+  <div className="status-loader">
+    <div className="status-loader-ring" />
+    <div className="status-loader-dot" />
+  </div>
+);
+
 const PixelAnimation = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [pixels, setPixels] = useState<any[]>([]);
@@ -1274,6 +1307,11 @@ const BookListGrid = ({
 
 
   const getStatusIcon = (status: BookProject['status']) => {
+    // Use modern StatusLoader for generating states
+    if (['generating_roadmap', 'generating_content', 'assembling'].includes(status)) {
+      return <StatusLoader />;
+    }
+
     const iconMap: Record<BookProject['status'], React.ElementType> = {
       planning: Clock,
       generating_roadmap: Loader2,
@@ -1289,12 +1327,7 @@ const BookListGrid = ({
       : status === 'error'
         ? 'text-red-500'
         : 'text-cyan-500';
-    const animateClass = ['generating_roadmap', 'generating_content', 'assembling'].includes(
-      status
-    )
-      ? 'animate-spin'
-      : '';
-    return <Icon className={`w-4 h-4 ${colorClass} ${animateClass}`} />;
+    return <Icon className={`w-4 h-4 ${colorClass}`} />;
   };
 
   const getStatusText = (status: BookProject['status']) =>
@@ -1756,18 +1789,19 @@ export function BookView({
       error: AlertCircle,
     };
     const Icon = iconMap[status] || Loader2;
+
+    // Use modern StatusLoader for generating states
+    if (['generating_roadmap', 'generating_content', 'assembling'].includes(status)) {
+      return <StatusLoader />;
+    }
+
     const colorClass =
       status === 'completed'
         ? 'text-green-500'
         : status === 'error'
           ? 'text-red-500'
           : 'text-orange-500';
-    const animateClass = ['generating_roadmap', 'generating_content', 'assembling'].includes(
-      status
-    )
-      ? 'animate-spin'
-      : '';
-    return <Icon className={`w - 4 h - 4 ${colorClass} ${animateClass} `} />;
+    return <Icon className={`w-4 h-4 ${colorClass}`} />;
   };
 
   const getStatusText = (status: BookProject['status']) =>
