@@ -193,7 +193,7 @@ export function SettingsModal({ isOpen, onClose, settings, onSaveSettings, showA
     <button
       onClick={() => setActiveTab(id)}
       className={`group flex items-center gap-3 px-4 py-2.5 text-sm font-semibold transition-all rounded-lg w-full ${activeTab === id
-        ? 'bg-white/10 text-white shadow-sm'
+        ? 'bg-gray-900 text-white dark:bg-white/10 dark:text-white shadow-sm'
         : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/[0.03]'
         }`}
     >
@@ -279,7 +279,7 @@ export function SettingsModal({ isOpen, onClose, settings, onSaveSettings, showA
                               {api.name}
                               {hasKey && <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" title="Key Configured" />}
                             </label>
-                            <a href={api.url} target="_blank" rel="noopener noreferrer" className="text-[10px] font-semibold text-gray-400 hover:text-white hover:underline flex items-center gap-1">
+                            <a href={api.url} target="_blank" rel="noopener noreferrer" className="text-[10px] font-semibold text-gray-400 hover:text-gray-900 dark:hover:text-white hover:underline flex items-center gap-1">
                               Get Key <ExternalLink size={10} />
                             </a>
                           </div>
@@ -291,7 +291,7 @@ export function SettingsModal({ isOpen, onClose, settings, onSaveSettings, showA
                               value={localSettings[api.id] as string}
                               onChange={e => setLocalSettings(p => ({ ...p, [api.id]: e.target.value }))}
                               placeholder={`Enter ${api.name} API Key`}
-                              className="w-full bg-gray-50 dark:bg-white/[0.03] border border-gray-200 dark:border-white/[0.08] rounded-lg py-2 pl-3 pr-10 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-white/20 focus:border-white/30 transition-all shadow-sm"
+                              className="w-full bg-gray-50 dark:bg-white/[0.03] border border-gray-200 dark:border-white/[0.08] rounded-lg py-2 pl-3 pr-10 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all shadow-sm"
                             />
                             <button
                               type="button"
@@ -310,7 +310,7 @@ export function SettingsModal({ isOpen, onClose, settings, onSaveSettings, showA
                   <div className="pt-4 border-t border-gray-100 dark:border-white/[0.05]">
                     <button
                       onClick={() => setShowAPIGuide(true)}
-                      className="text-xs font-semibold text-gray-500 hover:text-white flex items-center gap-2 transition-colors"
+                      className="text-xs font-semibold text-gray-500 hover:text-gray-900 dark:hover:text-white flex items-center gap-2 transition-colors"
                     >
                       <BookMarked size={14} />
                       View API Setup Documentation
@@ -365,7 +365,7 @@ export function SettingsModal({ isOpen, onClose, settings, onSaveSettings, showA
                           <div className="space-y-3">
                             <div className="flex items-center justify-between">
                               <span className="text-sm text-gray-600 dark:text-gray-300">Credits Remaining</span>
-                              <span className="text-2xl font-bold text-white">{profile?.credits ?? 0}</span>
+                              <span className="text-2xl font-bold text-gray-900 dark:text-white">{profile?.credits ?? 0}</span>
                             </div>
                             <div className="w-full bg-gray-200 dark:bg-white/10 rounded-full h-2">
                               <div
@@ -387,26 +387,26 @@ export function SettingsModal({ isOpen, onClose, settings, onSaveSettings, showA
                               href="https://wa.me/919730416498?text=Hi%2C%20I%20want%20to%20subscribe%20to%20Pustakam%20Monthly%20Plan"
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="flex items-center justify-between p-4 bg-gray-50 dark:bg-white/[0.03] border border-gray-200 dark:border-white/[0.08] rounded-xl hover:border-white/20 transition-all group"
+                              className="flex items-center justify-between p-4 bg-gray-50 dark:bg-white/[0.03] border border-gray-200 dark:border-white/[0.08] rounded-xl hover:border-indigo-500/20 transition-all group"
                             >
                               <div>
                                 <p className="font-semibold text-gray-900 dark:text-white">Monthly Plan</p>
                                 <p className="text-sm text-gray-500">₹149/month • Unlimited books</p>
                               </div>
-                              <ChevronRight size={18} className="text-gray-400 group-hover:text-white transition-colors" />
+                              <ChevronRight size={18} className="text-gray-400 group-hover:text-indigo-500 transition-colors" />
                             </a>
 
                             <a
                               href="https://wa.me/919730416498?text=Hi%2C%20I%20want%20to%20subscribe%20to%20Pustakam%20Yearly%20Plan"
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="flex items-center justify-between p-4 bg-gray-50 dark:bg-white/[0.03] border border-gray-200 dark:border-white/[0.08] rounded-xl hover:border-white/20 transition-all group"
+                              className="flex items-center justify-between p-4 bg-gray-50 dark:bg-white/[0.03] border border-gray-200 dark:border-white/[0.08] rounded-xl hover:border-indigo-500/20 transition-all group"
                             >
                               <div>
                                 <p className="font-semibold text-gray-900 dark:text-white">Yearly Plan</p>
                                 <p className="text-sm text-gray-500">₹1,499/year • Save 16%</p>
                               </div>
-                              <ChevronRight size={18} className="text-gray-400 group-hover:text-white transition-colors" />
+                              <ChevronRight size={18} className="text-gray-400 group-hover:text-indigo-500 transition-colors" />
                             </a>
                           </div>
                         </section>
@@ -489,8 +489,8 @@ export function SettingsModal({ isOpen, onClose, settings, onSaveSettings, showA
               {activeTab === 'about' && (
                 <div className="max-w-md animate-fade-in space-y-10">
                   <div className="flex items-start gap-6">
-                    <div className="w-16 h-16 rounded-xl bg-white/5 flex items-center justify-center border border-white/10 shrink-0">
-                      <img src="/white-logo.png" alt="Logo" className="w-10 h-10 drop-shadow-sm" />
+                    <div className="w-16 h-16 rounded-xl bg-gray-100 dark:bg-white/5 flex items-center justify-center border border-gray-200 dark:border-white/10 shrink-0">
+                      <img src="/white-logo.png" alt="Logo" className="w-10 h-10 drop-shadow-sm dark:invert-0 invert" />
                     </div>
                     <div>
                       <h3 className="text-xl font-black tracking-tight text-gray-900 dark:text-white">PUSTAKAM</h3>
@@ -527,9 +527,9 @@ export function SettingsModal({ isOpen, onClose, settings, onSaveSettings, showA
                     </div>
                     <button
                       onClick={() => setShowDisclaimer(true)}
-                      className="w-full flex items-center justify-between px-4 py-2 rounded-lg bg-gray-50 dark:bg-white/[0.03] border border-gray-100 dark:border-white/[0.05] hover:border-white/20 transition-all text-xs font-bold group"
+                      className="w-full flex items-center justify-between px-4 py-2 rounded-lg bg-gray-50 dark:bg-white/[0.03] border border-gray-100 dark:border-white/[0.05] hover:border-indigo-500/20 transition-all text-xs font-bold group"
                     >
-                      <span className="text-gray-500 dark:text-gray-400 group-hover:text-white transition-colors tracking-tight">System Regulatory Compliance</span>
+                      <span className="text-gray-500 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white transition-colors tracking-tight">System Regulatory Compliance</span>
                       <ChevronRight size={14} className="text-gray-300" />
                     </button>
                   </div>

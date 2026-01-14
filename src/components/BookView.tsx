@@ -42,7 +42,12 @@ import {
   Palette,
   Bookmark,
   ChevronDown,
-  Search
+  Search,
+  Code,
+  Music,
+  Heart,
+  Cpu,
+  TrendingUp
 } from 'lucide-react';
 import { BookProject, BookSession, ReadingBookmark } from '../types/book';
 import { bookService } from '../services/bookService';
@@ -1059,7 +1064,7 @@ const ReadingMode: React.FC<ReadingModeProps> = ({
           )}
           <span className="tooltip">
             {isBookmarked ? 'Bookmarked' : 'Bookmark'}
-          </span>
+          </span >
         </button>
       </div>
     </>
@@ -1097,14 +1102,14 @@ const HomeView = ({
   localIsGenerating: boolean;
   onOpenSettings: () => void;
 }) => (
-  <div className="flex-1 flex flex-col items-center justify-center px-6 py-12 min-h-[calc(100vh-48px)]" style={{ background: theme === 'dark' ? '#000000' : '#fafafa', fontFamily: 'Rubik, sans-serif' }}>
+  <div className="flex-1 flex flex-col items-center justify-center px-6 py-12 min-h-[calc(100vh-48px)]" style={{ background: 'var(--color-bg)', fontFamily: 'Rubik, sans-serif' }}>
     <div className="w-full max-w-2xl mx-auto animate-fade-in-up">
       {/* Centered Logo & Brand */}
       <div className="text-center mb-10">
         <img
           src="/white-logo.png"
           alt="Pustakam"
-          className={`w-16 h-16 mx-auto mb-4 ${theme === 'light' ? 'invert' : ''}`}
+          className={`w-16 h-16 mx-auto mb-4 ${theme === 'dark' ? 'invert' : ''}`}
         />
         <h1 className="text-3xl font-bold text-[var(--color-text-primary)] tracking-tight">Pustakam</h1>
       </div>
@@ -1199,7 +1204,7 @@ const HomeView = ({
       {/* Advanced Options Dropdown */}
       {showAdvanced && (
         <div
-          className="mt-6 p-6 bg-[#1a1a1a] border border-white/10 rounded-2xl shadow-xl"
+          className="mt-6 p-6 bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/10 rounded-2xl shadow-xl"
           style={{
             animation: 'dropdownSlideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
             transformOrigin: 'top center'
@@ -1299,20 +1304,25 @@ const BookListGrid = ({
   books,
   onSelectBook,
   onDeleteBook,
-  onUpdateBookStatus,
   setView,
   setShowListInMain,
   theme,
+  showAlertDialog,
 }: {
   books: BookProject[];
   onSelectBook: (id: string) => void;
-  onSaveSettings?: (settings: any) => void;
-  onReadingModeChange?: (isReading: boolean) => void;
   onDeleteBook: (id: string) => void;
-  onUpdateBookStatus: (id: string, status: BookProject['status']) => void;
   setView: (view: AppView) => void;
   setShowListInMain: (show: boolean) => void;
   theme: 'light' | 'dark';
+  showAlertDialog: (options: {
+    type: 'info' | 'warning' | 'error' | 'success' | 'confirm';
+    title: string;
+    message: string | React.ReactNode;
+    confirmText?: string;
+    cancelText?: string;
+    onConfirm?: () => void;
+  }) => void;
 }) => {
   const [, setHoveredBookId] = useState<string | null>(null);
 
@@ -1376,15 +1386,28 @@ const BookListGrid = ({
     return books.filter(book => {
       const matchesSearch = book.title.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesStatus = statusFilter === 'all' ||
-        (statusFilter === 'in-progress' && book.status === 'generating') ||
+        (statusFilter === 'in-progress' && ['generating_roadmap', 'generating_content', 'assembling'].includes(book.status)) ||
         (statusFilter === 'completed' && book.status === 'completed') ||
         (statusFilter === 'error' && book.status === 'error');
       return matchesSearch && matchesStatus;
     });
   }, [books, searchQuery, statusFilter]);
 
+  const getBookIcon = (title: string) => {
+    const t = title.toLowerCase();
+    if (t.includes('ai') || t.includes('intelligence') || t.includes('machine') || t.includes('neural')) return Brain;
+    if (t.includes('code') || t.includes('program') || t.includes('js') || t.includes('python') || t.includes('react') || t.includes('dev')) return Code;
+    if (t.includes('music') || t.includes('song')) return Music;
+    if (t.includes('heart') || t.includes('health') || t.includes('fitness') || t.includes('life')) return Heart;
+    if (t.includes('money') || t.includes('finance') || t.includes('business') || t.includes('invest')) return TrendingUp;
+    if (t.includes('art') || t.includes('design') || t.includes('paint')) return Palette;
+    if (t.includes('tech') || t.includes('digital') || t.includes('hardware')) return Cpu;
+    if (t.includes('science') || t.includes('math') || t.includes('physics')) return Sparkles;
+    return Book;
+  };
+
   return (
-    <div className="h-screen flex flex-col" style={{ background: theme === 'dark' ? '#000000' : '#fafafa', fontFamily: 'Rubik, sans-serif' }}>
+    <div className="h-screen flex flex-col" style={{ background: 'var(--color-bg)', fontFamily: 'Rubik, sans-serif' }}>
       {/* Fixed Header */}
       <div className="flex-shrink-0 w-full max-w-[1400px] mx-auto px-8 lg:px-12 pt-10 pb-6">
         <div className="flex items-center justify-between">
@@ -1401,10 +1424,10 @@ const BookListGrid = ({
                 placeholder="Search..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-48 bg-white/[0.03] border border-white/10 rounded-full pl-10 pr-4 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-white/20 focus:w-64 transition-all"
+                className="w-48 bg-gray-100 dark:bg-white/[0.03] border border-gray-200 dark:border-white/10 rounded-full pl-10 pr-4 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500/50 dark:focus:border-white/20 focus:w-64 transition-all"
               />
             </div>
-            <button onClick={() => setShowListInMain(false)} className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white border border-white/10 hover:border-white/20 rounded-full transition-all">
+            <button onClick={() => setShowListInMain(false)} className="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white border border-gray-200 dark:border-white/10 hover:border-gray-300 dark:hover:border-white/20 rounded-full transition-all">
               <ArrowLeft className="w-4 h-4 inline mr-2" /> Back
             </button>
           </div>
@@ -1415,11 +1438,11 @@ const BookListGrid = ({
       <div className="flex-1 overflow-y-auto">
         <div className="w-full max-w-[1400px] mx-auto px-8 lg:px-12 pb-10">
           {filteredBooks.length === 0 ? (
-            <div className="text-center py-24 bg-white/[0.02] rounded-2xl border border-white/5 border-dashed">
-              <div className="w-16 h-16 mx-auto mb-6 bg-white/5 rounded-full flex items-center justify-center border border-white/10">
+            <div className="text-center py-24 bg-gray-50 dark:bg-white/[0.02] rounded-2xl border border-gray-200 dark:border-white/5 border-dashed">
+              <div className="w-16 h-16 mx-auto mb-6 bg-gray-100 dark:bg-white/5 rounded-full flex items-center justify-center border border-gray-200 dark:border-white/10">
                 <BookOpen className="w-6 h-6 text-gray-400" />
               </div>
-              <h3 className="text-lg font-medium text-white mb-2">{searchQuery || statusFilter !== 'all' ? 'No books found' : 'No books yet'}</h3>
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">{searchQuery || statusFilter !== 'all' ? 'No books found' : 'No books yet'}</h3>
               <p className="text-gray-500 mb-6 max-w-sm mx-auto text-sm">
                 {searchQuery || statusFilter !== 'all'
                   ? 'Try adjusting your search.'
@@ -1430,7 +1453,7 @@ const BookListGrid = ({
                   setView('create');
                   setShowListInMain(false);
                 }}
-                className="px-5 py-2.5 text-sm font-medium text-gray-400 hover:text-white border border-white/10 hover:border-white/20 rounded-full transition-all inline-flex items-center gap-2"
+                className="px-5 py-2.5 text-sm font-medium text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white border border-gray-200 dark:border-white/10 hover:border-gray-300 dark:hover:border-white/20 rounded-full transition-all inline-flex items-center gap-2"
               >
                 <Sparkles className="w-4 h-4" />
                 Create Book
@@ -1448,49 +1471,62 @@ const BookListGrid = ({
                     onMouseEnter={() => setHoveredBookId(book.id)}
                     onMouseLeave={() => setHoveredBookId(null)}
                     onClick={() => onSelectBook(book.id)}
-                    className="group relative bg-gradient-to-br from-white/[0.03] to-white/[0.01] rounded-xl border border-white/5 p-5 transition-all duration-200 cursor-pointer hover:border-indigo-500/20 hover:shadow-lg hover:shadow-indigo-500/5"
+                    className="group relative bg-white dark:bg-gradient-to-br dark:from-white/[0.03] dark:to-white/[0.01] rounded-xl border border-gray-200 dark:border-white/5 p-5 transition-all duration-200 cursor-pointer hover:border-indigo-500/20 hover:shadow-lg hover:shadow-indigo-500/5 shadow-sm"
                   >
                     {/* Delete button - appears on hover */}
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        if (window.confirm('Delete this book?')) {
-                          onDeleteBook(book.id);
-                        }
+                        showAlertDialog({
+                          type: 'confirm',
+                          title: 'Delete Book',
+                          message: `Are you sure you want to delete "${book.title}"? This cannot be undone.`,
+                          confirmText: 'Delete',
+                          onConfirm: () => onDeleteBook(book.id)
+                        });
                       }}
-                      className="absolute top-3 right-3 p-1.5 rounded-lg text-gray-500 hover:text-red-400 hover:bg-red-500/10 opacity-0 group-hover:opacity-100 transition-all"
+                      className="absolute top-3 right-3 p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-500/10 opacity-0 group-hover:opacity-100 transition-all"
                     >
                       <Trash2 size={14} />
                     </button>
 
                     {/* Book icon */}
-                    <div className="p-2 rounded-lg bg-white/5 w-fit mb-3">
-                      <Book className="w-4 h-4 text-gray-400" />
-                    </div>
+                    {(() => {
+                      const Icon = getBookIcon(book.title);
+                      return (
+                        <div className="p-2 rounded-lg bg-gray-100 dark:bg-white/5 w-fit mb-3">
+                          <Icon className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                        </div>
+                      );
+                    })()}
 
                     {/* Title */}
-                    <h3 className="text-sm font-medium text-white mb-4 line-clamp-2 leading-snug" style={{ fontFamily: 'Rubik, sans-serif' }}>
+                    <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-4 line-clamp-2 leading-snug" style={{ fontFamily: 'Rubik, sans-serif' }}>
                       {book.title}
                     </h3>
 
                     {/* Stats - Clean chips */}
                     <div className="flex flex-wrap gap-2 mb-4">
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/5 text-xs text-gray-400">
-                        <FileText size={12} />
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gray-100 dark:bg-white/5 text-[10px] font-medium text-gray-500 dark:text-gray-400">
+                        <FileText size={10} />
                         {totalModules} modules
                       </span>
-                      {completedModules > 0 && (
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/5 text-xs text-gray-400">
-                          <CheckCircle size={12} />
-                          {completedModules} done
-                        </span>
-                      )}
+                      {(() => {
+                        const wordCount = book.modules.reduce((acc, m) => acc + (m.wordCount || 0), 0) || book.totalWords || 0;
+                        if (wordCount === 0) return null;
+                        return (
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gray-100 dark:bg-white/5 text-[10px] font-medium text-gray-500 dark:text-gray-400">
+                            <Sparkles size={10} />
+                            {wordCount.toLocaleString()} words
+                          </span>
+                        );
+                      })()}
                     </div>
 
                     {/* Footer */}
-                    <div className="flex items-center justify-between text-xs text-gray-500">
+                    <div className="flex items-center justify-between text-[10px] font-medium text-gray-400 dark:text-gray-500">
                       <span>{new Date(book.updatedAt).toLocaleDateString()}</span>
-                      <span className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400">
+                      <span className="opacity-0 group-hover:opacity-100 transition-opacity text-indigo-500 dark:text-gray-400">
                         Open →
                       </span>
                     </div>
@@ -1844,10 +1880,10 @@ export function BookView({
           books={books}
           onSelectBook={onSelectBook}
           onDeleteBook={onDeleteBook}
-          onUpdateBookStatus={onUpdateBookStatus}
           setView={setView}
           setShowListInMain={setShowListInMain}
           theme={theme}
+          showAlertDialog={showAlertDialog}
         />
       );
 
@@ -2186,7 +2222,7 @@ export function BookView({
     const isPaused = generationStatus?.status === 'paused';
 
     return (
-      <div className="min-h-[calc(100vh-48px)]" style={{ background: theme === 'dark' ? '#000000' : '#fafafa', fontFamily: 'Rubik, sans-serif' }}>
+      <div className="min-h-[calc(100vh-48px)]" style={{ background: 'var(--color-bg)', fontFamily: 'Rubik, sans-serif' }}>
         <div className="w-full max-w-3xl mx-auto px-6 py-10">
           <div className="mb-8">
             <button
@@ -2195,14 +2231,14 @@ export function BookView({
                 onSelectBook(null);
                 setShowListInMain(true);
               }}
-              className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors mb-5"
+              className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors mb-5"
             >
               <ArrowLeft className="w-4 h-4" />
               Back to My Books
             </button>
-            <h1 className="text-3xl font-bold text-white mb-1.5">{currentBook.title}</h1>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-1.5">{currentBook.title}</h1>
             <div className="flex items-center gap-2">
-              <div className="flex items-center gap-1.5 text-sm font-medium text-gray-400">
+              <div className="flex items-center gap-1.5 text-sm font-medium text-gray-500 dark:text-gray-400">
                 {getStatusIcon(currentBook.status)}
                 {getStatusText(currentBook.status)}
               </div>
@@ -2210,7 +2246,7 @@ export function BookView({
           </div>
 
           {currentBook.status === 'completed' && (
-            <div className="border-b border-white/10 mb-8">
+            <div className="border-b border-gray-200 dark:border-white/10 mb-8">
               <div className="flex items-center gap-6">
                 <DetailTabButton
                   label="Overview"
@@ -2260,9 +2296,14 @@ export function BookView({
                       generationStatus={generationStatus}
                       stats={generationStats}
                       onCancel={() => {
-                        if (window.confirm('Cancel generation? Progress will be saved.')) {
-                          bookService.cancelActiveRequests(currentBook.id);
-                        }
+                        showAlertDialog({
+                          type: 'confirm',
+                          title: 'Cancel Generation',
+                          message: 'Cancel generation? Progress will be saved.',
+                          confirmText: 'Yes, Cancel',
+                          cancelText: 'Keep Generating',
+                          onConfirm: () => bookService.cancelActiveRequests(currentBook.id)
+                        });
                       }}
                       onPause={handlePauseGeneration}
                       onResume={handleResumeGeneration}
@@ -2469,12 +2510,12 @@ export function BookView({
                           <div
                             key={module.id}
                             className={`flex items-center gap-3.5 p-3.5 rounded-lg border transition-all ${isActive
-                              ? 'bg-gray-500/10 border-gray-500/40'
+                              ? 'bg-gray-100 dark:bg-gray-500/10 border-gray-300 dark:border-gray-500/40'
                               : completedModule?.status === 'completed'
-                                ? 'bg-emerald-500/10 border-emerald-500/30'
+                                ? 'bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/30'
                                 : completedModule?.status === 'error'
-                                  ? 'border-red-500/30 bg-red-500/5'
-                                  : 'bg-[var(--color-bg)] border-[var(--color-border)]'
+                                  ? 'border-red-200 dark:border-red-500/30 bg-red-50 dark:bg-red-500/5'
+                                  : 'bg-white dark:bg-[var(--color-bg)] border-gray-200 dark:border-[var(--color-border)]'
                               }`}
                           >
                             <div
