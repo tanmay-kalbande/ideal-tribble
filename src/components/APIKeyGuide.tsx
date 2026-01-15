@@ -143,20 +143,20 @@ export function APIKeyGuide({ isOpen, onClose }: APIKeyGuideProps) {
 
     return (
         <div
-            className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in"
+            className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in"
             onClick={onClose}
         >
             <div
-                className="relative w-full max-w-2xl bg-[var(--color-sidebar)] border border-[var(--color-border)] rounded-2xl shadow-2xl flex flex-col max-h-[85vh] animate-fade-in-up"
+                className="relative w-full max-w-2xl bg-[var(--color-card)] border border-[var(--color-border)] rounded-2xl shadow-2xl flex flex-col max-h-[85vh] animate-fade-in-up"
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Header */}
-                <div className="p-5 flex items-center justify-between border-b border-[var(--color-border)]">
+                <div className="p-5 flex items-center justify-between border-b border-[var(--color-border)] bg-[var(--color-bg)]/50">
                     <div className="flex items-center gap-3">
-                        <Key className="text-blue-400" size={20} />
+                        <Key className="text-orange-500" size={20} />
                         <h2 className="text-xl font-bold text-[var(--color-text-primary)]">How to Get API Keys</h2>
                     </div>
-                    <button onClick={onClose} className="p-2 rounded-full hover:bg-white/10 transition-colors">
+                    <button onClick={onClose} className="p-2 rounded-full hover:bg-[var(--color-bg)] transition-colors">
                         <X size={18} />
                     </button>
                 </div>
@@ -170,11 +170,11 @@ export function APIKeyGuide({ isOpen, onClose }: APIKeyGuideProps) {
                                 key={provider.id}
                                 onClick={() => setSelectedProvider(provider.id)}
                                 className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${selectedProvider === provider.id
-                                    ? 'bg-orange-500/20 text-[var(--color-text-primary)]'
-                                    : 'text-[var(--color-text-secondary)] hover:bg-white/5 hover:text-[var(--color-text-primary)]'
+                                    ? 'bg-orange-500/10 text-orange-500'
+                                    : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-bg)] hover:text-[var(--color-text-primary)]'
                                     }`}
                             >
-                                <Icon size={16} className={provider.color} />
+                                <Icon size={16} className={selectedProvider === provider.id ? 'text-orange-500' : 'text-[var(--color-text-secondary)]'} />
                                 {provider.name.split(' ')[0]}
                             </button>
                         );
@@ -187,7 +187,7 @@ export function APIKeyGuide({ isOpen, onClose }: APIKeyGuideProps) {
                     <div className="flex items-center gap-3">
                         {React.createElement(selectedGuide.icon, {
                             size: 28,
-                            className: selectedGuide.color,
+                            className: 'text-orange-500',
                         })}
                         <div>
                             <h3 className="text-lg font-bold text-[var(--color-text-primary)]">{selectedGuide.name}</h3>
@@ -200,12 +200,12 @@ export function APIKeyGuide({ isOpen, onClose }: APIKeyGuideProps) {
                         <div className="flex items-center justify-between gap-3">
                             <div className="flex-1 min-w-0">
                                 <p className="text-xs text-[var(--color-text-secondary)] mb-1">Console URL</p>
-                                <p className="text-sm text-blue-500 truncate">{selectedGuide.url}</p>
+                                <p className="text-sm text-orange-500 truncate">{selectedGuide.url}</p>
                             </div>
                             <div className="flex gap-2">
                                 <button
                                     onClick={() => copyUrl(selectedGuide.url)}
-                                    className="p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-colors"
+                                    className="p-2 rounded-lg bg-[var(--color-bg)] hover:bg-[var(--color-bg)]/80 transition-colors"
                                     title="Copy URL"
                                 >
                                     {copiedUrl === selectedGuide.url ? (
@@ -218,7 +218,7 @@ export function APIKeyGuide({ isOpen, onClose }: APIKeyGuideProps) {
                                     href={selectedGuide.url}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="p-2 rounded-lg bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 transition-colors"
+                                    className="p-2 rounded-lg bg-orange-500/10 hover:bg-orange-500/20 text-orange-500 transition-colors"
                                     title="Open in new tab"
                                 >
                                     <ExternalLink size={16} />
@@ -230,7 +230,7 @@ export function APIKeyGuide({ isOpen, onClose }: APIKeyGuideProps) {
                     {/* Steps */}
                     <div>
                         <h4 className="text-sm font-semibold text-[var(--color-text-primary)] mb-3 flex items-center gap-2">
-                            <span className="w-6 h-6 rounded-full bg-blue-500/20 text-blue-500 flex items-center justify-center text-xs">
+                            <span className="w-6 h-6 rounded-full bg-orange-500/10 text-orange-500 flex items-center justify-center text-xs">
                                 📝
                             </span>
                             Step-by-Step Instructions
@@ -238,7 +238,7 @@ export function APIKeyGuide({ isOpen, onClose }: APIKeyGuideProps) {
                         <ol className="space-y-2">
                             {selectedGuide.steps.map((step, index) => (
                                 <li key={index} className="flex gap-3 text-sm">
-                                    <span className="w-6 h-6 rounded-full bg-orange-500/20 text-orange-500 flex items-center justify-center text-xs font-medium flex-shrink-0">
+                                    <span className="w-6 h-6 rounded-full bg-[var(--color-bg)] text-[var(--color-text-secondary)] border border-[var(--color-border)] flex items-center justify-center text-xs font-medium flex-shrink-0">
                                         {index + 1}
                                     </span>
                                     <span className="text-[var(--color-text-primary)] pt-0.5">{step}</span>
@@ -248,12 +248,12 @@ export function APIKeyGuide({ isOpen, onClose }: APIKeyGuideProps) {
                     </div>
 
                     {/* Tips */}
-                    <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-4">
-                        <h4 className="text-sm font-semibold text-green-600 dark:text-green-400 mb-2">💡 Tips</h4>
+                    <div className="bg-orange-500/5 border border-orange-500/10 rounded-lg p-4">
+                        <h4 className="text-sm font-semibold text-orange-500 mb-2">💡 Tips</h4>
                         <ul className="space-y-1">
                             {selectedGuide.tips.map((tip, index) => (
-                                <li key={index} className="text-sm text-green-700 dark:text-green-300 flex gap-2">
-                                    <span>•</span>
+                                <li key={index} className="text-sm text-[var(--color-text-secondary)] flex gap-2">
+                                    <span className="text-orange-500">•</span>
                                     <span>{tip}</span>
                                 </li>
                             ))}
