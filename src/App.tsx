@@ -741,6 +741,8 @@ function App() {
         onClose={() => setSettingsOpen(false)}
         settings={settings}
         onSaveSettings={handleSaveSettings}
+        theme={theme}
+        onToggleTheme={toggleTheme}
         showAlertDialog={showAlertDialog}
       />
 

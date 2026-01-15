@@ -1,6 +1,6 @@
 // src/components/SettingsModal.tsx
 import React from 'react';
-import { X, Shield, Database, Download, Upload, Trash2, HelpCircle, Key, Settings, ExternalLink, Eye, EyeOff, User, Zap, Globe, Cpu, BookOpen, AlertTriangle, Plus, BookMarked, ChevronRight, CreditCard, Crown, Sparkles, Calendar } from 'lucide-react';
+import { X, Shield, Database, Download, Upload, Trash2, HelpCircle, Key, Settings, ExternalLink, Eye, EyeOff, User, Zap, Globe, Cpu, BookOpen, AlertTriangle, Plus, BookMarked, ChevronRight, CreditCard, Crown, Sparkles, Calendar, Sun, Moon } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { APISettings } from '../types';
 import { storageUtils } from '../utils/storage';
@@ -12,6 +12,8 @@ interface SettingsModalProps {
   onClose: () => void;
   settings: APISettings;
   onSaveSettings: (settings: APISettings) => void;
+  theme: 'light' | 'dark';
+  onToggleTheme: () => void;
   showAlertDialog: (props: {
     type: 'info' | 'warning' | 'error' | 'success' | 'confirm';
     title: string;
@@ -22,7 +24,7 @@ interface SettingsModalProps {
   }) => void;
 }
 
-type ActiveTab = 'keys' | 'data' | 'about' | 'subscription';
+type ActiveTab = 'appearance' | 'keys' | 'data' | 'about' | 'subscription';
 
 interface ImportPreview {
   books: any[];
@@ -33,7 +35,7 @@ interface ImportPreview {
   };
 }
 
-export function SettingsModal({ isOpen, onClose, settings, onSaveSettings, showAlertDialog }: SettingsModalProps) {
+export function SettingsModal({ isOpen, onClose, settings, onSaveSettings, theme, onToggleTheme, showAlertDialog }: SettingsModalProps) {
   const [localSettings, setLocalSettings] = React.useState<APISettings>(settings);
   const { profile, isAuthenticated } = useAuth();
   const [activeTab, setActiveTab] = React.useState<ActiveTab>('keys');
@@ -253,6 +255,7 @@ export function SettingsModal({ isOpen, onClose, settings, onSaveSettings, showA
           <div className="flex flex-1 overflow-hidden">
             {/* Sidebar Navigation */}
             <div className="w-52 border-r border-gray-100 dark:border-white/[0.08] p-3 space-y-1 bg-gray-50/50 dark:bg-[#121212]">
+              <TabButton id="appearance" label="Appearance" Icon={Sun} />
               <TabButton id="keys" label="API Keys" Icon={Shield} />
               <TabButton id="subscription" label="Subscription" Icon={CreditCard} />
               <TabButton id="data" label="Data Area" Icon={Database} />
@@ -260,7 +263,43 @@ export function SettingsModal({ isOpen, onClose, settings, onSaveSettings, showA
             </div>
 
             {/* Content Area */}
-            <div className="flex-1 overflow-y-auto bg-white dark:bg-transparent p-8 scroll-smooth">
+            <div className="flex-1 overflow-y-auto bg-white dark:bg-transparent p-8 scroll-smooth text-[var(--color-text-primary)]">
+              {/* Appearance Tab */}
+              {activeTab === 'appearance' && (
+                <div className="max-w-md animate-fade-in space-y-8">
+                  <header>
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">Appearance</h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Customize how Pustakam looks for you.</p>
+                  </header>
+
+                  <section className="space-y-6">
+                    <div className="space-y-4">
+                      <label className="text-xs font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500">Theme Preference</label>
+                      <div className="grid grid-cols-2 gap-2 p-1 bg-gray-100 dark:bg-white/5 rounded-xl border border-gray-200 dark:border-white/10">
+                        <button
+                          onClick={() => theme === 'dark' && onToggleTheme()}
+                          className={`flex items-center justify-center gap-2.5 py-3 rounded-lg transition-all duration-200 ${theme === 'light'
+                            ? 'bg-white text-gray-900 shadow-md ring-1 ring-black/5'
+                            : 'text-gray-500 hover:text-gray-900 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5'}`}
+                        >
+                          <Sun size={18} className={theme === 'light' ? 'text-orange-500' : ''} />
+                          <span className="font-bold text-sm">Light Mode</span>
+                        </button>
+                        <button
+                          onClick={() => theme === 'light' && onToggleTheme()}
+                          className={`flex items-center justify-center gap-2.5 py-3 rounded-lg transition-all duration-200 ${theme === 'dark'
+                            ? 'bg-[#1a1a1a] dark:bg-zinc-800 text-white shadow-md ring-1 ring-white/10'
+                            : 'text-gray-500 hover:text-gray-900 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5'}`}
+                        >
+                          <Moon size={18} className={theme === 'dark' ? 'text-orange-500' : ''} />
+                          <span className="font-bold text-sm">Dark Mode</span>
+                        </button>
+                      </div>
+                      <p className="text-[10px] text-gray-400 dark:text-gray-500 italic">Adjusts the overall interface colors for better visibility.</p>
+                    </div>
+                  </section>
+                </div>
+              )}
               {/* API Keys Tab */}
               {activeTab === 'keys' && (
                 <div className="max-w-md animate-fade-in space-y-8">

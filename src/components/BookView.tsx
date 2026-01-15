@@ -125,6 +125,7 @@ interface BookViewProps {
     cancelText?: string;
     onConfirm?: () => void;
   }) => void;
+  onReadingModeChange?: (isReading: boolean) => void;
 }
 interface ReadingModeProps {
   content: string;
@@ -204,7 +205,7 @@ const formatTime = (seconds: number): string => {
 // ============================================================================
 // SUB-COMPONENTS
 // ============================================================================
-const GradientProgressBar = ({ progress = 0, active = true }) => (
+const GradientProgressBar = ({ progress = 0, active = true }: { progress?: number, active?: boolean }) => (
   <div className="relative w-full h-2.5 bg-[var(--color-card)] rounded-full overflow-hidden border border-[var(--color-border)]">
     <div
       className="absolute inset-0 bg-gradient-to-r from-gray-500 via-gray-400 to-gray-500 transition-all duration-700 ease-out"
@@ -261,7 +262,12 @@ const StatusLoader = () => (
 
 const PixelAnimation = () => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [pixels, setPixels] = useState<any[]>([]);
+  interface Pixel {
+    id: number;
+    color: string;
+    opacity: string;
+  }
+  const [pixels, setPixels] = useState<Pixel[]>([]);
 
   useEffect(() => {
     const colors = [
@@ -642,7 +648,7 @@ const EmbeddedProgressPanel = ({
   );
 };
 
-const CodeBlock = React.memo(({ children, className, theme, readingTheme }: any) => {
+const CodeBlock = React.memo(({ children, className, theme, readingTheme }: { children: ReactNode, className?: string, theme: 'light' | 'dark', readingTheme?: string }) => {
   const [isCopied, setIsCopied] = useState(false);
   const language = className?.replace(/language-/, '') || 'text';
 
@@ -1092,11 +1098,11 @@ const HomeView = ({
   hasApiKey: boolean;
   bookCount: number;
   theme: 'light' | 'dark';
-  formData: any;
-  setFormData: (fn: any) => void;
+  formData: BookSession;
+  setFormData: React.Dispatch<React.SetStateAction<BookSession>>;
   showAdvanced: boolean;
   setShowAdvanced: (show: boolean) => void;
-  handleCreateRoadmap: (data: any) => void;
+  handleCreateRoadmap: (data: BookSession) => void;
   handleEnhanceWithAI: () => void;
   isEnhancing: boolean;
   localIsGenerating: boolean;
@@ -1104,13 +1110,16 @@ const HomeView = ({
 }) => (
   <div className="flex-1 flex flex-col items-center justify-center px-6 py-12 min-h-[calc(100vh-48px)]" style={{ background: 'var(--color-bg)', fontFamily: 'Rubik, sans-serif' }}>
     <div className="w-full max-w-2xl mx-auto animate-fade-in-up">
-      {/* Centered Logo & Brand */}
       <div className="text-center mb-10">
         <img
           src={theme === 'dark' ? '/white-logo.png' : '/black-logo.png'}
           alt="Pustakam"
-          className="w-16 h-16 mx-auto"
+          className="w-16 h-16 mx-auto mb-6"
         />
+        <h1 className="text-4xl md:text-5xl font-bold text-[var(--color-text-primary)] tracking-tight leading-tight">
+          Create Knowledge.<br />
+          <span className="text-orange-500">Not Documents.</span>
+        </h1>
       </div>
 
       {/* Grok-style Pill Input Bar */}
@@ -1119,7 +1128,7 @@ const HomeView = ({
         <textarea
           value={formData.goal}
           onChange={(e) => {
-            setFormData((p: any) => ({ ...p, goal: e.target.value }));
+            setFormData((p) => ({ ...p, goal: e.target.value }));
             // Auto-resize the textarea
             e.target.style.height = 'auto';
             e.target.style.height = Math.min(e.target.scrollHeight, 200) + 'px';
@@ -1219,7 +1228,7 @@ const HomeView = ({
                 id="audience"
                 type="text"
                 value={formData.targetAudience}
-                onChange={(e) => setFormData((p: any) => ({ ...p, targetAudience: e.target.value }))}
+                onChange={(e) => setFormData((p) => ({ ...p, targetAudience: e.target.value }))}
                 placeholder="e.g. Beginners, Professionals"
                 className="w-full h-11 bg-[var(--color-bg)] border-2 border-[var(--color-border)] rounded-xl px-4 text-[var(--color-text-primary)] placeholder-[var(--color-text-secondary)]/50 focus:border-[var(--color-text-secondary)]/50 focus:ring-4 focus:ring-[var(--color-text-secondary)]/10 transition-all outline-none"
               />
@@ -1230,7 +1239,7 @@ const HomeView = ({
               </label>
               <CustomSelect
                 value={formData.complexityLevel || 'intermediate'}
-                onChange={(val) => setFormData((p: any) => ({ ...p, complexityLevel: val as any }))}
+                onChange={(val) => setFormData((p) => ({ ...p, complexityLevel: val as any }))}
                 options={[
                   { value: 'beginner', label: 'Beginner' },
                   { value: 'intermediate', label: 'Intermediate' },
@@ -1248,7 +1257,7 @@ const HomeView = ({
             <textarea
               id="reasoning"
               value={formData.reasoning}
-              onChange={(e) => setFormData((p: any) => ({ ...p, reasoning: e.target.value }))}
+              onChange={(e) => setFormData((p) => ({ ...p, reasoning: e.target.value }))}
               placeholder="Why are you writing this book? What should the reader achieve?"
               className="w-full bg-[var(--color-bg)] border-2 border-[var(--color-border)] rounded-xl p-4 text-[var(--color-text-primary)] placeholder-[var(--color-text-secondary)]/50 focus:border-[var(--color-text-secondary)]/50 focus:ring-4 focus:ring-[var(--color-text-secondary)]/10 transition-all outline-none resize-none text-sm"
               rows={3}
@@ -1269,7 +1278,7 @@ const HomeView = ({
                   type="checkbox"
                   className="hidden"
                   checked={formData.preferences?.includeExamples}
-                  onChange={(e) => setFormData((p: any) => ({ ...p, preferences: { ...p.preferences!, includeExamples: e.target.checked } }))}
+                  onChange={(e) => setFormData((p) => ({ ...p, preferences: { ...p.preferences!, includeExamples: e.target.checked } }))}
                 />
                 <span className="text-sm font-medium text-[var(--color-text-primary)]">Include Examples</span>
               </label>
@@ -1282,7 +1291,7 @@ const HomeView = ({
                   type="checkbox"
                   className="hidden"
                   checked={formData.preferences?.includePracticalExercises}
-                  onChange={(e) => setFormData((p: any) => ({ ...p, preferences: { ...p.preferences!, includePracticalExercises: e.target.checked } }))}
+                  onChange={(e) => setFormData((p) => ({ ...p, preferences: { ...p.preferences!, includePracticalExercises: e.target.checked } }))}
                 />
                 <span className="text-sm font-medium text-[var(--color-text-primary)]">Practical Exercises</span>
               </label>
@@ -1476,13 +1485,7 @@ const BookListGrid = ({
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        showAlertDialog({
-                          type: 'confirm',
-                          title: 'Delete Book',
-                          message: `Are you sure you want to delete "${book.title}"? This cannot be undone.`,
-                          confirmText: 'Delete',
-                          onConfirm: () => onDeleteBook(book.id)
-                        });
+                        onDeleteBook(book.id);
                       }}
                       className="absolute top-3 right-3 p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-500/10 opacity-0 group-hover:opacity-100 transition-all"
                     >
@@ -1783,16 +1786,6 @@ export function BookView({
     await onAssembleBook(book, session);
   };
 
-  const handleDeleteBook = (id: string) => {
-    showAlertDialog({
-      type: 'confirm',
-      title: 'Confirm Deletion',
-      message: 'Delete this book permanently? This cannot be undone.',
-      confirmText: 'Delete',
-      cancelText: 'Cancel',
-      onConfirm: () => onDeleteBook(id)
-    });
-  };
 
   const handleDownloadPdf = async () => {
     if (!currentBook) return;
@@ -2035,7 +2028,9 @@ export function BookView({
           <div className="inline-flex items-center justify-center p-3 mb-4 rounded-2xl bg-orange-500/10 border border-orange-500/20 text-orange-500">
             <Sparkles className="w-6 h-6" />
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold mb-3 text-[var(--color-text-primary)] tracking-tight">Create New Book</h1>
+          <h1 className="text-3xl md:text-4xl font-bold mb-3 text-[var(--color-text-primary)] tracking-tight">
+            Create Knowledge. <span className="text-orange-500">Not Documents.</span>
+          </h1>
           <p className="text-[var(--color-text-secondary)] text-lg max-w-lg mx-auto leading-relaxed">
             Describe your idea, and our AI will craft a comprehensive, professional book for you.
           </p>
@@ -2235,7 +2230,7 @@ export function BookView({
               <ArrowLeft className="w-4 h-4" />
               Back to My Books
             </button>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-1.5">{currentBook.title}</h1>
+            <h1 className="text-3xl font-bold text-[var(--color-text-primary)] mb-1.5">{currentBook.title}</h1>
             <div className="flex items-center gap-2">
               <div className="flex items-center gap-1.5 text-sm font-medium text-gray-500 dark:text-gray-400">
                 {getStatusIcon(currentBook.status)}

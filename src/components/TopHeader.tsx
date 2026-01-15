@@ -205,14 +205,6 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
                             </div>
                         )}
 
-                        {/* Theme Toggle */}
-                        <button
-                            onClick={onToggleTheme}
-                            className={`p-2.5 rounded-full transition-all ${theme === 'light' ? 'text-gray-500 hover:bg-gray-100 hover:text-gray-900' : 'text-gray-400 hover:text-white hover:bg-[#1a1a1a]'}`}
-                            title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-                        >
-                            {theme === 'dark' ? <Moon size={20} /> : <Sun size={20} />}
-                        </button>
 
 
                         {/* Auth State */}
