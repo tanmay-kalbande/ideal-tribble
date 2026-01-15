@@ -143,7 +143,7 @@ interface ReadingModeProps {
 interface ReadingSettings {
   fontSize: number;
   lineHeight: number;
-  fontFamily: 'serif' | 'sans' | 'mono' | 'anta' | 'inter';
+  fontFamily: 'nunito' | 'serif' | 'sans' | 'mono' | 'anta' | 'inter' | 'lora' | 'quicksand' | 'crimson';
   theme: 'dark' | 'sepia' | 'light';
   maxWidth: 'narrow' | 'medium' | 'wide';
   textAlign: 'left' | 'justify';
@@ -184,6 +184,19 @@ const FONT_FAMILIES = {
   mono: 'ui-monospace, "SF Mono", "Monaco", "Cascadia Code", monospace',
   anta: "'Anta', sans-serif",
   inter: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+  nunito: "'Nunito', 'Segoe UI', sans-serif", // Smooth, rounded
+  quicksand: "'Quicksand', sans-serif", // Very rounded, friendly
+  lora: "'Lora', serif", // Calligraphic serif
+  crimson: "'Crimson Pro', serif", // Old style professional
+};
+
+const FONT_LABELS = {
+  nunito: 'Smooth',
+  inter: 'Modern',
+  lora: 'Elegant',
+  crimson: 'Book',
+  serif: 'Classic',
+  mono: 'Code',
 };
 const MAX_WIDTHS = {
   narrow: '65ch',
@@ -755,11 +768,11 @@ const ReadingMode: React.FC<ReadingModeProps> = ({
     return {
       fontSize: 18,
       lineHeight: 1.8,
-      fontFamily: 'inter', // Inter - modern, clean reading font
+      fontFamily: 'nunito', // Defaulting to Nunito as requested
       theme: theme === 'dark' ? 'dark' : 'light',
       maxWidth: 'medium',
       textAlign: 'left',
-      fontWeight: 600, // Semi-bold for better readability
+      fontWeight: 500, // Slightly lighter for Nunito
       ...parsed,
     };
   });
@@ -984,6 +997,50 @@ const ReadingMode: React.FC<ReadingModeProps> = ({
               >
                 <ZoomIn size={16} />
               </button>
+            </div>
+          </div>
+
+          {/* Font Family Selector - NEW */}
+          <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-0 ml-4 hidden md:flex">
+            {/* Font Selector Dropdown */}
+            <div className="relative group">
+              <button
+                className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all border"
+                style={{
+                  backgroundColor: currentTheme.contentBg,
+                  color: currentTheme.text,
+                  borderColor: currentTheme.border
+                }}
+              >
+                <span className="opacity-70">Font:</span>
+                <span>{FONT_LABELS[settings.fontFamily as keyof typeof FONT_LABELS] || 'Custom'}</span>
+                <ChevronDown size={14} className="opacity-50" />
+              </button>
+
+              {/* Dropdown Menu */}
+              <div
+                className="absolute top-full left-0 mt-2 w-48 rounded-xl shadow-xl border overflow-hidden z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-left"
+                style={{
+                  backgroundColor: currentTheme.contentBg,
+                  borderColor: currentTheme.border
+                }}
+              >
+                {(['nunito', 'inter', 'lora', 'crimson', 'serif', 'mono'] as const).map((font) => (
+                  <button
+                    key={font}
+                    onClick={() => setSettings(prev => ({ ...prev, fontFamily: font }))}
+                    className="w-full text-left px-4 py-2.5 text-sm hover:brightness-95 flex items-center justify-between"
+                    style={{
+                      fontFamily: FONT_FAMILIES[font],
+                      color: settings.fontFamily === font ? currentTheme.accent : currentTheme.text,
+                      backgroundColor: settings.fontFamily === font ? `${currentTheme.accent}15` : 'transparent'
+                    }}
+                  >
+                    <span>{FONT_LABELS[font]}</span>
+                    {settings.fontFamily === font && <Check size={14} />}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
 
