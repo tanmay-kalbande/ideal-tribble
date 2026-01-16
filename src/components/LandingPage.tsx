@@ -103,7 +103,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin, onGetStarted }) => {
                 <div className="max-w-6xl mx-auto flex items-center justify-between">
                     <div className="flex items-center gap-3 cursor-pointer" onClick={onGetStarted}>
                         <img src="/white-logo.png" alt="Pustakam" className="w-9 h-9" />
-                        <span className="text-lg font-bold tracking-tight">PUSTAKAM</span>
+                        <span className="text-lg font-bold tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>PUSTAKAM</span>
                     </div>
 
                     <div className="flex items-center gap-4">
@@ -176,7 +176,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin, onGetStarted }) => {
                     </div>
 
                     {/* Main Headline */}
-                    <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.1] mb-6 tracking-tight">
+                    <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-[1.1] mb-6" style={{ fontFamily: "'Outfit', sans-serif" }}>
                         <span className="text-white">Create a book about</span>
                         <br />
                         <TypeWriter
