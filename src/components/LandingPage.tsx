@@ -1,6 +1,6 @@
-// src/components/LandingPage.tsx - Variant: Morphing Gradient Blob + Clean Typography
-import React, { useState, useEffect } from 'react';
-import { ArrowRight } from 'lucide-react';
+// src/components/LandingPage.tsx - Bold Minimal Landing
+import React, { useState } from 'react';
+import { Menu, X, ArrowRight, Sparkles } from 'lucide-react';
 
 interface LandingPageProps {
     onLogin: () => void;
@@ -9,120 +9,140 @@ interface LandingPageProps {
 }
 
 const LandingPage: React.FC<LandingPageProps> = ({ onLogin, onGetStarted }) => {
-    const [loaded, setLoaded] = useState(false);
-
-    useEffect(() => {
-        setLoaded(true);
-    }, []);
+    const [menuOpen, setMenuOpen] = useState(false);
 
     return (
-        <div className="min-h-screen bg-[#030303] text-white font-sans relative overflow-hidden">
-
-            {/* Animated Gradient Blob */}
-            <div className="fixed inset-0 flex items-center justify-center pointer-events-none">
-                <div
-                    className="w-[500px] h-[500px] opacity-60"
-                    style={{
-                        background: 'conic-gradient(from 0deg, #f97316, #fbbf24, #f97316, #ea580c, #f97316)',
-                        borderRadius: '40% 60% 70% 30% / 40% 50% 60% 50%',
-                        filter: 'blur(80px)',
-                        animation: 'morph 8s ease-in-out infinite, spin 20s linear infinite',
-                    }}
-                />
+        <div className="min-h-screen bg-black text-white font-sans">
+            {/* Gradient Background */}
+            <div className="fixed inset-0 opacity-30">
+                <div className="absolute inset-0 bg-gradient-to-br from-orange-500/20 via-transparent to-amber-500/10" />
+                <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-gradient-radial from-orange-500/20 to-transparent blur-3xl" />
             </div>
 
-            {/* Animation Keyframes */}
-            <style>{`
-                @keyframes morph {
-                    0%, 100% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; }
-                    25% { border-radius: 70% 30% 50% 50% / 30% 30% 70% 70%; }
-                    50% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
-                    75% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
-                }
-                @keyframes spin {
-                    from { transform: rotate(0deg); }
-                    to { transform: rotate(360deg); }
-                }
-            `}</style>
-
-            {/* Noise Overlay */}
-            <div
-                className="fixed inset-0 pointer-events-none opacity-[0.015]"
-                style={{
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
-                }}
-            />
-
-            {/* ===== HEADER ===== */}
-            <header className="relative z-50 px-6 md:px-12 py-6">
-                <div className="max-w-5xl mx-auto flex items-center justify-between">
+            {/* Header */}
+            <header className="fixed top-0 left-0 right-0 z-50 px-6 py-6">
+                <div className="max-w-7xl mx-auto flex items-center justify-between">
                     <div className="flex items-center gap-3">
                         <img src="/white-logo.png" alt="Pustakam" className="w-8 h-8" />
-                        <span className="text-sm font-bold tracking-widest uppercase">Pustakam</span>
+                        <span className="text-base font-semibold tracking-tight hidden sm:block">Pustakam</span>
                     </div>
-                    <div className="flex items-center gap-5">
-                        <button onClick={onLogin} className="text-sm text-white/40 hover:text-white transition-colors">
-                            Sign in
+
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={onLogin}
+                            className="hidden sm:block text-sm text-white/60 hover:text-white transition-colors"
+                        >
+                            Login
                         </button>
                         <button
                             onClick={onGetStarted}
-                            className="px-5 py-2.5 border border-white/20 hover:bg-white hover:text-black rounded-full text-sm font-medium transition-all"
+                            className="px-6 py-2.5 bg-white text-black text-sm font-semibold rounded-full hover:bg-white/90 transition-all"
                         >
-                            Get Started
+                            Start Free
+                        </button>
+                        <button
+                            onClick={() => setMenuOpen(true)}
+                            className="sm:hidden p-2 hover:bg-white/10 rounded-lg"
+                        >
+                            <Menu size={20} />
                         </button>
                     </div>
                 </div>
             </header>
 
-            {/* ===== HERO ===== */}
-            <main className="relative z-10 min-h-[calc(100vh-100px)] flex items-center justify-center px-6">
-                <div className="max-w-2xl mx-auto text-center">
+            {/* Mobile Menu */}
+            {menuOpen && (
+                <div className="fixed inset-0 z-[100] bg-black flex flex-col p-6">
+                    <div className="flex items-center justify-between mb-20">
+                        <div className="flex items-center gap-3">
+                            <img src="/white-logo.png" alt="Pustakam" className="w-8 h-8" />
+                            <span className="text-base font-semibold">Pustakam</span>
+                        </div>
+                        <button onClick={() => setMenuOpen(false)} className="p-2">
+                            <X size={24} />
+                        </button>
+                    </div>
+                    <nav className="flex-1 flex flex-col justify-center gap-6">
+                        <button
+                            onClick={() => { setMenuOpen(false); onLogin(); }}
+                            className="text-left text-2xl text-white/60 hover:text-white transition-colors"
+                        >
+                            Login
+                        </button>
+                        <button
+                            onClick={() => { setMenuOpen(false); onGetStarted(); }}
+                            className="text-left text-2xl text-orange-400 hover:text-orange-300 transition-colors flex items-center gap-2"
+                        >
+                            Get Started <ArrowRight size={24} />
+                        </button>
+                    </nav>
+                </div>
+            )}
+
+            {/* Hero */}
+            <main className="relative min-h-screen flex items-center justify-center px-6">
+                <div className="max-w-5xl mx-auto text-center">
+                    {/* Badge */}
+                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-sm mb-8">
+                        <div className="w-2 h-2 rounded-full bg-orange-400 animate-pulse" />
+                        <span className="text-xs text-white/70 font-medium">AI-Powered • Free to Start</span>
+                    </div>
 
                     {/* Main Headline */}
-                    <h1
-                        className={`text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight leading-[1.05] mb-6 transition-all duration-1000 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
-                    >
-                        Write books with
+                    <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-6 leading-[1.05]">
+                        Create books
                         <br />
-                        <span className="bg-gradient-to-r from-orange-400 via-amber-300 to-orange-500 bg-clip-text text-transparent">
-                            artificial intelligence
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-amber-400 to-orange-500">
+                            with AI
                         </span>
                     </h1>
 
-                    {/* Subheadline */}
-                    <p
-                        className={`text-base sm:text-lg text-white/35 mb-10 max-w-md mx-auto transition-all duration-1000 delay-200 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
-                    >
-                        From idea to complete book in minutes. 5+ AI models, full chapters, PDF export.
+                    {/* Description */}
+                    <p className="text-lg sm:text-xl text-white/50 max-w-2xl mx-auto mb-10 leading-relaxed">
+                        Generate complete, structured books on any topic in minutes.
+                        <br className="hidden sm:block" />
+                        No credit card. Bring your own API keys.
                     </p>
 
-                    {/* CTA Button */}
-                    <div
-                        className={`transition-all duration-1000 delay-400 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
-                    >
+                    {/* CTA */}
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-16">
                         <button
                             onClick={onGetStarted}
-                            className="group inline-flex items-center gap-3 px-8 py-4 bg-white text-black font-semibold rounded-full text-base hover:bg-orange-400 hover:text-white transition-all shadow-xl shadow-white/10 hover:shadow-orange-400/20"
+                            className="group w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-400 hover:to-orange-500 text-white font-semibold rounded-full text-base transition-all flex items-center justify-center gap-2 shadow-lg shadow-orange-500/25"
                         >
-                            Start creating — it's free
+                            Start Creating
                             <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                        </button>
+                        <button
+                            onClick={onLogin}
+                            className="w-full sm:w-auto px-8 py-4 border border-white/10 hover:border-white/30 hover:bg-white/5 font-medium rounded-full text-base transition-all"
+                        >
+                            Sign In
                         </button>
                     </div>
 
-                    {/* Trust Badge */}
-                    <p
-                        className={`mt-10 text-xs text-white/20 transition-all duration-1000 delay-500 ${loaded ? 'opacity-100' : 'opacity-0'}`}
-                    >
-                        Bring your own API keys • 100% private • No credit card
-                    </p>
+                    {/* Trust Pills */}
+                    <div className="flex flex-wrap items-center justify-center gap-3 text-sm">
+                        <div className="px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm text-white/60">
+                            <Sparkles size={14} className="inline mr-1.5 text-orange-400" />
+                            5+ AI Models
+                        </div>
+                        <div className="px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm text-white/60">
+                            100% Privacy
+                        </div>
+                        <div className="px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm text-white/60">
+                            Free Forever
+                        </div>
+                    </div>
                 </div>
             </main>
 
-            {/* ===== FOOTER ===== */}
-            <footer className="relative z-10 py-6 px-6 text-center">
-                <p className="text-xs text-white/15">
-                    © 2026 Pustakam — Tanmay Kalbande
-                </p>
+            {/* Footer */}
+            <footer className="absolute bottom-0 left-0 right-0 py-6 px-6">
+                <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-white/30">
+                    <span>© 2026 Pustakam</span>
+                    <span>Created by Tanmay Kalbande</span>
+                </div>
             </footer>
         </div>
     );
