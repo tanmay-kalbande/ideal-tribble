@@ -1,6 +1,6 @@
-// src/components/LandingPage.tsx - Variant 2: Bold Gradient Hero
-import React, { useState } from 'react';
-import { ArrowRight, Sparkles, BookOpen, Zap } from 'lucide-react';
+// src/components/LandingPage.tsx - Variant 3: Split Screen with Visual Demo
+import React, { useState, useEffect } from 'react';
+import { ArrowRight, BookOpen, Sparkles } from 'lucide-react';
 
 interface LandingPageProps {
     onLogin: () => void;
@@ -8,106 +8,164 @@ interface LandingPageProps {
     onSubscribe?: () => void;
 }
 
-const LandingPage: React.FC<LandingPageProps> = ({ onLogin, onGetStarted }) => {
-    const [email, setEmail] = useState('');
+// Animated book generation preview
+function BookPreview() {
+    const [lines, setLines] = useState<string[]>([]);
+    const content = [
+        '# Introduction to Quantum Computing',
+        '',
+        'Quantum computing represents a fundamental',
+        'shift in how we process information...',
+        '',
+        '## Key Concepts',
+        '',
+        '**Qubits** - Unlike classical bits, qubits',
+        'can exist in superposition states...',
+        '',
+        '**Entanglement** - Quantum particles can',
+        'be correlated across distances...',
+    ];
+
+    useEffect(() => {
+        let index = 0;
+        const interval = setInterval(() => {
+            if (index < content.length) {
+                setLines(prev => [...prev, content[index]]);
+                index++;
+            } else {
+                setLines([]);
+                index = 0;
+            }
+        }, 400);
+        return () => clearInterval(interval);
+    }, []);
 
     return (
-        <div className="min-h-screen bg-black text-white font-sans overflow-hidden">
-
-            {/* Gradient Mesh Background */}
-            <div className="fixed inset-0 pointer-events-none">
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-gradient-to-b from-orange-600/30 via-orange-500/10 to-transparent blur-3xl" />
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,black_70%)]" />
+        <div className="w-full max-w-sm mx-auto">
+            <div className="bg-[#111] rounded-2xl border border-white/10 overflow-hidden shadow-2xl">
+                {/* Window Header */}
+                <div className="flex items-center gap-2 px-4 py-3 border-b border-white/5">
+                    <div className="w-3 h-3 rounded-full bg-red-500/80" />
+                    <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
+                    <div className="w-3 h-3 rounded-full bg-green-500/80" />
+                    <span className="ml-3 text-xs text-white/30 font-mono">generating...</span>
+                </div>
+                {/* Content */}
+                <div className="p-5 h-64 overflow-hidden font-mono text-sm">
+                    {lines.map((line, i) => (
+                        <div
+                            key={i}
+                            className={`${line.startsWith('#') ? 'text-orange-400 font-bold' :
+                                    line.startsWith('**') ? 'text-amber-300' :
+                                        'text-white/60'
+                                } ${line === '' ? 'h-4' : ''}`}
+                            style={{ animation: 'fadeIn 0.3s ease-out' }}
+                        >
+                            {line}
+                        </div>
+                    ))}
+                    <span className="inline-block w-2 h-4 bg-orange-400 animate-pulse" />
+                </div>
             </div>
+        </div>
+    );
+}
+
+const LandingPage: React.FC<LandingPageProps> = ({ onLogin, onGetStarted }) => {
+    return (
+        <div className="min-h-screen bg-black text-white font-sans">
 
             {/* ===== HEADER ===== */}
-            <header className="relative z-50 px-6 md:px-12 py-6">
-                <div className="max-w-6xl mx-auto flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <img src="/white-logo.png" alt="Pustakam" className="w-8 h-8" />
-                        <span className="text-base font-semibold tracking-wide">PUSTAKAM</span>
+            <header className="fixed top-0 left-0 right-0 z-50 px-6 md:px-10 py-5 bg-black/50 backdrop-blur-xl border-b border-white/5">
+                <div className="max-w-7xl mx-auto flex items-center justify-between">
+                    <div className="flex items-center gap-2.5">
+                        <img src="/white-logo.png" alt="Pustakam" className="w-7 h-7" />
+                        <span className="text-sm font-bold tracking-wider">PUSTAKAM</span>
                     </div>
-                    <div className="flex items-center gap-6">
-                        <button onClick={onLogin} className="text-sm text-white/60 hover:text-white transition-colors hidden sm:block">
-                            Sign in
+                    <div className="flex items-center gap-4">
+                        <button onClick={onLogin} className="text-sm text-white/50 hover:text-white transition-colors">
+                            Login
                         </button>
                         <button
                             onClick={onGetStarted}
-                            className="px-4 py-2 bg-white/10 hover:bg-white/15 border border-white/10 rounded-lg text-sm font-medium transition-all"
+                            className="px-4 py-2 bg-orange-500 hover:bg-orange-400 rounded-lg text-sm font-semibold transition-colors"
                         >
-                            Get Started
+                            Try Free
                         </button>
                     </div>
                 </div>
             </header>
 
-            {/* ===== HERO ===== */}
-            <main className="relative z-10 min-h-[calc(100vh-100px)] flex flex-col items-center justify-center px-6 text-center">
+            {/* ===== HERO - Split Layout ===== */}
+            <main className="min-h-screen pt-20 flex items-center">
+                <div className="w-full max-w-7xl mx-auto px-6 md:px-10 grid lg:grid-cols-2 gap-12 lg:gap-20 items-center py-16">
 
-                {/* Pill Badge */}
-                <div className="flex items-center gap-2 px-4 py-1.5 rounded-full border border-orange-500/30 bg-orange-500/10 mb-8">
-                    <Zap size={14} className="text-orange-400" />
-                    <span className="text-sm text-orange-300">Powered by AI</span>
-                </div>
-
-                {/* Main Headline */}
-                <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-6 max-w-4xl leading-[1.05]">
-                    Books that write
-                    <br />
-                    <span className="bg-gradient-to-r from-orange-400 via-amber-400 to-orange-500 bg-clip-text text-transparent">
-                        themselves
-                    </span>
-                </h1>
-
-                {/* Subheadline */}
-                <p className="text-lg sm:text-xl text-white/40 max-w-lg mb-12">
-                    Enter a topic. Get a complete book. It's that simple.
-                </p>
-
-                {/* Email Input + CTA */}
-                <div className="w-full max-w-md">
-                    <div className="flex flex-col sm:flex-row gap-3">
-                        <input
-                            type="text"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            placeholder="What do you want to learn?"
-                            className="flex-1 px-5 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-white/30 outline-none focus:border-orange-500/50 focus:bg-white/[0.07] transition-all"
-                        />
-                        <button
-                            onClick={onGetStarted}
-                            className="px-6 py-4 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-orange-500/20"
-                        >
-                            Create
-                            <ArrowRight size={18} />
-                        </button>
-                    </div>
-                    <p className="text-xs text-white/30 mt-4">
-                        Free to start • Bring your own API keys • No credit card required
-                    </p>
-                </div>
-
-                {/* Feature Pills */}
-                <div className="flex flex-wrap items-center justify-center gap-3 mt-16">
-                    {[
-                        { icon: BookOpen, text: '5+ AI Models' },
-                        { icon: Sparkles, text: 'Full Books, Not Snippets' },
-                        { icon: Zap, text: 'Generate in Minutes' },
-                    ].map((item, i) => (
-                        <div key={i} className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.03] border border-white/5">
-                            <item.icon size={14} className="text-white/40" />
-                            <span className="text-sm text-white/50">{item.text}</span>
+                    {/* Left - Text Content */}
+                    <div>
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-xs font-medium mb-6">
+                            <Sparkles size={12} />
+                            AI Book Engine
                         </div>
-                    ))}
+
+                        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.1] mb-6">
+                            Give us a topic.
+                            <br />
+                            <span className="text-white/40">We'll write the book.</span>
+                        </h1>
+
+                        <p className="text-lg text-white/40 mb-10 max-w-md">
+                            AI-powered book generation. Full chapters, not summaries. Ready in minutes, not months.
+                        </p>
+
+                        <div className="flex flex-col sm:flex-row gap-4 mb-8">
+                            <button
+                                onClick={onGetStarted}
+                                className="group px-7 py-4 bg-white text-black font-semibold rounded-xl hover:bg-white/90 transition-all flex items-center justify-center gap-2"
+                            >
+                                Start Writing
+                                <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                            </button>
+                            <button
+                                onClick={onLogin}
+                                className="px-7 py-4 border border-white/20 rounded-xl font-medium hover:bg-white/5 transition-all"
+                            >
+                                Sign In
+                            </button>
+                        </div>
+
+                        <div className="flex items-center gap-6 text-sm text-white/30">
+                            <div className="flex items-center gap-2">
+                                <BookOpen size={16} />
+                                <span>5+ AI models</span>
+                            </div>
+                            <span>•</span>
+                            <span>Export to PDF</span>
+                            <span>•</span>
+                            <span>Free tier</span>
+                        </div>
+                    </div>
+
+                    {/* Right - Visual Demo */}
+                    <div className="hidden lg:block">
+                        <BookPreview />
+                    </div>
                 </div>
             </main>
 
             {/* ===== FOOTER ===== */}
-            <footer className="relative z-10 py-8 px-6 text-center">
-                <p className="text-xs text-white/20">
-                    © 2026 Pustakam • Created by Tanmay Kalbande
-                </p>
+            <footer className="py-6 px-6 border-t border-white/5">
+                <div className="max-w-7xl mx-auto flex items-center justify-between text-xs text-white/30">
+                    <span>© 2026 Pustakam</span>
+                    <span>By Tanmay Kalbande</span>
+                </div>
             </footer>
+
+            <style>{`
+                @keyframes fadeIn {
+                    from { opacity: 0; transform: translateY(4px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+            `}</style>
         </div>
     );
 };
