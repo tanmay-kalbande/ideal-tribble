@@ -1474,7 +1474,7 @@ const BookListGrid = ({
   return (
     <div className="h-screen flex flex-col" style={{ background: 'var(--color-bg)', fontFamily: 'Rubik, sans-serif' }}>
       {/* Fixed Header */}
-      <div className="flex-shrink-0 w-full max-w-[1400px] mx-auto px-8 lg:px-12 pt-10 pb-6">
+      <div className="flex-shrink-0 w-full sticky top-0 z-40 bg-gradient-to-b from-[var(--color-bg)] via-[var(--color-bg)]/80 to-transparent pb-6 pt-6 px-8 lg:px-12 backdrop-blur-sm transition-colors duration-300">
         <div className="flex items-center justify-between">
           <div>
             {/* Title moved to TopHeader */}

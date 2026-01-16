@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Book, Database, Layers, Code, Server, CreditCard, ChevronRight, Terminal } from 'lucide-react';
+import { X, Book, Sparkles, Layers, Download, Library, Lightbulb, ChevronRight, CheckCircle2, ArrowRight, FileText, FileDown, Palette, Search } from 'lucide-react';
 
 interface TechnicalDocsProps {
     isOpen: boolean;
@@ -7,295 +7,404 @@ interface TechnicalDocsProps {
 }
 
 const sections = [
-    { id: 'intro', title: 'Introduction', icon: Book },
-    { id: 'architecture', title: 'Architecture', icon: Layers },
-    { id: 'data-models', title: 'Data Models', icon: Database },
-    { id: 'services', title: 'Service Layer', icon: Server },
-    { id: 'api-integration', title: 'AI Integration', icon: Terminal },
+    { id: 'getting-started', title: 'Getting Started', icon: Sparkles },
+    { id: 'create-book', title: 'Create Your Book', icon: Book },
+    { id: 'modules', title: 'Modules & Chapters', icon: Layers },
+    { id: 'reading', title: 'Reading & Exporting', icon: Download },
+    { id: 'library', title: 'Your Library', icon: Library },
+    { id: 'tips', title: 'Pro Tips', icon: Lightbulb },
 ];
 
 export const TechnicalDocs: React.FC<TechnicalDocsProps> = ({ isOpen, onClose }) => {
-    const [activeSection, setActiveSection] = useState('intro');
+    const [activeSection, setActiveSection] = useState('getting-started');
 
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm animate-fade-in">
-            <div className="flex w-full max-w-6xl h-[85vh] bg-[var(--color-bg)] rounded-xl border border-[var(--color-border)] shadow-2xl overflow-hidden flex-col md:flex-row">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in">
+            <div className="flex w-full max-w-5xl h-[85vh] bg-white dark:bg-[#1a1a1a] rounded-xl border border-gray-200 dark:border-white/[0.1] shadow-2xl overflow-hidden flex-col md:flex-row">
 
                 {/* Sidebar */}
-                <div className="w-full md:w-64 bg-[var(--color-card)] border-r border-[var(--color-border)] flex flex-col">
-                    <div className="p-6 border-b border-[var(--color-border)]">
-                        <h2 className="text-xl font-bold bg-gradient-to-r from-[var(--color-text-primary)] to-[var(--color-text-secondary)] bg-clip-text text-transparent">
-                            Platform Docs
+                <div className="w-full md:w-64 bg-gray-50 dark:bg-[#121212] border-r border-gray-200 dark:border-white/[0.08] flex flex-col">
+                    <div className="p-6 border-b border-gray-200 dark:border-white/[0.08]">
+                        <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                            <Book size={20} className="text-orange-500" />
+                            Platform Guide
                         </h2>
-                        <p className="text-xs text-[var(--color-text-secondary)] mt-1">v2.4.0 Technical Specification</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Learn how to use Pustakam effectively</p>
                     </div>
 
-                    <nav className="flex-1 overflow-y-auto p-4 space-y-1">
+                    <nav className="flex-1 overflow-y-auto p-3 space-y-1">
                         {sections.map((section) => (
                             <button
                                 key={section.id}
                                 onClick={() => setActiveSection(section.id)}
-                                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm transition-colors ${activeSection === section.id
-                                    ? 'bg-[var(--color-accent)]/10 text-[var(--color-accent)] font-medium border border-[var(--color-accent)]/20'
-                                    : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-bg)] hover:text-[var(--color-text-primary)]'
+                                className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm transition-all font-medium ${activeSection === section.id
+                                    ? 'bg-gray-900 text-white dark:bg-white/10 dark:text-white shadow-sm'
+                                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/[0.03]'
                                     }`}
                             >
-                                <section.icon size={18} />
+                                <section.icon size={16} className={activeSection === section.id ? 'text-orange-400' : ''} />
                                 <span>{section.title}</span>
                                 {activeSection === section.id && <ChevronRight className="ml-auto" size={14} />}
                             </button>
                         ))}
                     </nav>
 
-                    <div className="p-4 border-t border-[var(--color-border)]">
+                    <div className="p-3 border-t border-gray-200 dark:border-white/[0.08]">
                         <button
                             onClick={onClose}
-                            className="w-full flex items-center justify-center space-x-2 px-4 py-2 rounded-lg bg-[var(--color-bg)] text-[var(--color-text-primary)] hover:bg-[var(--color-border)] transition-colors text-sm font-medium border border-[var(--color-border)]"
+                            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-gray-100 dark:bg-white/[0.05] text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/[0.08] transition-colors text-sm font-medium border border-gray-200 dark:border-white/[0.08]"
                         >
                             <X size={16} />
-                            <span>Close Documentation</span>
+                            <span>Close Guide</span>
                         </button>
                     </div>
                 </div>
 
                 {/* Content Area */}
-                <div className="flex-1 overflow-y-auto bg-[var(--color-bg)]">
-                    <div className="max-w-4xl mx-auto p-8 md:p-12 space-y-12">
+                <div className="flex-1 overflow-y-auto bg-white dark:bg-transparent">
+                    <div className="max-w-3xl mx-auto p-8 md:p-10 space-y-8">
 
-                        {/* Introduction */}
-                        {activeSection === 'intro' && (
-                            <div className="space-y-6 animate-fade-in">
-                                <div>
-                                    <h1 className="text-3xl font-bold text-[var(--color-text-primary)] mb-4">Pustakam-AI Platform</h1>
-                                    <p className="text-lg text-[var(--color-text-secondary)] leading-relaxed">
-                                        Pustakam-AI is an advanced agentic book generation platform that leverages large language models (LLMs) to transform user intents into comprehensive, structured learning materials. Code-named "Kitaab", the system employs a multi-stage generation pipeline to ensure high-quality, coherent content.
+                        {/* Getting Started */}
+                        {activeSection === 'getting-started' && (
+                            <div className="space-y-8 animate-fade-in">
+                                <header>
+                                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">Welcome to Pustakam</h1>
+                                    <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+                                        Pustakam transforms your ideas into comprehensive, structured learning materials. Simply describe what you want to learn, and our AI creates a complete book with organized chapters and modules.
+                                    </p>
+                                </header>
+
+                                <div className="grid gap-4">
+                                    <div className="p-5 rounded-xl border border-gray-200 dark:border-white/[0.08] bg-gray-50 dark:bg-white/[0.02]">
+                                        <div className="flex items-start gap-4">
+                                            <div className="w-10 h-10 rounded-lg bg-orange-500/10 flex items-center justify-center shrink-0">
+                                                <span className="text-orange-500 font-bold">1</span>
+                                            </div>
+                                            <div>
+                                                <h3 className="font-semibold text-gray-900 dark:text-white mb-1">Describe Your Topic</h3>
+                                                <p className="text-sm text-gray-600 dark:text-gray-400">Enter what you want to learn about in the input field. Be specific for better results.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="p-5 rounded-xl border border-gray-200 dark:border-white/[0.08] bg-gray-50 dark:bg-white/[0.02]">
+                                        <div className="flex items-start gap-4">
+                                            <div className="w-10 h-10 rounded-lg bg-orange-500/10 flex items-center justify-center shrink-0">
+                                                <span className="text-orange-500 font-bold">2</span>
+                                            </div>
+                                            <div>
+                                                <h3 className="font-semibold text-gray-900 dark:text-white mb-1">Review the Roadmap</h3>
+                                                <p className="text-sm text-gray-600 dark:text-gray-400">AI generates a structured outline. Review the modules before starting generation.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="p-5 rounded-xl border border-gray-200 dark:border-white/[0.08] bg-gray-50 dark:bg-white/[0.02]">
+                                        <div className="flex items-start gap-4">
+                                            <div className="w-10 h-10 rounded-lg bg-orange-500/10 flex items-center justify-center shrink-0">
+                                                <span className="text-orange-500 font-bold">3</span>
+                                            </div>
+                                            <div>
+                                                <h3 className="font-semibold text-gray-900 dark:text-white mb-1">Generate & Read</h3>
+                                                <p className="text-sm text-gray-600 dark:text-gray-400">Click generate to create content. Once complete, read online or export your book.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="p-4 rounded-lg bg-emerald-500/5 border border-emerald-500/20">
+                                    <p className="text-sm text-emerald-700 dark:text-emerald-400 flex items-center gap-2">
+                                        <CheckCircle2 size={16} />
+                                        <span><strong>Tip:</strong> Your books are saved automatically. Access them anytime from your Library.</span>
                                     </p>
                                 </div>
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-                                    <div className="p-6 rounded-xl border border-[var(--color-border)] bg-[var(--color-card)]">
-                                        <h3 className="text-[var(--color-text-primary)] font-semibold mb-2 flex items-center gap-2">
-                                            <Terminal className="text-[var(--color-accent)]" size={20} />
-                                            Agentic Workflow
-                                        </h3>
-                                        <p className="text-sm text-[var(--color-text-secondary)]">
-                                            The system replaces standard linear generation with recursive agentic planning, breaking down goals into chapters, modules, and sections autonomously.
-                                        </p>
-                                    </div>
-                                    <div className="p-6 rounded-xl border border-[var(--color-border)] bg-[var(--color-card)]">
-                                        <h3 className="text-[var(--color-text-primary)] font-semibold mb-2 flex items-center gap-2">
-                                            <Code className="text-green-500" size={20} />
-                                            Polyglot AI
-                                        </h3>
-                                        <p className="text-sm text-[var(--color-text-secondary)]">
-                                            Seamlessly integrates with Groq, Gemini, and Mistral models to optimize for speed (inference) and quality (reasoning) depending on the task.
-                                        </p>
-                                    </div>
-                                </div>
                             </div>
                         )}
 
-                        {/* Architecture */}
-                        {activeSection === 'architecture' && (
+                        {/* Create Your Book */}
+                        {activeSection === 'create-book' && (
                             <div className="space-y-8 animate-fade-in">
-                                <div>
-                                    <h2 className="text-2xl font-bold text-[var(--color-text-primary)] mb-6">System Architecture</h2>
-
-                                    <div className="space-y-6">
-                                        <div className="border border-[var(--color-border)] rounded-xl overflow-hidden">
-                                            <div className="bg-[var(--color-card)] p-4 border-b border-[var(--color-border)] flex items-center justify-between">
-                                                <span className="font-mono text-xs text-[var(--color-text-secondary)]">client-side-stack.json</span>
-                                            </div>
-                                            <div className="p-6 bg-[#0d1117] overflow-x-auto">
-                                                <pre className="text-sm font-mono text-gray-300">
-                                                    {`{
-  "frontend": {
-    "framework": "React 18",
-    "buildTool": "Vite",
-    "styling": "Tailwind CSS + CSS Variables",
-    "icons": "Lucide React",
-    "animations": "Custom CSS + RAF"
-  },
-  "backend": {
-    "auth": "Supabase Auth",
-    "database": "PostgreSQL (Supabase)",
-    "storage": "Supabase Storage",
-    "edge_functions": "Deno (Supabase Edge)"
-  }
-}`}
-                                                </pre>
-                                            </div>
-                                        </div>
-
-                                        <div className="prose prose-invert max-w-none">
-                                            <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">Key Architectural Decisions</h3>
-                                            <ul className="list-disc pl-5 space-y-2 text-[var(--color-text-secondary)] mt-4">
-                                                <li><strong className="text-[var(--color-text-primary)]">Client-Side Orchestration:</strong> The initial version heavily relies on client-side logic for managing the LLM streaming and state to reduce server costs and improve latency.</li>
-                                                <li><strong className="text-[var(--color-text-primary)]">Hybrid State Strategies:</strong> Uses local storage for work-in-progress drafts and Supabase for persistent, purchased hooks.</li>
-                                                <li><strong className="text-[var(--color-text-primary)]">Token-Agnostic Design:</strong> The `BookGenerationService` is designed to swap providers (Groq/Google) without changing the core business logic.</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Data Models */}
-                        {activeSection === 'data-models' && (
-                            <div className="space-y-8 animate-fade-in">
-                                <div>
-                                    <h2 className="text-2xl font-bold text-[var(--color-text-primary)] mb-2">Core Data Models</h2>
-                                    <p className="text-[var(--color-text-secondary)] mb-8">
-                                        TypeScript interfaces defining the structure of knowledge artifacts.
+                                <header>
+                                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">Creating Your Book</h1>
+                                    <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+                                        Follow these steps to create a comprehensive learning guide on any topic.
                                     </p>
+                                </header>
 
-                                    <div className="space-y-8">
-                                        {/* BookProject */}
-                                        <div>
-                                            <h3 className="text-lg font-mono text-[var(--color-accent)] mb-3">interface BookProject</h3>
-                                            <div className="border border-[var(--color-border)] rounded-xl overflow-hidden bg-[#0d1117]">
-                                                <pre className="p-4 text-sm font-mono text-gray-300 overflow-x-auto">
-                                                    {`interface BookProject {
-  id: string;              // UUID
-  title: string;           // Derived from user intent
-  goal: string;            // Original user prompt
-  status: 'planning' | 'generating' | 'completed';
-  
-  // The structure of the book
-  roadmap?: {
-    modules: RoadmapModule[];
-    difficultyLevel: 'beginner' | 'intermediate';
-  };
-  
-  // Generated Content
-  modules: BookModule[];   // recursively generated chapters
-  finalBook?: string;      // Compiled Markdown
-  
-  // Metadata
-  createdAt: Date;
-  updatedAt: Date;
-  category: BookCategory;
-}`}
-                                                </pre>
-                                            </div>
-                                        </div>
-
-                                        {/* BookModule */}
-                                        <div>
-                                            <h3 className="text-lg font-mono text-[var(--color-accent)] mb-3">interface BookModule</h3>
-                                            <div className="border border-[var(--color-border)] rounded-xl overflow-hidden bg-[#0d1117]">
-                                                <pre className="p-4 text-sm font-mono text-gray-300 overflow-x-auto">
-                                                    {`interface BookModule {
-  id: string;
-  roadmapModuleId: string; // Link to parent requirement
-  title: string;
-  
-  // Content Payload
-  content: string;         // MDX/Markdown content
-  wordCount: number;
-  
-  // State Tracking
-  status: 'pending' | 'generating' | 'completed' | 'error';
-  generatedAt?: Date;
-}`}
-                                                </pre>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Services */}
-                        {activeSection === 'services' && (
-                            <div className="space-y-8 animate-fade-in">
-                                <div>
-                                    <h2 className="text-2xl font-bold text-[var(--color-text-primary)] mb-6">Service Layer</h2>
-
-                                    <div className="grid gap-6">
-                                        {/* BookService */}
-                                        <div className="p-6 rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] hover:border-[var(--color-accent)]/50 transition-colors group">
-                                            <div className="flex items-start justify-between mb-4">
-                                                <div>
-                                                    <h3 className="text-lg font-bold text-[var(--color-text-primary)] group-hover:text-[var(--color-accent)] transition-colors">BookGenerationService</h3>
-                                                    <code className="text-xs px-2 py-1 rounded bg-[var(--color-bg)] text-[var(--color-text-secondary)] mt-1 inline-block">src/services/bookService.ts</code>
-                                                </div>
-                                                <Server className="text-[var(--color-text-secondary)] group-hover:text-[var(--color-accent)]" />
-                                            </div>
-                                            <p className="text-sm text-[var(--color-text-secondary)] mb-4">
-                                                The singleton service responsible for orchestrating the AI generation lifecycle. It manages:
-                                            </p>
-                                            <ul className="text-sm text-[var(--color-text-secondary)] space-y-2 list-disc pl-4">
-                                                <li>Prompt engineering and context window management</li>
-                                                <li>Retry logic for LLM hallucinations or network failures</li>
-                                                <li>Checkpoint saving to prevent data loss during long generations</li>
-                                            </ul>
-                                        </div>
-
-                                        {/* CreditService */}
-                                        <div className="p-6 rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] hover:border-[var(--color-accent)]/50 transition-colors group">
-                                            <div className="flex items-start justify-between mb-4">
-                                                <div>
-                                                    <h3 className="text-lg font-bold text-[var(--color-text-primary)] group-hover:text-[var(--color-accent)] transition-colors">CreditService</h3>
-                                                    <code className="text-xs px-2 py-1 rounded bg-[var(--color-bg)] text-[var(--color-text-secondary)] mt-1 inline-block">src/services/creditService.ts</code>
-                                                </div>
-                                                <CreditCard className="text-[var(--color-text-secondary)] group-hover:text-[var(--color-accent)]" />
-                                            </div>
-                                            <p className="text-sm text-[var(--color-text-secondary)] mb-4">
-                                                Handles the monetization and usage quotas securely.
-                                            </p>
-                                            <div className="bg-[var(--color-bg)] p-3 rounded-lg border border-[var(--color-border)] text-xs font-mono text-[var(--color-text-secondary)]">
-                                                rpc('start_book_generation', &#123; <br />
-                                                &nbsp;&nbsp;p_book_id: string,<br />
-                                                &nbsp;&nbsp;p_title: string,<br />
-                                                &nbsp;&nbsp;p_goal: string<br />
-                                                &#125;)
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* API Integration */}
-                        {activeSection === 'api-integration' && (
-                            <div className="space-y-8 animate-fade-in">
-                                <div>
-                                    <h2 className="text-2xl font-bold text-[var(--color-text-primary)] mb-6">AI Model Integration</h2>
-                                    <p className="text-[var(--color-text-secondary)] mb-6">
-                                        Pustakam-AI uses a provider-agnostic interface to communicate with state-of-the-art LLMs.
-                                    </p>
+                                <section className="space-y-4">
+                                    <h2 className="text-sm font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Step-by-Step Process</h2>
 
                                     <div className="space-y-4">
-                                        <div className="flex items-center justify-between p-4 rounded-lg bg-[var(--color-card)] border border-[var(--color-border)]">
-                                            <div className="flex items-center space-x-4">
-                                                <div className="w-10 h-10 rounded-full bg-orange-500/10 flex items-center justify-center text-orange-500 font-bold">G</div>
-                                                <div>
-                                                    <h4 className="font-medium text-[var(--color-text-primary)]">Groq (Llama 3)</h4>
-                                                    <p className="text-xs text-[var(--color-text-secondary)]">Primary inference engine for speed</p>
+                                        <div className="p-5 rounded-xl border border-gray-200 dark:border-white/[0.08] bg-white dark:bg-white/[0.02]">
+                                            <h3 className="font-semibold text-gray-900 dark:text-white mb-2 flex items-center gap-2">
+                                                <ArrowRight size={16} className="text-orange-500" />
+                                                Writing Effective Prompts
+                                            </h3>
+                                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                                                The quality of your book depends on how you describe your topic. Here are some examples:
+                                            </p>
+                                            <div className="space-y-2">
+                                                <div className="text-sm p-3 rounded-lg bg-gray-50 dark:bg-white/[0.03] border border-gray-100 dark:border-white/[0.05]">
+                                                    <span className="text-gray-400">Good:</span> <span className="text-gray-900 dark:text-white">"Complete guide to machine learning for beginners with Python examples"</span>
+                                                </div>
+                                                <div className="text-sm p-3 rounded-lg bg-gray-50 dark:bg-white/[0.03] border border-gray-100 dark:border-white/[0.05]">
+                                                    <span className="text-gray-400">Better:</span> <span className="text-gray-900 dark:text-white">"Comprehensive JavaScript course from basics to advanced concepts including ES6+, async programming, and React fundamentals"</span>
                                                 </div>
                                             </div>
-                                            <div className="px-3 py-1 rounded-full bg-green-500/10 text-green-500 text-xs font-medium">Active</div>
                                         </div>
 
-                                        <div className="flex items-center justify-between p-4 rounded-lg bg-[var(--color-card)] border border-[var(--color-border)]">
-                                            <div className="flex items-center space-x-4">
-                                                <div className="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500 font-bold">M</div>
-                                                <div>
-                                                    <h4 className="font-medium text-[var(--color-text-primary)]">Mistral Large</h4>
-                                                    <p className="text-xs text-[var(--color-text-secondary)]">Fallback for complex reasoning tasks</p>
-                                                </div>
-                                            </div>
-                                            <div className="px-3 py-1 rounded-full bg-[var(--color-bg)] text-[var(--color-text-secondary)] text-xs font-medium">Standby</div>
+                                        <div className="p-5 rounded-xl border border-gray-200 dark:border-white/[0.08] bg-white dark:bg-white/[0.02]">
+                                            <h3 className="font-semibold text-gray-900 dark:text-white mb-2 flex items-center gap-2">
+                                                <ArrowRight size={16} className="text-orange-500" />
+                                                Reviewing the Roadmap
+                                            </h3>
+                                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                                                After entering your topic, a roadmap with all planned modules appears. Each module represents a chapter in your book. Review the structure before proceeding to ensure it covers what you need.
+                                            </p>
+                                        </div>
+
+                                        <div className="p-5 rounded-xl border border-gray-200 dark:border-white/[0.08] bg-white dark:bg-white/[0.02]">
+                                            <h3 className="font-semibold text-gray-900 dark:text-white mb-2 flex items-center gap-2">
+                                                <ArrowRight size={16} className="text-orange-500" />
+                                                Generation Process
+                                            </h3>
+                                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                                                Click "Generate All Modules" to start content creation. You can pause and resume anytime. Progress is automatically saved, so you won't lose work if you close the browser.
+                                            </p>
                                         </div>
                                     </div>
+                                </section>
+                            </div>
+                        )}
 
-                                    <div className="mt-8 p-4 border-l-2 border-[var(--color-accent)] bg-[var(--color-accent)]/5">
-                                        <h4 className="text-sm font-bold text-[var(--color-accent)] mb-1">Prompt Engineering Strategy</h4>
-                                        <p className="text-sm text-[var(--color-text-secondary)]">
-                                            We utilize "Chain of Thought" prompting for roadmap generation, enforcing a strict JSON schema output to ensure reliable parsing by the frontend service.
+                        {/* Modules & Chapters */}
+                        {activeSection === 'modules' && (
+                            <div className="space-y-8 animate-fade-in">
+                                <header>
+                                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">Understanding Modules</h1>
+                                    <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+                                        Your book is organized into modules – each representing a self-contained chapter covering a specific topic.
+                                    </p>
+                                </header>
+
+                                <div className="grid gap-4">
+                                    <div className="p-5 rounded-xl border border-gray-200 dark:border-white/[0.08] bg-gray-50 dark:bg-white/[0.02]">
+                                        <h3 className="font-semibold text-gray-900 dark:text-white mb-2 flex items-center gap-2">
+                                            <Layers size={16} className="text-orange-500" />
+                                            Module Structure
+                                        </h3>
+                                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">Each module contains:</p>
+                                        <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-2">
+                                            <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-emerald-500" /> Clear introduction and objectives</li>
+                                            <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-emerald-500" /> Detailed explanations with examples</li>
+                                            <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-emerald-500" /> Key takeaways and summaries</li>
+                                            <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-emerald-500" /> Practical exercises when applicable</li>
+                                        </ul>
+                                    </div>
+
+                                    <div className="p-5 rounded-xl border border-gray-200 dark:border-white/[0.08] bg-gray-50 dark:bg-white/[0.02]">
+                                        <h3 className="font-semibold text-gray-900 dark:text-white mb-2 flex items-center gap-2">
+                                            <Palette size={16} className="text-orange-500" />
+                                            Module Status
+                                        </h3>
+                                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">Track progress with status indicators:</p>
+                                        <div className="space-y-2 text-sm">
+                                            <div className="flex items-center gap-3">
+                                                <span className="w-2 h-2 rounded-full bg-gray-400"></span>
+                                                <span className="text-gray-600 dark:text-gray-400">Pending – Not yet generated</span>
+                                            </div>
+                                            <div className="flex items-center gap-3">
+                                                <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
+                                                <span className="text-gray-600 dark:text-gray-400">Generating – Currently being created</span>
+                                            </div>
+                                            <div className="flex items-center gap-3">
+                                                <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                                <span className="text-gray-600 dark:text-gray-400">Completed – Ready to read</span>
+                                            </div>
+                                            <div className="flex items-center gap-3">
+                                                <span className="w-2 h-2 rounded-full bg-red-500"></span>
+                                                <span className="text-gray-600 dark:text-gray-400">Error – Can be retried</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Reading & Exporting */}
+                        {activeSection === 'reading' && (
+                            <div className="space-y-8 animate-fade-in">
+                                <header>
+                                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">Reading & Exporting</h1>
+                                    <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+                                        Enjoy your book in a beautiful reading interface or export it for offline use.
+                                    </p>
+                                </header>
+
+                                <section className="space-y-4">
+                                    <h2 className="text-sm font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Reading Experience</h2>
+
+                                    <div className="p-5 rounded-xl border border-gray-200 dark:border-white/[0.08] bg-gray-50 dark:bg-white/[0.02]">
+                                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                                            The reading mode offers a distraction-free experience with customizable settings:
+                                        </p>
+                                        <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-2">
+                                            <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-emerald-500" /> Choose from multiple font options</li>
+                                            <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-emerald-500" /> Adjust font size for comfort</li>
+                                            <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-emerald-500" /> Light/Dark mode support</li>
+                                            <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-emerald-500" /> Track your reading progress</li>
+                                        </ul>
+                                    </div>
+                                </section>
+
+                                <section className="space-y-4">
+                                    <h2 className="text-sm font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Export Options</h2>
+
+                                    <div className="grid gap-3">
+                                        <div className="p-4 rounded-xl border border-gray-200 dark:border-white/[0.08] bg-white dark:bg-white/[0.02] flex items-center gap-4">
+                                            <div className="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center">
+                                                <FileDown size={20} className="text-red-500" />
+                                            </div>
+                                            <div>
+                                                <h3 className="font-semibold text-gray-900 dark:text-white">PDF Export</h3>
+                                                <p className="text-sm text-gray-500 dark:text-gray-400">Professional formatted document for printing</p>
+                                            </div>
+                                        </div>
+
+                                        <div className="p-4 rounded-xl border border-gray-200 dark:border-white/[0.08] bg-white dark:bg-white/[0.02] flex items-center gap-4">
+                                            <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                                                <FileText size={20} className="text-blue-500" />
+                                            </div>
+                                            <div>
+                                                <h3 className="font-semibold text-gray-900 dark:text-white">Markdown Export</h3>
+                                                <p className="text-sm text-gray-500 dark:text-gray-400">Raw markdown for editing or use in other apps</p>
+                                            </div>
+                                        </div>
+
+                                        <div className="p-4 rounded-xl border border-gray-200 dark:border-white/[0.08] bg-white dark:bg-white/[0.02] flex items-center gap-4">
+                                            <div className="w-10 h-10 rounded-lg bg-gray-500/10 flex items-center justify-center">
+                                                <FileText size={20} className="text-gray-500" />
+                                            </div>
+                                            <div>
+                                                <h3 className="font-semibold text-gray-900 dark:text-white">Plain Text</h3>
+                                                <p className="text-sm text-gray-500 dark:text-gray-400">Simple text version for maximum compatibility</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+                            </div>
+                        )}
+
+                        {/* Your Library */}
+                        {activeSection === 'library' && (
+                            <div className="space-y-8 animate-fade-in">
+                                <header>
+                                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">Managing Your Library</h1>
+                                    <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+                                        All your books are stored locally and accessible from the Library view.
+                                    </p>
+                                </header>
+
+                                <div className="grid gap-4">
+                                    <div className="p-5 rounded-xl border border-gray-200 dark:border-white/[0.08] bg-gray-50 dark:bg-white/[0.02]">
+                                        <h3 className="font-semibold text-gray-900 dark:text-white mb-2 flex items-center gap-2">
+                                            <Search size={16} className="text-orange-500" />
+                                            Finding Books
+                                        </h3>
+                                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                                            Use the search bar to quickly find books by title or topic. Books are displayed as cards showing their status and completion progress.
+                                        </p>
+                                    </div>
+
+                                    <div className="p-5 rounded-xl border border-gray-200 dark:border-white/[0.08] bg-gray-50 dark:bg-white/[0.02]">
+                                        <h3 className="font-semibold text-gray-900 dark:text-white mb-2 flex items-center gap-2">
+                                            <Library size={16} className="text-orange-500" />
+                                            Book Status
+                                        </h3>
+                                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                                            Each book card shows:
+                                        </p>
+                                        <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                                            <li>• Title and description</li>
+                                            <li>• Total modules and completed count</li>
+                                            <li>• Generation status indicator</li>
+                                            <li>• Last updated timestamp</li>
+                                        </ul>
+                                    </div>
+
+                                    <div className="p-5 rounded-xl border border-gray-200 dark:border-white/[0.08] bg-gray-50 dark:bg-white/[0.02]">
+                                        <h3 className="font-semibold text-gray-900 dark:text-white mb-2 flex items-center gap-2">
+                                            <Download size={16} className="text-orange-500" />
+                                            Backup & Restore
+                                        </h3>
+                                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                                            Access backup options from Settings → Data Area. Export your entire library as a JSON file and restore it anytime on any device.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Pro Tips */}
+                        {activeSection === 'tips' && (
+                            <div className="space-y-8 animate-fade-in">
+                                <header>
+                                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">Pro Tips</h1>
+                                    <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+                                        Get the most out of Pustakam with these expert recommendations.
+                                    </p>
+                                </header>
+
+                                <div className="space-y-4">
+                                    <div className="p-5 rounded-xl border border-orange-500/20 bg-orange-500/5">
+                                        <h3 className="font-semibold text-gray-900 dark:text-white mb-2 flex items-center gap-2">
+                                            <Lightbulb size={16} className="text-orange-500" />
+                                            Be Specific with Topics
+                                        </h3>
+                                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                                            Instead of "Learn Python", try "Python programming for data science including pandas, numpy, and matplotlib with practical projects". More detail = better content.
+                                        </p>
+                                    </div>
+
+                                    <div className="p-5 rounded-xl border border-orange-500/20 bg-orange-500/5">
+                                        <h3 className="font-semibold text-gray-900 dark:text-white mb-2 flex items-center gap-2">
+                                            <Lightbulb size={16} className="text-orange-500" />
+                                            Choose the Right Model
+                                        </h3>
+                                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                                            Different AI models have different strengths. Gemini is great for comprehensive content, while Groq offers faster generation. Experiment to find your preference.
+                                        </p>
+                                    </div>
+
+                                    <div className="p-5 rounded-xl border border-orange-500/20 bg-orange-500/5">
+                                        <h3 className="font-semibold text-gray-900 dark:text-white mb-2 flex items-center gap-2">
+                                            <Lightbulb size={16} className="text-orange-500" />
+                                            Use Multiple API Keys
+                                        </h3>
+                                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                                            Configure multiple API providers in Settings. If one fails during generation, you can quickly switch to another without losing progress.
+                                        </p>
+                                    </div>
+
+                                    <div className="p-5 rounded-xl border border-orange-500/20 bg-orange-500/5">
+                                        <h3 className="font-semibold text-gray-900 dark:text-white mb-2 flex items-center gap-2">
+                                            <Lightbulb size={16} className="text-orange-500" />
+                                            Regular Backups
+                                        </h3>
+                                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                                            Export your library regularly from Settings → Data Area. This protects your books if you clear browser data or switch devices.
+                                        </p>
+                                    </div>
+
+                                    <div className="p-5 rounded-xl border border-emerald-500/20 bg-emerald-500/5">
+                                        <h3 className="font-semibold text-gray-900 dark:text-white mb-2 flex items-center gap-2">
+                                            <CheckCircle2 size={16} className="text-emerald-500" />
+                                            Install as App
+                                        </h3>
+                                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                                            Pustakam works as a Progressive Web App. Install it on your device for a native app experience with offline reading capabilities.
                                         </p>
                                     </div>
                                 </div>
