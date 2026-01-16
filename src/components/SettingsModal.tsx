@@ -6,7 +6,6 @@ import { APISettings } from '../types';
 import { storageUtils } from '../utils/storage';
 import { DisclaimerPage } from './DisclaimerPage';
 import { APIKeyGuide } from './APIKeyGuide';
-import { TechnicalDocs } from './TechnicalDocs';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -45,7 +44,6 @@ export function SettingsModal({ isOpen, onClose, settings, onSaveSettings, theme
   const [showImportModal, setShowImportModal] = React.useState(false);
   const [showDisclaimer, setShowDisclaimer] = React.useState(false);
   const [showAPIGuide, setShowAPIGuide] = React.useState(false);
-  const [showTechnicalDocs, setShowTechnicalDocs] = React.useState(false);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   React.useEffect(() => setLocalSettings(settings), [settings, isOpen]);
@@ -573,13 +571,6 @@ export function SettingsModal({ isOpen, onClose, settings, onSaveSettings, theme
                       <span className="text-gray-500 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white transition-colors tracking-tight">System Regulatory Compliance</span>
                       <ChevronRight size={14} className="text-gray-300" />
                     </button>
-                    <button
-                      onClick={() => setShowTechnicalDocs(true)}
-                      className="w-full flex items-center justify-between px-4 py-2 rounded-lg bg-gray-50 dark:bg-white/[0.03] border border-gray-100 dark:border-white/[0.05] hover:border-indigo-500/20 transition-all text-xs font-bold group"
-                    >
-                      <span className="text-gray-500 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white transition-colors tracking-tight">Platform Technical Docs</span>
-                      <ChevronRight size={14} className="text-gray-300" />
-                    </button>
                   </div>
                 </div>
               )}
@@ -672,7 +663,6 @@ export function SettingsModal({ isOpen, onClose, settings, onSaveSettings, theme
       {/* Overlays */}
       {showDisclaimer && <DisclaimerPage isOpen={showDisclaimer} onClose={() => setShowDisclaimer(false)} />}
       {showAPIGuide && <APIKeyGuide isOpen={showAPIGuide} onClose={() => setShowAPIGuide(false)} />}
-      {showTechnicalDocs && <TechnicalDocs isOpen={showTechnicalDocs} onClose={() => setShowTechnicalDocs(false)} />}
     </>
   );
 }
