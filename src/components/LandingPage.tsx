@@ -1,6 +1,6 @@
-// src/components/LandingPage.tsx - Variant 2: "The Generator" Focus
+// src/components/LandingPage.tsx - Professional, Minimal Landing Page
 import React, { useState, useEffect } from 'react';
-import { Menu, X, ArrowRight, Sparkles, Book, Command, Search } from 'lucide-react';
+import { Menu, X, ArrowRight, Sparkles, BookOpen, Shield, Zap, Check } from 'lucide-react';
 
 interface LandingPageProps {
     onLogin: () => void;
@@ -8,70 +8,63 @@ interface LandingPageProps {
     onSubscribe?: () => void;
 }
 
-// Background Animation - Moving Mesh Gradient
-function MeshGradient() {
+// Animated typing effect with cursor
+function TypeWriter({ texts, className }: { texts: string[]; className?: string }) {
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [displayText, setDisplayText] = useState('');
+    const [isDeleting, setIsDeleting] = useState(false);
+
+    useEffect(() => {
+        const currentText = texts[currentIndex];
+        const timeout = setTimeout(() => {
+            if (!isDeleting) {
+                if (displayText.length < currentText.length) {
+                    setDisplayText(currentText.slice(0, displayText.length + 1));
+                } else {
+                    setTimeout(() => setIsDeleting(true), 2500);
+                }
+            } else {
+                if (displayText.length > 0) {
+                    setDisplayText(displayText.slice(0, -1));
+                } else {
+                    setIsDeleting(false);
+                    setCurrentIndex((prev) => (prev + 1) % texts.length);
+                }
+            }
+        }, isDeleting ? 25 : 70);
+
+        return () => clearTimeout(timeout);
+    }, [displayText, isDeleting, currentIndex, texts]);
+
     return (
-        <div className="fixed inset-0 overflow-hidden -z-10 bg-[#050510]">
-            <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-indigo-600/20 rounded-full blur-[100px] animate-blob" />
-            <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-orange-500/10 rounded-full blur-[100px] animate-blob animation-delay-2000" />
-            <div className="absolute -bottom-32 left-1/3 w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[100px] animate-blob animation-delay-4000" />
-            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-        </div>
+        <span className={className}>
+            {displayText}
+            <span className="inline-block w-[3px] h-[0.9em] bg-orange-500 ml-1 animate-pulse rounded-sm" />
+        </span>
     );
 }
 
-// Animated Mock Input Concept
-function MockInput({ onClick }: { onClick: () => void }) {
-    const prompts = [
-        "Explain Quantum Physics like I'm 5",
-        "A Complete Guide to Urban Gardening",
-        "The History of Renaissance Art",
-        "Python Programming for Beginners",
-        "Modern Stoicism Philosophy"
-    ];
-    const [text, setText] = useState("");
-    const [promptIndex, setPromptIndex] = useState(0);
-    const [isTyping, setIsTyping] = useState(true);
-
-    useEffect(() => {
-        const currentPrompt = prompts[promptIndex];
-        let timeout: NodeJS.Timeout;
-
-        if (isTyping) {
-            if (text.length < currentPrompt.length) {
-                timeout = setTimeout(() => {
-                    setText(currentPrompt.slice(0, text.length + 1));
-                }, 50);
-            } else {
-                timeout = setTimeout(() => setIsTyping(false), 2000);
-            }
-        } else {
-            if (text.length > 0) {
-                timeout = setTimeout(() => {
-                    setText(text.slice(0, -1));
-                }, 30);
-            } else {
-                setPromptIndex((prev) => (prev + 1) % prompts.length);
-                setIsTyping(true);
-            }
-        }
-
-        return () => clearTimeout(timeout);
-    }, [text, isTyping, promptIndex]);
-
+// Subtle animated gradient background
+function GradientBackground() {
     return (
-        <div
-            onClick={onClick}
-            className="w-full max-w-2xl mx-auto mt-12 bg-white/5 border border-white/10 rounded-2xl p-2 pl-6 pr-2 flex items-center gap-4 cursor-pointer hover:bg-white/[0.07] hover:border-white/20 transition-all group shadow-2xl shadow-black/50"
-        >
-            <Search className="text-white/30 group-hover:text-white/50 transition-colors" size={24} />
-            <div className="flex-1 h-12 flex items-center text-lg sm:text-xl text-white/90 font-light">
-                {text}
-                <span className="w-0.5 h-6 bg-orange-500 animate-pulse ml-1" />
-            </div>
-            <button className="bg-white text-black px-6 py-3 rounded-xl font-semibold text-sm hover:bg-gray-100 transition-colors hidden sm:block">
-                Generate
-            </button>
+        <div className="fixed inset-0 overflow-hidden pointer-events-none">
+            {/* Main gradient orbs */}
+            <div
+                className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-gradient-radial from-orange-500/8 via-transparent to-transparent blur-3xl"
+                style={{ animation: 'pulse 8s ease-in-out infinite' }}
+            />
+            <div
+                className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-gradient-radial from-amber-500/5 via-transparent to-transparent blur-3xl"
+                style={{ animation: 'pulse 10s ease-in-out infinite', animationDelay: '2s' }}
+            />
+            {/* Grid pattern overlay */}
+            <div
+                className="absolute inset-0 opacity-[0.02]"
+                style={{
+                    backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)',
+                    backgroundSize: '60px 60px'
+                }}
+            />
         </div>
     );
 }
@@ -79,140 +72,190 @@ function MockInput({ onClick }: { onClick: () => void }) {
 const LandingPage: React.FC<LandingPageProps> = ({ onLogin, onGetStarted }) => {
     const [menuOpen, setMenuOpen] = useState(false);
 
+    // Diverse topics for the typewriter
+    const topics = [
+        'Machine Learning',
+        'Philosophy',
+        'Business Strategy',
+        'Quantum Physics',
+        'Psychology',
+        'Web Development',
+        'Creative Writing',
+        'Data Science',
+        'Economics',
+        'Neuroscience',
+        'Product Design',
+        'Marketing',
+        'History',
+        'Blockchain',
+        'Leadership'
+    ];
+
     return (
-        <div className="min-h-screen text-white font-sans selection:bg-orange-500/30">
-            <MeshGradient />
+        <div className="min-h-screen bg-[#08080c] text-white font-sans relative overflow-hidden">
+            <GradientBackground />
 
             {/* ===== HEADER ===== */}
-            <header className="fixed top-0 inset-x-0 z-50 px-6 py-6 transition-all duration-300">
-                <div className="max-w-7xl mx-auto flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                        {/* Logo Icon */}
-                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold">
-                            P
-                        </div>
-                        <span className="font-semibold tracking-tight">Pustakam</span>
+            <header className="fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 lg:px-12 py-4 bg-gradient-to-b from-[#08080c] via-[#08080c]/90 to-transparent">
+                <div className="max-w-6xl mx-auto flex items-center justify-between">
+                    <div className="flex items-center gap-2.5 sm:gap-3">
+                        <img src="/white-logo.png" alt="Pustakam" className="w-8 h-8 sm:w-9 sm:h-9" />
+                        <span className="text-base sm:text-lg font-bold tracking-tight">PUSTAKAM</span>
                     </div>
 
-                    <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-white/60">
-                        <button onClick={onGetStarted} className="hover:text-white transition-colors">How it works</button>
-                        <button onClick={onGetStarted} className="hover:text-white transition-colors">Showcase</button>
-                        <button onClick={onLogin} className="hover:text-white transition-colors">Login</button>
+                    <div className="flex items-center gap-2 sm:gap-4">
+                        <button
+                            onClick={onLogin}
+                            className="hidden sm:block px-4 py-2 text-sm font-medium text-white/60 hover:text-white transition-colors"
+                        >
+                            Sign In
+                        </button>
                         <button
                             onClick={onGetStarted}
-                            className="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-full transition-colors border border-white/5"
+                            className="px-4 sm:px-5 py-2 sm:py-2.5 bg-white text-black font-semibold rounded-full text-xs sm:text-sm hover:bg-white/90 transition-all hover:scale-[1.02]"
                         >
-                            Get Started
+                            Get Started Free
                         </button>
-                    </nav>
-
-                    <button onClick={() => setMenuOpen(true)} className="md:hidden p-2 text-white/70 hover:text-white">
-                        <Menu size={24} />
-                    </button>
+                        <button
+                            onClick={() => setMenuOpen(true)}
+                            className="sm:hidden p-2 hover:bg-white/10 rounded-lg transition-colors"
+                        >
+                            <Menu size={20} />
+                        </button>
+                    </div>
                 </div>
             </header>
 
-            {/* ===== HERO ===== */}
-            <main className="min-h-screen flex flex-col justify-center px-6 pt-20 relative z-10">
-                <div className="max-w-5xl mx-auto w-full text-center">
-
-                    {/* Badge */}
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-medium text-orange-300 mb-8 mx-auto hover:bg-white/10 transition-colors cursor-default">
-                        <Sparkles size={12} />
-                        <span>v2.0 Now Available</span>
-                    </div>
-
-                    {/* Headline */}
-                    <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-white/40">
-                        Knowledge, <br />
-                        <span className="">Generated.</span>
-                    </h1>
-
-                    {/* Subheadline */}
-                    <p className="text-xl sm:text-2xl text-white/40 max-w-2xl mx-auto leading-relaxed mb-4">
-                        The AI engine that turns your curiosity into comprehensive books.
-                        Structured chapters, deep content, instant exports.
-                    </p>
-
-                    {/* Mock Input Interaction */}
-                    <MockInput onClick={onGetStarted} />
-
-                    {/* Bottom Features */}
-                    <div className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto border-t border-white/5 pt-10">
-                        <div className="text-center group cursor-default">
-                            <div className="flex justify-center mb-3 text-white/20 group-hover:text-orange-400 transition-colors">
-                                <Command size={24} />
-                            </div>
-                            <h3 className="font-semibold text-white/80">AI Powered</h3>
-                            <p className="text-sm text-white/30 mt-1">Mistral & Gemini & Groq</p>
-                        </div>
-                        <div className="text-center group cursor-default">
-                            <div className="flex justify-center mb-3 text-white/20 group-hover:text-blue-400 transition-colors">
-                                <Book size={24} />
-                            </div>
-                            <h3 className="font-semibold text-white/80">Full Books</h3>
-                            <p className="text-sm text-white/30 mt-1">Not just summaries</p>
-                        </div>
-                        <div className="text-center group cursor-default">
-                            <div className="flex justify-center mb-3 text-white/20 group-hover:text-green-400 transition-colors">
-                                <Sparkles size={24} />
-                            </div>
-                            <h3 className="font-semibold text-white/80">Export Ready</h3>
-                            <p className="text-sm text-white/30 mt-1">PDF & Markdown</p>
-                        </div>
-                        <div className="text-center group cursor-default">
-                            <div className="flex justify-center mb-3 text-white/20 group-hover:text-purple-400 transition-colors">
-                                <ArrowRight size={24} />
-                            </div>
-                            <h3 className="font-semibold text-white/80">Free Start</h3>
-                            <p className="text-sm text-white/30 mt-1">No credit card required</p>
-                        </div>
-                    </div>
-
-                </div>
-            </main>
-
-            {/* Mobile Menu */}
+            {/* ===== MOBILE MENU ===== */}
             {menuOpen && (
-                <div className="fixed inset-0 z-[100] bg-[#050510] flex flex-col p-6 animate-in slide-in-from-right duration-200">
-                    <div className="flex items-center justify-between mb-8">
-                        <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold">
-                                P
-                            </div>
-                            <span className="font-semibold">Pustakam</span>
+                <div className="fixed inset-0 z-[100] bg-[#08080c] flex flex-col p-6 animate-fade-in">
+                    <div className="flex items-center justify-between mb-16">
+                        <div className="flex items-center gap-3">
+                            <img src="/white-logo.png" alt="Pustakam" className="w-9 h-9" />
+                            <span className="text-lg font-bold">PUSTAKAM</span>
                         </div>
-                        <button onClick={() => setMenuOpen(false)} className="p-2 bg-white/5 rounded-lg text-white/70">
+                        <button
+                            onClick={() => setMenuOpen(false)}
+                            className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                        >
                             <X size={24} />
                         </button>
                     </div>
-
-                    <div className="flex-1 flex flex-col justify-center gap-6">
-                        <button onClick={onGetStarted} className="text-3xl font-bold text-white text-left">Create Book</button>
-                        <button onClick={onLogin} className="text-3xl font-bold text-white/40 text-left hover:text-white transition-colors">Login</button>
-                        <div className="h-px bg-white/10 my-4" />
-                        <p className="text-white/30 text-sm">Experience the future of learning.</p>
-                    </div>
+                    <nav className="flex-1 flex flex-col justify-center gap-6">
+                        <button
+                            onClick={() => { setMenuOpen(false); onLogin(); }}
+                            className="text-left text-2xl font-medium text-white/60 hover:text-white transition-colors"
+                        >
+                            Sign In
+                        </button>
+                        <button
+                            onClick={() => { setMenuOpen(false); onGetStarted(); }}
+                            className="text-left text-2xl font-semibold text-orange-400 hover:text-orange-300 transition-colors flex items-center gap-3"
+                        >
+                            Get Started Free <ArrowRight size={24} />
+                        </button>
+                    </nav>
                 </div>
             )}
 
-            <style>{`
-                @keyframes blob {
-                    0% { transform: translate(0px, 0px) scale(1); }
-                    33% { transform: translate(30px, -50px) scale(1.1); }
-                    66% { transform: translate(-20px, 20px) scale(0.9); }
-                    100% { transform: translate(0px, 0px) scale(1); }
-                }
-                .animate-blob {
-                    animation: blob 7s infinite;
-                }
-                .animation-delay-2000 {
-                    animation-delay: 2s;
-                }
-                .animation-delay-4000 {
-                    animation-delay: 4s;
-                }
-            `}</style>
+            {/* ===== HERO SECTION ===== */}
+            <main className="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-12 pt-20 pb-16 relative z-10">
+                <div className="max-w-4xl mx-auto text-center w-full">
+
+                    {/* Launch Badge */}
+                    <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-gradient-to-r from-orange-500/10 to-amber-500/10 border border-orange-500/20 mb-6 sm:mb-8">
+                        <span className="relative flex h-2 w-2">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
+                        </span>
+                        <span className="text-xs sm:text-sm font-medium text-orange-300">
+                            🎉 Completely Free • Unlimited Books • Limited Time
+                        </span>
+                    </div>
+
+                    {/* Main Headline */}
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-[1.1] mb-4 sm:mb-6 tracking-tight">
+                        <span className="text-white/90">Create a book about</span>
+                        <br className="hidden sm:block" />
+                        <span className="sm:hidden"> </span>
+                        <TypeWriter
+                            texts={topics}
+                            className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-amber-400"
+                        />
+                    </h1>
+
+                    {/* Subheadline */}
+                    <p className="text-base sm:text-lg lg:text-xl text-white/40 max-w-2xl mx-auto mb-8 sm:mb-10 leading-relaxed px-2">
+                        Transform any topic into a comprehensive, well-structured book in minutes using AI.
+                        <span className="text-white/60"> Bring your own API keys. Keep full control.</span>
+                    </p>
+
+                    {/* CTA Buttons */}
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-10 sm:mb-12 px-4">
+                        <button
+                            onClick={onGetStarted}
+                            className="group w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-400 hover:to-orange-500 text-white font-semibold rounded-full text-base sm:text-lg transition-all flex items-center justify-center gap-2 sm:gap-3 shadow-lg shadow-orange-500/20 hover:shadow-orange-500/30 hover:scale-[1.02]"
+                        >
+                            <Sparkles size={18} className="sm:w-5 sm:h-5" />
+                            Start Creating — It's Free
+                            <ArrowRight size={18} className="sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
+                        </button>
+                        <button
+                            onClick={onLogin}
+                            className="w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 border border-white/15 hover:border-white/30 hover:bg-white/5 font-medium rounded-full text-base sm:text-lg transition-all text-white/70 hover:text-white"
+                        >
+                            I have an account
+                        </button>
+                    </div>
+
+                    {/* Feature Pills */}
+                    <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-12 sm:mb-16 px-2">
+                        {[
+                            { icon: Zap, text: '5+ AI Models' },
+                            { icon: Shield, text: '100% Private' },
+                            { icon: BookOpen, text: 'Export as PDF' },
+                        ].map((item, i) => (
+                            <div
+                                key={i}
+                                className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-white/[0.03] border border-white/[0.06] text-white/50 text-xs sm:text-sm"
+                            >
+                                <item.icon size={14} className="text-orange-400/70" />
+                                <span>{item.text}</span>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Social Proof / Trust */}
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 text-xs sm:text-sm text-white/30">
+                        <div className="flex items-center gap-2">
+                            <div className="flex -space-x-2">
+                                {[...Array(4)].map((_, i) => (
+                                    <div
+                                        key={i}
+                                        className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-gradient-to-br from-orange-400 to-amber-500 border-2 border-[#08080c] flex items-center justify-center text-[10px] font-bold text-white"
+                                    >
+                                        {['T', 'A', 'M', 'K'][i]}
+                                    </div>
+                                ))}
+                            </div>
+                            <span>1,000+ creators</span>
+                        </div>
+                        <div className="hidden sm:block w-1 h-1 rounded-full bg-white/20" />
+                        <div className="flex items-center gap-1.5">
+                            <Check size={14} className="text-green-400" />
+                            <span>No credit card required</span>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            {/* ===== FOOTER ===== */}
+            <footer className="absolute bottom-0 left-0 right-0 py-4 sm:py-6 px-4 sm:px-6 z-10">
+                <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs sm:text-sm text-white/25">
+                    <span>© 2026 Pustakam</span>
+                    <span className="text-white/15">Built by Tanmay Kalbande</span>
+                </div>
+            </footer>
         </div>
     );
 };

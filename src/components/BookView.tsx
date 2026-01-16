@@ -1220,39 +1220,37 @@ const HomeView = ({
           <span className="hidden sm:inline">{isEnhancing ? 'Refining...' : 'Enhance'}</span>
         </button>
 
-        {/* Generate button - only show when advanced options NOT open */}
-        {!showAdvanced && (
-          <button
-            onClick={() => {
-              if (hasApiKey) {
-                handleCreateRoadmap(formData);
-              } else {
-                onOpenSettings();
-              }
-            }}
-            disabled={!formData.goal.trim() || localIsGenerating}
-            className="grok-voice-btn shrink-0"
-            title={hasApiKey ? 'Generate book' : 'Add API key first'}
-          >
-            {localIsGenerating ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <Sparkles className="w-4 h-4" />
-            )}
-          </button>
-        )}
+        {/* Generate button */}
+        <button
+          onClick={() => {
+            if (hasApiKey) {
+              handleCreateRoadmap(formData);
+            } else {
+              onOpenSettings();
+            }
+          }}
+          disabled={!formData.goal.trim() || localIsGenerating}
+          className="grok-voice-btn shrink-0"
+          title={hasApiKey ? 'Generate book' : 'Add API key first'}
+        >
+          {localIsGenerating ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
+            <Sparkles className="w-4 h-4" />
+          )}
+        </button>
       </div>
 
       {/* Action Chips */}
       <div className="grok-chips">
-        {/* Auto/Options chip - more prominent styling */}
+        {/* Auto/Options chip (moved from input bar) */}
         <button
           onClick={() => setShowAdvanced(!showAdvanced)}
-          className={`grok-chip ${showAdvanced ? 'grok-chip-active' : ''}`}
+          className="grok-chip"
         >
-          <Sparkles size={16} className={showAdvanced ? 'text-orange-500' : ''} />
-          Configure
-          <ChevronDown size={12} className={`transition-transform duration-300 ${showAdvanced ? '' : 'rotate-180'}`} />
+          <Settings size={16} />
+          Auto
+          <ChevronDown size={12} className={`transition-transform ${showAdvanced ? 'rotate-180' : ''}`} />
         </button>
 
         {bookCount > 0 && (
@@ -1268,15 +1266,12 @@ const HomeView = ({
         </button>
       </div>
 
-      {/* Advanced Options Dropdown - expands downward */}
+      {/* Advanced Options Dropdown */}
       {showAdvanced && (
         <div
-          className={`mt-6 p-6 rounded-2xl shadow-xl border transition-colors ${theme === 'light'
-            ? 'bg-white border-gray-200'
-            : 'bg-[#1a1a1a] border-white/10'
-            }`}
+          className="mt-6 p-6 bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/10 rounded-2xl shadow-xl"
           style={{
-            animation: 'dropdownSlideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+            animation: 'dropdownSlideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
             transformOrigin: 'top center'
           }}
         >
@@ -1359,44 +1354,6 @@ const HomeView = ({
               </label>
             </div>
           </div>
-        </div>
-      )}
-
-      {/* Generate Button - shows below form when advanced options are open */}
-      {showAdvanced && (
-        <div className="mt-6 flex justify-center">
-          <button
-            onClick={() => {
-              if (hasApiKey) {
-                handleCreateRoadmap(formData);
-              } else {
-                onOpenSettings();
-              }
-            }}
-            disabled={!formData.goal.trim() || localIsGenerating}
-            className={`
-              px-8 py-3.5 rounded-xl font-semibold text-base
-              flex items-center gap-3 
-              transition-all duration-300 transform
-              ${!formData.goal.trim() || localIsGenerating
-                ? 'bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed'
-                : 'bg-gradient-to-r from-orange-500 to-orange-600 text-white hover:from-orange-600 hover:to-orange-700 shadow-lg hover:shadow-orange-500/30 hover:scale-[1.02]'
-              }
-            `}
-            title={hasApiKey ? 'Generate your book' : 'Add API key first'}
-          >
-            {localIsGenerating ? (
-              <>
-                <Loader2 className="w-5 h-5 animate-spin" />
-                <span>Creating...</span>
-              </>
-            ) : (
-              <>
-                <Book className="w-5 h-5" />
-                <span>Create My Book</span>
-              </>
-            )}
-          </button>
         </div>
       )}
 

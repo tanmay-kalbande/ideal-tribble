@@ -116,18 +116,6 @@
   }
 }
 
-@keyframes dropdownSlideDown {
-  from {
-    opacity: 0;
-    transform: scaleY(0.95) translateY(-4px);
-  }
-
-  to {
-    opacity: 1;
-    transform: scaleY(1) translateY(0);
-  }
-}
-
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -1256,28 +1244,6 @@
 
   .grok-chip:hover svg {
     @apply opacity-90;
-  }
-
-  .grok-chip-active {
-    background: rgba(249, 115, 22, 0.1);
-    border-color: rgba(249, 115, 22, 0.3);
-    color: rgb(249, 115, 22);
-  }
-
-  .grok-chip-active:hover {
-    background: rgba(249, 115, 22, 0.15);
-    border-color: rgba(249, 115, 22, 0.4);
-  }
-
-  .light .grok-chip-active {
-    background: rgba(249, 115, 22, 0.08);
-    border-color: rgba(249, 115, 22, 0.2);
-    color: rgb(234, 88, 12);
-  }
-
-  .light .grok-chip-active:hover {
-    background: rgba(249, 115, 22, 0.12);
-    border-color: rgba(249, 115, 22, 0.3);
   }
 
   /* ==========================================================================

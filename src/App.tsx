@@ -94,18 +94,6 @@ function App() {
 
   const { isInstallable, isInstalled, installApp, dismissInstallPrompt } = usePWA();
 
-  // ✅ ENHANCED: useEffect to handle the loading screen without dissolve effect
-  useEffect(() => {
-    const loader = document.getElementById('loading-screen');
-    if (loader) {
-      // Set a minimum display time of 3 seconds
-      setTimeout(() => {
-        // Simply hide it without fade animation
-        loader.classList.add('fade-out');
-      }, 3000); // Minimum 3 seconds delay
-    }
-  }, []); // Empty dependency array ensures this runs only once when the App mounts
-
   const currentBook = useMemo(() => currentBookId ? books.find(b => b.id === currentBookId) : null, [currentBookId, books]);
 
   const isGenerating = useMemo(() => {

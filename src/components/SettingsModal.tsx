@@ -575,18 +575,10 @@ export function SettingsModal({ isOpen, onClose, settings, onSaveSettings, theme
                     </button>
                     <button
                       onClick={() => setShowTechnicalDocs(true)}
-                      className="w-full flex items-center justify-between px-5 py-3.5 rounded-xl bg-gradient-to-r from-orange-500/10 to-orange-600/10 border border-orange-500/30 hover:border-orange-500/50 hover:from-orange-500/15 hover:to-orange-600/15 transition-all group"
+                      className="w-full flex items-center justify-between px-4 py-2 rounded-lg bg-gray-50 dark:bg-white/[0.03] border border-gray-100 dark:border-white/[0.05] hover:border-indigo-500/20 transition-all text-xs font-bold group"
                     >
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-orange-500/20 flex items-center justify-center">
-                          <BookOpen size={16} className="text-orange-500" />
-                        </div>
-                        <div className="text-left">
-                          <span className="text-sm font-bold text-gray-900 dark:text-white block">Platform Guide</span>
-                          <span className="text-[10px] text-gray-500 dark:text-gray-400">Learn how to use Pustakam effectively</span>
-                        </div>
-                      </div>
-                      <ChevronRight size={16} className="text-orange-500 group-hover:translate-x-0.5 transition-transform" />
+                      <span className="text-gray-500 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white transition-colors tracking-tight">Platform Technical Docs</span>
+                      <ChevronRight size={14} className="text-gray-300" />
                     </button>
                   </div>
                 </div>
