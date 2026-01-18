@@ -47,7 +47,16 @@ import {
   Music,
   Heart,
   Cpu,
-  TrendingUp
+  TrendingUp,
+  Eye,
+  Coins,
+  Utensils,
+  MessageCircle,
+  Users,
+  GraduationCap,
+  Atom,
+  Target,
+  Briefcase
 } from 'lucide-react';
 import { BookProject, BookSession, ReadingBookmark } from '../types/book';
 import { bookService } from '../services/bookService';
@@ -273,74 +282,82 @@ const StatusLoader = () => (
   </div>
 );
 
-const PixelAnimation = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  interface Pixel {
-    id: number;
-    color: string;
-    opacity: string;
-  }
-  const [pixels, setPixels] = useState<Pixel[]>([]);
-
-  useEffect(() => {
-    const colors = [
-      'bg-orange-500', 'bg-yellow-500', 'bg-amber-600',
-      'bg-red-500', 'bg-[var(--color-text-secondary)]', 'bg-[var(--color-border)]',
-    ];
-
-    const generatePixels = () => {
-      if (containerRef.current) {
-        const pixelSpace = 12;
-        const containerWidth = containerRef.current.offsetWidth;
-        const containerHeight = containerRef.current.offsetHeight;
-
-        const numCols = Math.floor(containerWidth / pixelSpace);
-        const numRows = Math.floor(containerHeight / pixelSpace);
-        const totalPixels = numCols * numRows;
-
-        if (totalPixels > 0) {
-          const newPixels = Array(totalPixels)
-            .fill(0)
-            .map((_, i) => ({
-              id: i,
-              color: colors[Math.floor(Math.random() * colors.length)],
-              opacity: Math.random() > 0.5 ? 'opacity-100' : 'opacity-30',
-            }));
-          setPixels(newPixels);
-        }
-      }
-    };
-
-    const observer = new ResizeObserver(() => {
-      generatePixels();
-    });
-
-    // Capture the current ref value to avoid stale closure in cleanup
-    const currentContainer = containerRef.current;
-    if (currentContainer) {
-      observer.observe(currentContainer);
-    }
-
-    const interval = setInterval(generatePixels, 250);
-
-    return () => {
-      clearInterval(interval);
-      // Use disconnect() for complete cleanup instead of unobserve()
-      observer.disconnect();
-    };
-  }, []);
+const AIWaveAnimation = () => {
+  // Generate flowing bars for a modern AI visualization
+  const bars = Array(24).fill(0);
 
   return (
-    <div ref={containerRef} className="flex flex-wrap content-start gap-1.5 w-full h-10 md:h-4 overflow-hidden">
-      {pixels.map((p) => (
+    <div className="flex items-center justify-center gap-[3px] w-full h-10 md:h-8 px-4">
+      {bars.map((_, i) => (
         <div
-          key={p.id}
-          className={`w-1.5 h-1.5 rounded-sm ${p.color} ${p.opacity} transition-opacity duration-200`}
+          key={i}
+          className="w-1 rounded-full bg-gradient-to-t from-cyan-500 via-cyan-400 to-emerald-400"
+          style={{
+            animation: `aiWave 1.4s ease-in-out infinite`,
+            animationDelay: `${i * 0.05}s`,
+            height: '100%',
+            opacity: 0.4 + Math.sin(i * 0.3) * 0.3,
+          }}
         />
       ))}
+      <style>{`
+        @keyframes aiWave {
+          0%, 100% {
+            transform: scaleY(0.3);
+            opacity: 0.4;
+          }
+          50% {
+            transform: scaleY(1);
+            opacity: 1;
+          }
+        }
+      `}</style>
     </div>
   );
 };
+
+// Contextual icon based on book title/topic
+const getContextualIcon = (title: string): React.ElementType => {
+  const t = title.toLowerCase();
+
+  // Technology & Programming
+  if (t.includes('code') || t.includes('program') || t.includes('software') || t.includes('develop')) return Code;
+  if (t.includes('ai') || t.includes('artificial') || t.includes('machine') || t.includes('neural') || t.includes('learning')) return Brain;
+  if (t.includes('data') || t.includes('analytics') || t.includes('statistics')) return TrendingUp;
+
+  // Creative & Arts
+  if (t.includes('music') || t.includes('song') || t.includes('melody')) return Music;
+  if (t.includes('art') || t.includes('design') || t.includes('creative') || t.includes('paint')) return Palette;
+  if (t.includes('photo') || t.includes('image') || t.includes('visual')) return Eye;
+
+  // Business & Finance
+  if (t.includes('business') || t.includes('startup') || t.includes('entrepreneur')) return TrendingUp;
+  if (t.includes('money') || t.includes('finance') || t.includes('invest') || t.includes('wealth')) return Coins;
+  if (t.includes('market') || t.includes('sales') || t.includes('growth')) return TrendingUp;
+
+  // Health & Wellness
+  if (t.includes('health') || t.includes('fitness') || t.includes('exercise') || t.includes('workout')) return Heart;
+  if (t.includes('mental') || t.includes('mindful') || t.includes('meditation') || t.includes('calm')) return Sparkles;
+  if (t.includes('nutrition') || t.includes('diet') || t.includes('food')) return Utensils;
+
+  // Communication & Leadership
+  if (t.includes('communication') || t.includes('speak') || t.includes('listen') || t.includes('conversation')) return MessageCircle;
+  if (t.includes('leader') || t.includes('manage') || t.includes('team')) return Users;
+
+  // Education & Learning
+  if (t.includes('learn') || t.includes('study') || t.includes('education') || t.includes('teach')) return GraduationCap;
+  if (t.includes('science') || t.includes('physics') || t.includes('chemistry') || t.includes('math')) return Atom;
+
+  // Personal Development
+  if (t.includes('habit') || t.includes('success') || t.includes('goal') || t.includes('future') || t.includes('mindset')) return Target;
+  if (t.includes('career') || t.includes('job') || t.includes('profession')) return Briefcase;
+
+  // Default to a book/sparkles icon
+  return Sparkles;
+};
+
+// Keep PixelAnimation as a legacy alias
+const PixelAnimation = AIWaveAnimation;
 
 
 const RetryDecisionPanel = ({
@@ -494,6 +511,7 @@ const EmbeddedProgressPanel = ({
   onResume,
   onRetryDecision,
   availableModels,
+  bookTitle,
 }: {
   generationStatus: GenerationStatus;
   stats: GenerationStats;
@@ -502,7 +520,10 @@ const EmbeddedProgressPanel = ({
   onResume?: () => void;
   onRetryDecision?: (decision: 'retry' | 'switch' | 'skip') => void;
   availableModels?: Array<{ provider: string; model: string; name: string }>;
+  bookTitle?: string;
 }) => {
+  // Get contextual icon based on book title
+  const ContextIcon = bookTitle ? getContextualIcon(bookTitle) : Sparkles;
   const streamBoxRef = useRef<HTMLDivElement>(null);
 
   const isPaused = generationStatus.status === 'paused';
@@ -540,8 +561,8 @@ const EmbeddedProgressPanel = ({
                 <Pause className="w-6 h-6 text-slate-400" />
               </div>
             ) : (
-              <div className="w-12 h-12 flex items-center justify-center bg-emerald-500/20 rounded-lg border border-emerald-500/30">
-                <Brain className="w-6 h-6 text-emerald-400 animate-pulse" />
+              <div className="w-12 h-12 flex items-center justify-center bg-gradient-to-br from-cyan-500/20 to-emerald-500/20 rounded-lg border border-cyan-500/30">
+                <ContextIcon className="w-6 h-6 text-cyan-400 animate-pulse" />
               </div>
             )}
             <div>
@@ -2360,6 +2381,7 @@ export function BookView({
                       onResume={handleResumeGeneration}
                       onRetryDecision={onRetryDecision}
                       availableModels={availableModels}
+                      bookTitle={currentBook.title}
                     />
                   )}
 
