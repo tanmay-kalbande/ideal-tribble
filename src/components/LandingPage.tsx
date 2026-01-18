@@ -10,6 +10,15 @@ interface LandingPageProps {
 // Atmospheric Nebula Background using Canvas
 const NebulaBackground: React.FC = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const mouseRef = useRef({ x: 0, y: 0 });
+
+    useEffect(() => {
+        const handleMouseMove = (e: MouseEvent) => {
+            mouseRef.current = { x: e.clientX, y: e.clientY };
+        };
+        window.addEventListener('mousemove', handleMouseMove);
+        return () => window.removeEventListener('mousemove', handleMouseMove);
+    }, []);
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -26,9 +35,8 @@ const NebulaBackground: React.FC = () => {
             y: number;
             radius: number;
             color: string;
-            dx: number;
-            dy: number;
-            opacity: number;
+            vx: number;
+            vy: number;
         }
 
         interface Star {
@@ -36,8 +44,7 @@ const NebulaBackground: React.FC = () => {
             y: number;
             radius: number;
             alpha: number;
-            dx: number;
-            dy: number;
+            fv: number; // Flicker velocity
         }
 
         const init = () => {
@@ -46,75 +53,82 @@ const NebulaBackground: React.FC = () => {
             clouds = [];
             stars = [];
 
-            // Create massive, volumetric ambient clouds (x.ai style)
-            // Focused more on the right side and center
-            for (let i = 0; i < 15; i++) {
+            // 1. Smoke Particles (rendered with blur)
+            // We use fewer, larger particles that will be heavily blurred to create "wisps"
+            for (let i = 0; i < 40; i++) {
                 clouds.push({
-                    x: Math.random() * canvas.width * 1.2 - canvas.width * 0.1, // Wider spread
+                    x: Math.random() * canvas.width,
                     y: Math.random() * canvas.height,
-                    radius: Math.random() * 400 + 300, // Massive soft clouds
-                    color: i % 3 === 0 ? 'rgba(56, 189, 248)' : (i % 2 === 0 ? 'rgba(59, 130, 246)' : 'rgba(30, 58, 138)'), // Sky-400, Blue-500, Blue-900
-                    dx: (Math.random() - 0.5) * 0.05, // Extremely slow drift
-                    dy: (Math.random() - 0.5) * 0.05,
-                    opacity: Math.random() * 0.1 + 0.05 // Very faint
+                    radius: Math.random() * 200 + 100,
+                    // Deeper, richer colors for x.ai void feel
+                    color: i % 4 === 0 ? '#3b82f6' : // Bright Blue
+                        i % 4 === 1 ? '#1d4ed8' : // Dark Blue
+                            i % 4 === 2 ? '#60a5fa' : // Light Cyan
+                                '#172554',  // Deep Void
+                    vx: (Math.random() - 0.5) * 0.2, // Slow drift
+                    vy: (Math.random() - 0.5) * 0.2
                 });
             }
 
-            // Create sharp particle dust
-            for (let i = 0; i < 200; i++) {
+            // 2. Dust/Star Particles (sharp)
+            for (let i = 0; i < 250; i++) {
                 stars.push({
                     x: Math.random() * canvas.width,
                     y: Math.random() * canvas.height,
-                    radius: Math.random() * 1.2,
-                    alpha: Math.random() * 0.6 + 0.1,
-                    dx: (Math.random() - 0.5) * 0.2, // Faster than clouds
-                    dy: (Math.random() - 0.5) * 0.2
+                    radius: Math.random() * 1.5,
+                    alpha: Math.random(),
+                    fv: 0.01 + Math.random() * 0.04
                 });
             }
         };
 
         const animate = () => {
-            // Clear with deep space black (preserving no trail for full redraw)
-            ctx.fillStyle = '#000000'; // Pure black like x.ai
+            // Clears screen with pure void black
+            ctx.fillStyle = '#000000';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Draw Clouds (Nebula) - Additive blending for volumetric feel
+            // --- LAYER 1: SMOKE (Blurred) ---
+            // This is the "secret sauce" - heavy blur on simple shapes creates gaseous fog
+            ctx.filter = 'blur(80px)';
+            // Also use screen blend to make them glow when overlapping
             ctx.globalCompositeOperation = 'screen';
+
             clouds.forEach(cloud => {
-                cloud.x += cloud.dx;
-                cloud.y += cloud.dy;
+                cloud.x += cloud.vx;
+                cloud.y += cloud.vy;
 
-                // Soft wrap
-                if (cloud.x - cloud.radius > canvas.width) cloud.x = -cloud.radius;
-                if (cloud.x + cloud.radius < 0) cloud.x = canvas.width + cloud.radius;
-                if (cloud.y - cloud.radius > canvas.height) cloud.y = -cloud.radius;
-                if (cloud.y + cloud.radius < 0) cloud.y = canvas.height + cloud.radius;
+                // Gentle mouse repulsion/attraction for dynamic feel
+                const dx = mouseRef.current.x - cloud.x;
+                const dy = mouseRef.current.y - cloud.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < 500) {
+                    cloud.x -= dx * 0.0005;
+                    cloud.y -= dy * 0.0005;
+                }
 
-                const gradient = ctx.createRadialGradient(cloud.x, cloud.y, 0, cloud.x, cloud.y, cloud.radius);
-                // Core is brighter, fades to transparent
-                gradient.addColorStop(0, cloud.color.replace(')', `, ${cloud.opacity * 1.5})`));
-                gradient.addColorStop(0.5, cloud.color.replace(')', `, ${cloud.opacity * 0.5})`));
-                gradient.addColorStop(1, 'transparent');
+                // Bounce wrap
+                if (cloud.x < -200) cloud.x = canvas.width + 200;
+                if (cloud.x > canvas.width + 200) cloud.x = -200;
+                if (cloud.y < -200) cloud.y = canvas.height + 200;
+                if (cloud.y > canvas.height + 200) cloud.y = -200;
 
-                ctx.fillStyle = gradient;
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.beginPath();
+                ctx.arc(cloud.x, cloud.y, cloud.radius, 0, Math.PI * 2);
+                ctx.fillStyle = cloud.color;
+                ctx.fill();
             });
 
-            // Draw Dust/Stars - Normal blending (on top)
-            ctx.globalCompositeOperation = 'source-over';
+            // --- LAYER 2: STARS (Sharp) ---
+            ctx.filter = 'none'; // RESET filter for stars
+            ctx.globalCompositeOperation = 'source-over'; // Normal blending
+
             stars.forEach(star => {
-                star.x += star.dx;
-                star.y += star.dy;
+                star.alpha += star.fv;
+                if (star.alpha > 1 || star.alpha < 0) star.fv *= -1;
 
-                if (star.x < 0) star.x = canvas.width;
-                if (star.x > canvas.width) star.x = 0;
-                if (star.y < 0) star.y = canvas.height;
-                if (star.y > canvas.height) star.y = 0;
-
-                const flicker = Math.random() * 0.1 - 0.05;
                 ctx.beginPath();
                 ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(255, 255, 255, ${Math.max(0, Math.min(1, star.alpha + flicker))})`;
+                ctx.fillStyle = `rgba(255, 255, 255, ${Math.abs(star.alpha) * 0.8})`;
                 ctx.fill();
             });
 
