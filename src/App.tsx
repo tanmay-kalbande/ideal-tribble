@@ -22,6 +22,7 @@ import { CreditGate } from './components/CreditGate';
 import { WelcomeModal } from './components/WelcomeModal';
 import LandingPage from './components/LandingPage';
 import creditService from './services/creditService';
+import { Toast, ToastType } from './components/Toast';
 
 type AppView = 'list' | 'create' | 'detail';
 type Theme = 'light' | 'dark';
@@ -58,6 +59,13 @@ function App() {
   const [showCreditGate, setShowCreditGate] = useState(false);
   const [showWelcomeModal, setShowWelcomeModal] = useState(false);
   const [isAuthTransitioning, setIsAuthTransitioning] = useState(false);
+
+  // Toast State
+  const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null);
+
+  const showToast = useCallback((message: string, type: ToastType = 'info') => {
+    setToast({ message, type });
+  }, []);
 
   // Get auth state for credit checks
   const { credits, isAuthenticated, isSupabaseEnabled, refreshCredits, isLoading, user, profile, signOut } = useAuth();
@@ -541,12 +549,7 @@ function App() {
   const handleRetryFailedModules = async (book: BookProject, session: BookSession) => {
     const failedModules = book.modules.filter(m => m.status === 'error');
     if (failedModules.length === 0) {
-      showAlertDialog({
-        type: 'info',
-        title: 'No Failed Modules',
-        message: 'There are no failed modules to retry.',
-        confirmText: 'Got it',
-      });
+      showToast('No failed modules to retry.', 'info');
       return;
     }
     setGenerationStartTime(new Date());
@@ -572,12 +575,7 @@ function App() {
     try {
       await bookService.assembleFinalBook(book, session);
       setGenerationStatus({ status: 'completed', totalProgress: 100, logMessage: '✅ Book completed!' });
-      showAlertDialog({
-        type: 'success',
-        title: 'Book Assembled!',
-        message: 'Your book has been successfully assembled and is ready for reading or download!',
-        confirmText: 'Awesome!',
-      });
+      showToast('Book Successfully Assembled!', 'success');
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Assembly failed';
       showAlertDialog({
@@ -616,12 +614,7 @@ function App() {
       setSettings(newSettings);
       storageUtils.saveSettings(newSettings);
       setSettingsOpen(false);
-      showAlertDialog({
-        type: 'success',
-        title: 'Settings Saved',
-        message: 'Your API settings have been successfully saved.',
-        confirmText: 'OK',
-      });
+      showToast('Settings Saved', 'success');
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to save settings.';
       showAlertDialog({
@@ -818,6 +811,14 @@ function App() {
       />
 
       <Analytics />
+
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
 
     </div>
   );

@@ -1226,8 +1226,8 @@ const HomeView = ({
   localIsGenerating: boolean;
   onOpenSettings: () => void;
 }) => (
-  <div className="flex-1 flex flex-col items-center justify-center px-6 py-12 min-h-[calc(100vh-48px)]" style={{ background: 'var(--color-bg)', fontFamily: 'Rubik, sans-serif' }}>
-    <div className="w-full max-w-2xl mx-auto animate-fade-in-up">
+  <div className="flex-1 flex flex-col items-center justify-start px-6 pt-32 md:pt-48 pb-12 min-h-screen" style={{ background: 'var(--color-bg)', fontFamily: 'Rubik, sans-serif' }}>
+    <div className="w-full max-w-2xl mx-auto animate-subtle-fade">
       <div className="text-center mb-10">
         <img
           src={theme === 'dark' ? '/white-logo.png' : '/black-logo.png'}
