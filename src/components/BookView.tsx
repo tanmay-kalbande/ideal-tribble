@@ -1269,7 +1269,7 @@ const HomeView = ({
       {/* Advanced Options Dropdown */}
       {showAdvanced && (
         <div
-          className="mt-6 p-6 bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/10 rounded-2xl shadow-xl"
+          className="mt-6 p-6 bg-[var(--color-card)] border border-[var(--color-border)] rounded-2xl shadow-xl"
           style={{
             animation: 'dropdownSlideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
             transformOrigin: 'top center'
