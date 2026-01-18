@@ -283,31 +283,67 @@ const StatusLoader = () => (
 );
 
 const AIWaveAnimation = () => {
-  // Generate flowing bars for a modern AI visualization
-  const bars = Array(24).fill(0);
-
   return (
-    <div className="flex items-center justify-center gap-[3px] w-full h-10 md:h-8 px-4">
-      {bars.map((_, i) => (
+    <div className="flex items-center justify-center w-full h-12 relative">
+      {/* Pulsing glow circles */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        {/* Outer ring */}
         <div
-          key={i}
-          className="w-1 rounded-full bg-gradient-to-t from-cyan-500 via-cyan-400 to-emerald-400"
+          className="absolute rounded-full bg-cyan-500/20 blur-sm"
           style={{
-            animation: `aiWave 1.4s ease-in-out infinite`,
-            animationDelay: `${i * 0.05}s`,
-            height: '100%',
-            opacity: 0.4 + Math.sin(i * 0.3) * 0.3,
+            width: '80px',
+            height: '80px',
+            animation: 'pulse-outer 2s ease-in-out infinite',
           }}
         />
-      ))}
+        {/* Middle ring */}
+        <div
+          className="absolute rounded-full bg-cyan-400/30 blur-sm"
+          style={{
+            width: '50px',
+            height: '50px',
+            animation: 'pulse-middle 2s ease-in-out infinite 0.3s',
+          }}
+        />
+        {/* Inner core */}
+        <div
+          className="absolute rounded-full bg-emerald-400/50"
+          style={{
+            width: '20px',
+            height: '20px',
+            animation: 'pulse-core 2s ease-in-out infinite 0.6s',
+          }}
+        />
+      </div>
+
       <style>{`
-        @keyframes aiWave {
+        @keyframes pulse-outer {
           0%, 100% {
-            transform: scaleY(0.3);
-            opacity: 0.4;
+            transform: scale(0.8);
+            opacity: 0.2;
           }
           50% {
-            transform: scaleY(1);
+            transform: scale(1.2);
+            opacity: 0.4;
+          }
+        }
+        @keyframes pulse-middle {
+          0%, 100% {
+            transform: scale(0.9);
+            opacity: 0.3;
+          }
+          50% {
+            transform: scale(1.1);
+            opacity: 0.6;
+          }
+        }
+        @keyframes pulse-core {
+          0%, 100% {
+            transform: scale(1);
+            opacity: 0.5;
+          }
+          50% {
+            transform: scale(1.3);
             opacity: 1;
           }
         }

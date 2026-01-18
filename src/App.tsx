@@ -139,7 +139,15 @@ function App() {
     });
   }, [settings]);
 
-  useEffect(() => { storageUtils.saveBooks(books, user?.id); }, [books, user?.id]);
+  // Track whether we've completed initial load to prevent overwriting data
+  const hasMountedRef = React.useRef(false);
+
+  useEffect(() => {
+    // Only save if we've completed initial mount, preventing overwriting loaded data
+    if (hasMountedRef.current) {
+      storageUtils.saveBooks(books, user?.id);
+    }
+  }, [books, user?.id]);
 
   useEffect(() => { if (!currentBookId) setView('list'); }, [currentBookId]);
 
@@ -156,7 +164,10 @@ function App() {
     setBooks(loadedBooks);
     // Reset current book selection when user changes
     setCurrentBookId(null);
+    // Mark as mounted after first load completes
+    hasMountedRef.current = true;
   }, [user?.id]);
+
 
   useEffect(() => {
     const handleOnline = () => { setIsOnline(true); setShowOfflineMessage(false); };
