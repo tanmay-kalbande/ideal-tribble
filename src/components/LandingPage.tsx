@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MoveRight } from 'lucide-react';
+import { MoveRight, ArrowUp } from 'lucide-react';
 
 interface LandingPageProps {
     onLogin: () => void;
@@ -46,57 +46,61 @@ const NebulaBackground: React.FC = () => {
             clouds = [];
             stars = [];
 
-            // Create large nebula clouds
-            for (let i = 0; i < 20; i++) { // Increased count for dense atmosphere
+            // Create massive, volumetric ambient clouds (x.ai style)
+            // Focused more on the right side and center
+            for (let i = 0; i < 15; i++) {
                 clouds.push({
-                    x: Math.random() * canvas.width,
+                    x: Math.random() * canvas.width * 1.2 - canvas.width * 0.1, // Wider spread
                     y: Math.random() * canvas.height,
-                    radius: Math.random() * 300 + 200, // Large glowing blobs
-                    color: i % 2 === 0 ? 'rgba(59, 130, 246)' : 'rgba(37, 99, 235)', // Blue-500 and Blue-600
-                    dx: (Math.random() - 0.5) * 0.2, // Very slow movement
-                    dy: (Math.random() - 0.5) * 0.2,
-                    opacity: Math.random() * 0.15 + 0.05 // Subtle opacity
+                    radius: Math.random() * 400 + 300, // Massive soft clouds
+                    color: i % 3 === 0 ? 'rgba(56, 189, 248)' : (i % 2 === 0 ? 'rgba(59, 130, 246)' : 'rgba(30, 58, 138)'), // Sky-400, Blue-500, Blue-900
+                    dx: (Math.random() - 0.5) * 0.05, // Extremely slow drift
+                    dy: (Math.random() - 0.5) * 0.05,
+                    opacity: Math.random() * 0.1 + 0.05 // Very faint
                 });
             }
 
-            // Create dust/stars
-            for (let i = 0; i < 150; i++) {
+            // Create sharp particle dust
+            for (let i = 0; i < 200; i++) {
                 stars.push({
                     x: Math.random() * canvas.width,
                     y: Math.random() * canvas.height,
-                    radius: Math.random() * 1.5,
-                    alpha: Math.random() * 0.5 + 0.2,
-                    dx: (Math.random() - 0.5) * 0.1,
-                    dy: (Math.random() - 0.5) * 0.1
+                    radius: Math.random() * 1.2,
+                    alpha: Math.random() * 0.6 + 0.1,
+                    dx: (Math.random() - 0.5) * 0.2, // Faster than clouds
+                    dy: (Math.random() - 0.5) * 0.2
                 });
             }
         };
 
         const animate = () => {
-            ctx.fillStyle = '#050505';
+            // Clear with deep space black (preserving no trail for full redraw)
+            ctx.fillStyle = '#000000'; // Pure black like x.ai
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Draw Clouds (Nebula)
+            // Draw Clouds (Nebula) - Additive blending for volumetric feel
+            ctx.globalCompositeOperation = 'screen';
             clouds.forEach(cloud => {
                 cloud.x += cloud.dx;
                 cloud.y += cloud.dy;
 
-                // Wrap around screen
+                // Soft wrap
                 if (cloud.x - cloud.radius > canvas.width) cloud.x = -cloud.radius;
                 if (cloud.x + cloud.radius < 0) cloud.x = canvas.width + cloud.radius;
                 if (cloud.y - cloud.radius > canvas.height) cloud.y = -cloud.radius;
                 if (cloud.y + cloud.radius < 0) cloud.y = canvas.height + cloud.radius;
 
                 const gradient = ctx.createRadialGradient(cloud.x, cloud.y, 0, cloud.x, cloud.y, cloud.radius);
-                gradient.addColorStop(0, cloud.color.replace(')', `, ${cloud.opacity})`));
+                // Core is brighter, fades to transparent
+                gradient.addColorStop(0, cloud.color.replace(')', `, ${cloud.opacity * 1.5})`));
+                gradient.addColorStop(0.5, cloud.color.replace(')', `, ${cloud.opacity * 0.5})`));
                 gradient.addColorStop(1, 'transparent');
 
-                ctx.globalCompositeOperation = 'screen'; // Additive blending for "glow"
                 ctx.fillStyle = gradient;
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
             });
 
-            // Draw Dust/Stars
+            // Draw Dust/Stars - Normal blending (on top)
             ctx.globalCompositeOperation = 'source-over';
             stars.forEach(star => {
                 star.x += star.dx;
@@ -107,9 +111,10 @@ const NebulaBackground: React.FC = () => {
                 if (star.y < 0) star.y = canvas.height;
                 if (star.y > canvas.height) star.y = 0;
 
+                const flicker = Math.random() * 0.1 - 0.05;
                 ctx.beginPath();
                 ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(255, 255, 255, ${star.alpha})`;
+                ctx.fillStyle = `rgba(255, 255, 255, ${Math.max(0, Math.min(1, star.alpha + flicker))})`;
                 ctx.fill();
             });
 
@@ -131,6 +136,7 @@ const NebulaBackground: React.FC = () => {
 
 const LandingPage = ({ onLogin, onGetStarted }: LandingPageProps) => {
     const [scrolled, setScrolled] = useState(false);
+    const [inputText, setInputText] = useState('');
 
     useEffect(() => {
         const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -181,18 +187,29 @@ const LandingPage = ({ onLogin, onGetStarted }: LandingPageProps) => {
                     </h1>
                 </div>
 
-                <div className="flex flex-col items-center gap-8 mb-16 animate-fade-in">
-                    <button
-                        onClick={onGetStarted}
-                        className="bg-white text-black px-10 py-4 rounded-full text-sm font-bold tracking-[0.2em] uppercase hover:bg-blue-500 hover:text-white transition-all transform hover:scale-105 active:scale-95 shadow-[0_0_30px_rgba(255,255,255,0.1)]"
-                    >
-                        Initialize Engine
-                    </button>
-
-                    <div className="max-w-lg text-white/30 text-sm md:text-base leading-relaxed font-light tracking-wide px-4">
-                        Pustakam synthesizes high-fidelity knowledge archives from your prompts.
-                        Built for rapid exploration and deep academic research.
+                <div className="w-full max-w-2xl relative group mb-12">
+                    <div className="absolute -inset-1 bg-blue-500/10 blur-xl rounded-2xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-700" />
+                    <div className="relative bg-[#0d0d0d]/80 backdrop-blur-2xl border border-white/10 rounded-2xl p-4 flex items-center gap-4 transition-all group-focus-within:border-white/20 shadow-2xl">
+                        <div className="flex-1 flex flex-col items-start px-2">
+                            <textarea
+                                value={inputText}
+                                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setInputText(e.target.value)}
+                                placeholder="What do you want to learn?"
+                                className="w-full bg-transparent border-none focus:ring-0 text-lg md:text-xl placeholder-white/20 resize-none h-12 py-2"
+                            />
+                        </div>
+                        <button
+                            onClick={onGetStarted}
+                            className={`p-3 rounded-xl transition-all ${inputText.trim() ? 'bg-white text-black' : 'bg-white/5 text-white/20 cursor-not-allowed'}`}
+                        >
+                            <ArrowUp size={24} />
+                        </button>
                     </div>
+                </div>
+
+                <div className="max-w-lg text-white/30 text-sm md:text-base leading-relaxed font-light tracking-wide px-4">
+                    Pustakam synthesizes high-fidelity knowledge archives from your prompts.
+                    Built for rapid exploration and deep academic research.
                 </div>
 
                 {/* Subtle Scroll Indicator */}
