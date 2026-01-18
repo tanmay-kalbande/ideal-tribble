@@ -1,6 +1,5 @@
 /* src/index.css */
-/* Google Fonts - Outfit for branding */
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Outfit:wght@300;400;500;600;700&display=swap');
 /* Reading Fonts: Nunito (Smooth), Merriweather (Serif), Lora (Elegant), Crimson Pro (Professional), Quicksand (Rounded) */
 @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;500;600&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&family=Nunito:wght@300;400;500;600;700&family=Quicksand:wght@300;400;500;600;700&display=swap');
 
@@ -38,10 +37,10 @@
 
   /* DARK THEME (DEFAULT) - Matching Landing Page Exactly */
   :root {
-    --color-bg: #000000;
-    --color-sidebar: #000000;
-    --color-card: rgba(255, 255, 255, 0.02);
-    --color-border: rgba(255, 255, 255, 0.1);
+    --color-bg: #050505;
+    --color-sidebar: #050505;
+    --color-card: rgba(255, 255, 255, 0.03);
+    --color-border: rgba(255, 255, 255, 0.08);
     --color-text-primary: #FFFFFF;
     --color-text-secondary: #9ca3af;
     --color-text-placeholder: #6B7280;
@@ -156,6 +155,7 @@
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -164,11 +164,12 @@
 @keyframes toastIn {
   from {
     opacity: 0;
-    transform: translate(-50%, 1rem) scale(0.95);
+    transform: translateX(100%) scale(0.95);
   }
+
   to {
     opacity: 1;
-    transform: translate(-50%, 0) scale(1);
+    transform: translateX(0) scale(1);
   }
 }
 

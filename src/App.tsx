@@ -516,12 +516,7 @@ function App() {
 
   const handleResumeGeneration = async (book: BookProject, session: BookSession) => {
     if (!book.roadmap) {
-      showAlertDialog({
-        type: 'warning',
-        title: 'Missing Roadmap',
-        message: 'No roadmap available to resume generation. This book might be corrupted.',
-        confirmText: 'Got it',
-      });
+      showToast('No roadmap available to resume generation. This book might be corrupted.', 'error');
       return;
     }
     bookService.resumeGeneration(book.id);
@@ -536,12 +531,7 @@ function App() {
       const errorMessage = error instanceof Error ? error.message : 'Resume failed';
       if (!errorMessage.includes('GENERATION_PAUSED')) {
         setGenerationStatus({ status: 'error', totalProgress: 0, logMessage: `Resume failed: ${errorMessage}` });
-        showAlertDialog({
-          type: 'error',
-          title: 'Resume Failed',
-          message: `Failed to resume generation: ${errorMessage}.`,
-          confirmText: 'Dismiss',
-        });
+        showToast(`Failed to resume generation: ${errorMessage}.`, 'error');
       }
     }
   };
@@ -562,12 +552,7 @@ function App() {
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Retry failed';
       setGenerationStatus({ status: 'error', totalProgress: 0, logMessage: `Retry failed: ${errorMessage}` });
-      showAlertDialog({
-        type: 'error',
-        title: 'Retry Failed',
-        message: `Failed to retry modules: ${errorMessage}.`,
-        confirmText: 'Dismiss',
-      });
+      showToast(`Failed to retry modules: ${errorMessage}.`, 'error');
     }
   };
 
@@ -578,12 +563,7 @@ function App() {
       showToast('Book Successfully Assembled!', 'success');
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Assembly failed';
-      showAlertDialog({
-        type: 'error',
-        title: 'Book Assembly Failed',
-        message: `Failed to assemble the book: ${errorMessage}.`,
-        confirmText: 'Dismiss',
-      });
+      showToast(`Failed to assemble the book: ${errorMessage}.`, 'error');
       setBooks(prev => prev.map(b => b.id === book.id ? { ...b, status: 'error', error: errorMessage } : b));
     }
   };
@@ -739,6 +719,7 @@ function App() {
           theme={theme}
           onOpenSettings={() => setSettingsOpen(true)}
           showAlertDialog={showAlertDialog}
+          showToast={showToast}
           onReadingModeChange={setIsReadingMode}
         />
       </main>

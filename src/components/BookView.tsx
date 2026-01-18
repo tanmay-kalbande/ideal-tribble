@@ -134,6 +134,7 @@ interface BookViewProps {
     cancelText?: string;
     onConfirm?: () => void;
   }) => void;
+  showToast: (message: string, type?: 'success' | 'error' | 'info' | 'warning') => void;
   onReadingModeChange?: (isReading: boolean) => void;
 }
 interface ReadingModeProps {
@@ -701,8 +702,12 @@ const EmbeddedProgressPanel = ({
                   </button>
                 )
               ) : isGenerating && onPause && (
-                <button onClick={onPause} className="px-5 py-2.5 bg-slate-600 hover:bg-slate-700 rounded-lg text-white font-semibold transition-all shadow-lg hover:shadow-slate-500/30 flex items-center gap-2" title="Pause and save progress" >
-                  <Pause className="w-4 h-4" /> Pause
+                <button
+                  onClick={onPause}
+                  className="px-5 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-white/90 font-medium transition-all flex items-center gap-2"
+                  title="Pause and save progress"
+                >
+                  <Pause className="w-4 h-4 opacity-70" /> Pause
                 </button>
               )}
             </div>
@@ -1747,12 +1752,7 @@ export function BookView({
 
   const handleStartGeneration = () => {
     if (!currentBook?.roadmap) {
-      showAlertDialog({
-        type: 'warning',
-        title: 'Missing Roadmap',
-        message: 'No roadmap available to generate modules.',
-        confirmText: 'Got it'
-      });
+      showToast('No roadmap available to generate modules.', 'error');
       return;
     }
 
@@ -1831,12 +1831,7 @@ export function BookView({
 
   const handleCreateRoadmap = async (session: BookSession) => {
     if (!session.goal.trim()) {
-      showAlertDialog({
-        type: 'warning',
-        title: 'Input Required',
-        message: 'Please enter a learning goal.',
-        confirmText: 'Got it'
-      });
+      showToast('Please enter a learning goal.', 'warning');
       return;
     }
     if (!hasApiKey) {
@@ -1888,12 +1883,7 @@ export function BookView({
 
   const handleResumeGeneration = async () => {
     if (!currentBook?.roadmap) {
-      showAlertDialog({
-        type: 'warning',
-        title: 'Missing Roadmap',
-        message: 'No roadmap available to resume generation. This book might be corrupted.',
-        confirmText: 'Got it'
-      });
+      showToast('No roadmap available to resume generation.', 'error');
       return;
     }
 
@@ -1912,12 +1902,7 @@ export function BookView({
   const handleRetryFailedModules = async (book: BookProject, session: BookSession) => {
     const failedModules = book.modules.filter(m => m.status === 'error');
     if (failedModules.length === 0) {
-      showAlertDialog({
-        type: 'info',
-        title: 'No Failed Modules',
-        message: 'There are no failed modules to retry.',
-        confirmText: 'Got it'
-      });
+      showToast('There are no failed modules to retry.', 'info');
       return;
     }
     await onRetryFailedModules(book, session);
@@ -2023,12 +2008,7 @@ export function BookView({
     // handleEnhanceWithAI defined here for HomeView
     const handleEnhanceWithAI = async () => {
       if (!formData.goal.trim()) {
-        showAlertDialog({
-          type: 'warning',
-          title: 'Input Required',
-          message: 'Please describe what you want to learn before using the AI refiner.',
-          confirmText: 'Got it'
-        });
+        showToast('Please describe what you want to learn first.', 'warning');
         return;
       }
 
@@ -2056,12 +2036,7 @@ export function BookView({
           preferences: enhanced.preferences
         });
 
-        showAlertDialog({
-          type: 'success',
-          title: 'Idea Refined! ✨',
-          message: `Your idea has been refined and the form below is auto-filled. Review and adjust if needed, then click "Generate Book".`,
-          confirmText: 'Great!'
-        });
+        showToast('Idea Refined! ✨ Review and adjust as needed.', 'success');
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Refinement failed';
         showAlertDialog({
@@ -2098,12 +2073,7 @@ export function BookView({
   if (view === 'create') {
     const handleEnhanceWithAI = async () => {
       if (!formData.goal.trim()) {
-        showAlertDialog({
-          type: 'warning',
-          title: 'Input Required',
-          message: 'Please describe what you want to learn before using the AI refiner.',
-          confirmText: 'Got it'
-        });
+        showToast('Please describe what you want to learn first.', 'warning');
         return;
       }
 
@@ -2131,12 +2101,7 @@ export function BookView({
           preferences: enhanced.preferences
         });
 
-        showAlertDialog({
-          type: 'success',
-          title: 'Idea Refined! ✨',
-          message: `Your idea has been refined and the form below is auto - filled.Review and adjust if needed, then click "Generate Book Roadmap".`,
-          confirmText: 'Great!'
-        });
+        showToast('Idea Refined! ✨ Review and adjust as needed.', 'success');
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Refinement failed';
         showAlertDialog({

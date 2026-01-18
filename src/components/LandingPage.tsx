@@ -1,6 +1,5 @@
-// src/components/LandingPage.tsx - Frans Hals Museum Style Multi-Section Landing
-import React, { useState, useRef, useEffect } from 'react';
-import { Menu, X, ChevronRight, ChevronLeft, BookOpen, Sparkles, Zap, Shield, Globe, Download, Check, BookMarked, ArrowRight, Loader2, Star, Users, Clock, Award } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Menu, X, Sparkles, Shield, Download, ArrowRight, MoveRight } from 'lucide-react';
 
 interface LandingPageProps {
     onLogin: () => void;
@@ -8,34 +7,27 @@ interface LandingPageProps {
     onSubscribe?: () => void;
 }
 
-type ActiveSection = 'home' | 'collection' | 'features' | 'pricing';
-
-// Book Generation Mockup - BIGGER/BOLDER with typing animation
+// Minimalist Generation Mockup
 function BookGenerationMockup() {
     const [currentModule, setCurrentModule] = useState(1);
     const [progress, setProgress] = useState(10);
-    const [wordCount, setWordCount] = useState(3200);
     const [typedText, setTypedText] = useState('');
-    const [pixels, setPixels] = useState<Array<{ color: string; opacity: string }>>([]);
-    const textContainerRef = useRef<HTMLDivElement>(null);
     const [charIndex, setCharIndex] = useState(0);
 
     const chapters = [
-        { title: 'Introduction to AI Ethics', text: '# Introduction to AI Ethics\n\nArtificial Intelligence has transformed modern technology in unprecedented ways. From healthcare diagnostics to autonomous vehicles, AI systems are reshaping how we interact with the world around us. The ethical implications of these systems demand careful consideration as they increasingly influence critical decisions affecting human lives.\n\n## Key Concepts\n\nEthical AI encompasses principles of fairness, transparency, accountability, and privacy.' },
-        { title: 'Understanding Algorithmic Bias', text: '# Understanding Algorithmic Bias\n\nAlgorithmic bias occurs when machine learning systems produce systematically prejudiced results. These biases can emerge from training data, feature selection, or model architecture choices. Understanding the root causes is essential for building fair systems.\n\n## Sources of Bias\n\nHistorical bias reflects past inequalities embedded in training data. Representation bias occurs when certain groups are underrepresented.' },
-        { title: 'Fairness in Machine Learning', text: '# Fairness in Machine Learning\n\nDefining fairness in ML systems requires careful consideration of multiple stakeholder perspectives. Statistical parity, equal opportunity, and calibration represent different fairness criteria that may sometimes conflict with each other.\n\n## Fairness Metrics\n\nDemographic parity ensures equal positive rates across groups. Equalized odds requires equal true positive and false positive rates.' },
+        { title: 'The Future of AI Ethics', text: 'Artificial intelligence is reshaping our world. The ethical framework we build now will determine the course of human history...' },
+        { title: 'Algorithmic Complexity', text: 'To understand the scale of modern systems, one must first grasp the underlying patterns of data distribution...' },
     ];
 
     const currentChapter = chapters[(currentModule - 1) % chapters.length];
 
     useEffect(() => {
         const moduleInterval = setInterval(() => {
-            setCurrentModule((m) => {
+            setCurrentModule((m: number) => {
                 const nextModule = m >= 10 ? 1 : m + 1;
                 setCharIndex(0);
                 setTypedText('');
                 setProgress(nextModule * 10);
-                setWordCount(3200 + (nextModule - 1) * 1200 + Math.floor(Math.random() * 500));
                 return nextModule;
             });
         }, 5000);
@@ -45,442 +37,257 @@ function BookGenerationMockup() {
     useEffect(() => {
         const fullText = currentChapter.text;
         const typeInterval = setInterval(() => {
-            setCharIndex((prev) => {
+            setCharIndex((prev: number) => {
                 if (prev < fullText.length) {
                     setTypedText(fullText.substring(0, prev + 1));
                     return prev + 1;
                 }
                 return prev;
             });
-        }, 8);
+        }, 15);
         return () => clearInterval(typeInterval);
     }, [currentModule, currentChapter.text]);
 
-    useEffect(() => {
-        if (textContainerRef.current) {
-            textContainerRef.current.scrollTop = textContainerRef.current.scrollHeight;
-        }
-    }, [typedText]);
-
-    useEffect(() => {
-        const colors = ['bg-orange-500', 'bg-yellow-500', 'bg-amber-600', 'bg-red-500', 'bg-gray-600', 'bg-gray-700'];
-        const generatePixels = () => {
-            const totalPixels = 150;
-            const newPixels = Array(totalPixels).fill(0).map(() => ({
-                color: colors[Math.floor(Math.random() * colors.length)],
-                opacity: Math.random() > 0.4 ? 'opacity-100' : 'opacity-40',
-            }));
-            setPixels(newPixels);
-        };
-        generatePixels();
-        const interval = setInterval(generatePixels, 200);
-        return () => clearInterval(interval);
-    }, []);
-
     return (
-        // BIGGER MOCKUP
-        <div className="relative w-full max-w-lg mx-auto">
-            <div className="absolute -inset-6 bg-orange-500/20 blur-3xl rounded-3xl" />
-            <div className="relative bg-[#0f0f15] rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
-                <div className="p-6">
-                    <div className="flex items-center gap-4 mb-2">
-                        <div className="w-12 h-12 flex items-center justify-center bg-orange-500/20 rounded-xl border border-orange-500/30">
-                            <BookOpen size={26} className="text-orange-400" />
-                        </div>
-                        <div className="flex-1">
-                            <div className="flex items-center justify-between">
-                                <span className="text-lg font-bold text-white">Generating Chapters...</span>
-                                <div className="flex items-center gap-3">
-                                    <span className="text-sm font-bold text-orange-300 bg-orange-500/20 border border-orange-500/30 px-3 py-1 rounded-full">{progress}%</span>
-                                    <span className="text-sm font-mono text-gray-400">{wordCount.toLocaleString()} words</span>
-                                </div>
-                            </div>
-                            <div className="text-sm text-gray-500 mt-0.5">Module {currentModule} of 10</div>
-                        </div>
-                    </div>
-                    <div className="h-2 bg-[#1a1a24] rounded-full overflow-hidden mt-4 mb-4">
-                        <div className="h-full rounded-full transition-all duration-150" style={{ width: `${progress}%`, background: 'linear-gradient(90deg, #f97316, #fbbf24)' }} />
-                    </div>
-                </div>
-                <div ref={textContainerRef} className="mx-6 p-5 bg-[#0a0a0f] border border-white/5 rounded-xl mb-5 h-32 overflow-y-auto">
-                    <div className="flex items-center gap-2 mb-3">
-                        <Zap size={16} className="text-amber-400" />
-                        <span className="text-white font-semibold">{currentChapter.title}</span>
-                    </div>
-                    <div className="text-sm text-gray-500 leading-relaxed font-mono whitespace-pre-wrap">
-                        {typedText}<span className="inline-block w-2 h-4 bg-orange-400 animate-pulse ml-0.5" />
-                    </div>
-                </div>
-                <div className="mx-6 mb-5">
-                    <div className="flex flex-wrap gap-1 h-8 overflow-hidden">
-                        {pixels.map((p, i) => <div key={i} className={`w-2 h-2 rounded-sm ${p.color} ${p.opacity} transition-opacity duration-150`} />)}
-                    </div>
-                </div>
-                <div className="px-6 pb-5 pt-3 border-t border-white/5">
+        <div className="relative w-full max-w-lg mx-auto group">
+            {/* Subtle Ambient Glow */}
+            <div className="absolute -inset-1 bg-gradient-to-r from-orange-500/10 to-amber-500/10 blur-2xl rounded-3xl opacity-50 group-hover:opacity-100 transition-opacity duration-1000" />
+
+            <div className="relative bg-[#080808] rounded-24 overflow-hidden border border-white/5 shadow-[0_0_50px_-12px_rgba(0,0,0,0.5)]">
+                {/* Visual Header */}
+                <div className="p-6 border-b border-white/5 bg-white/2">
                     <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-2 text-sm text-gray-500">
-                            <Loader2 size={16} className="text-orange-500 animate-spin" />
-                            <span>41s remaining</span>
+                        <div className="flex items-center gap-3">
+                            <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
+                            <span className="text-[11px] font-mono tracking-[0.2em] text-white/40 uppercase">System Status: Generating</span>
                         </div>
-                        <div className="flex items-center gap-2">
-                            <button className="px-4 py-2 border border-white/10 rounded-lg text-sm font-medium text-gray-400">Cancel</button>
-                            <button className="px-5 py-2 bg-orange-600 rounded-lg text-white text-sm font-semibold">Pause</button>
-                        </div>
+                        <span className="text-[11px] font-mono text-orange-400/80">{progress}%</span>
                     </div>
+                    <div className="h-[2px] bg-white/5 w-full rounded-full overflow-hidden">
+                        <div className="h-full bg-orange-500 transition-all duration-700 ease-out" style={{ width: `${progress}%` }} />
+                    </div>
+                </div>
+
+                {/* Content Area */}
+                <div className="p-8 h-48 flex flex-col justify-center">
+                    <div className="text-[12px] font-mono text-orange-400 mb-3 opacity-70">CHAPTER {currentModule}</div>
+                    <h3 className="text-xl font-medium text-white mb-4 tracking-tight">{currentChapter.title}</h3>
+                    <div className="text-sm text-white/40 leading-relaxed font-sans">
+                        {typedText}<span className="inline-block w-[1px] h-4 bg-orange-500/50 ml-1 animate-pulse" />
+                    </div>
+                </div>
+
+                {/* Action Bar */}
+                <div className="px-8 py-5 bg-white/[0.01] border-t border-white/5 flex items-center justify-between">
+                    <div className="flex items-center gap-2 overflow-hidden">
+                        {[...Array(24)].map((_, i) => (
+                            <div
+                                key={i}
+                                className={`w-1 h-3 rounded-full transition-all duration-500 ${i < (progress / 4) ? 'bg-orange-500/40' : 'bg-white/5'}`}
+                            />
+                        ))}
+                    </div>
+                    <div className="text-[10px] font-mono text-white/20 tracking-widest uppercase">Pustakam Engine v2</div>
                 </div>
             </div>
         </div>
     );
 }
 
-// Sample books
-const sampleBooks = [
-    { id: 1, title: 'Introduction To AI Fundamentals', pdf: '/Introduction_To_Ai_Fundamentals_2026-01-04.pdf', cover: 'linear-gradient(135deg, #f97316 0%, #fbbf24 100%)', year: '2026' },
-    { id: 2, title: 'Introduction To Databases And SQL', pdf: '/Introduction_To_Databases_And_Sql_2026-01-08.pdf', cover: 'linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%)', year: '2026' },
-    { id: 3, title: 'Data Science: A Practical Guide', pdf: '/Data_Science_Work_A_Practical_Guide_To_Roles_And_P_2025-11-06.pdf', cover: 'linear-gradient(135deg, #8b5cf6 0%, #d946ef 100%)', year: '2025' },
-    { id: 4, title: 'ML Lifecycle: End-to-End Guide', pdf: '/Master_The_End-to-end_Lifecycle_Of_Building_And_De_2025-11-24.pdf', cover: 'linear-gradient(135deg, #ef4444 0%, #f97316 100%)', year: '2025' },
-    { id: 5, title: 'Understanding Earth: Our Living Planet', pdf: '/Understanding_Earth_Our_Living_Planet_2025-11-06.pdf', cover: 'linear-gradient(135deg, #10b981 0%, #34d399 100%)', year: '2025' },
-    { id: 6, title: 'Code Craft: Building Logic One Line At A Time', pdf: '/Code_Craft_Building_Logic_One_Line_At_A_Time_2025-10-29 (4).pdf', cover: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)', year: '2025' },
-    { id: 7, title: 'The Art Of Calm: A Journey To Inner Peace', pdf: '/The_Art_Of_Calm_A_Journey_To_Inner_Peace_2025-10-29.pdf', cover: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)', year: '2025' },
-];
-
 const features = [
-    { icon: Sparkles, title: 'AI-Powered Generation', description: 'Transform any topic into comprehensive, well-structured books using state-of-the-art AI models.', color: 'text-orange-400' },
-    { icon: BookOpen, title: 'Complete Books', description: 'Generate full books with chapters, not just snippets. Perfect for learning and reference.', color: 'text-yellow-400' },
-    { icon: Zap, title: 'Multiple AI Models', description: 'Choose from Google Gemini, Mistral, Groq, Cerebras and more. Use your own API keys.', color: 'text-amber-400' },
-    { icon: Shield, title: 'Privacy First', description: 'Your data stays on your device. API keys stored locally, never on our servers.', color: 'text-red-400' },
-    { icon: Globe, title: 'Works Offline', description: 'Install as a PWA and access your books anytime, even without internet.', color: 'text-orange-300' },
-    { icon: Download, title: 'Export Anywhere', description: 'Download your books as PDF or Markdown. Read on any device.', color: 'text-amber-300' },
+    { title: 'Neural Generation', description: 'Advanced language models synthesize information into structured chapters.', icon: Sparkles },
+    { title: 'Zero Data Leak', description: 'Your content and API keys never leave your browser. Privacy by design.', icon: Shield },
+    { title: 'Universal Export', description: 'Seamlessly transition from screen to page with high-fidelity PDF and Markdown.', icon: Download },
 ];
 
-const pricingPlans = [
-    { name: 'Free', price: '₹0', description: 'Try the platform', features: ['3 books total', 'All AI models', 'PDF export', 'Offline access'], popular: false },
-    { name: 'Monthly', price: '₹149', period: '/month', description: 'For regular creators', features: ['Unlimited books', 'All AI models', 'PDF & Markdown export', 'Priority support'], popular: true },
-    { name: 'Yearly', price: '₹1,499', period: '/year', description: 'Best value', features: ['Everything in Monthly', '2 months free', 'Early access to features', 'Dedicated support'], popular: false, savings: '₹289 saved' },
-];
-
-const LandingPage: React.FC<LandingPageProps> = ({ onLogin, onGetStarted, onSubscribe }) => {
+const LandingPage: React.FC<LandingPageProps> = ({ onLogin, onGetStarted }) => {
+    const [scrolled, setScrolled] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
-    const [activeSection, setActiveSection] = useState<ActiveSection>('home');
-    const scrollRef = useRef<HTMLDivElement>(null);
 
-    const navigateTo = (section: ActiveSection) => {
-        setActiveSection(section);
-        setMenuOpen(false);
-    };
-
-    const handleSubscribe = () => {
-        if (onSubscribe) {
-            onSubscribe();
-        } else {
-            onLogin();
-        }
-    };
-
-    const scrollBooks = (dir: 'left' | 'right') => {
-        if (scrollRef.current) {
-            scrollRef.current.scrollBy({ left: dir === 'left' ? -300 : 300, behavior: 'smooth' });
-        }
-    };
+    useEffect(() => {
+        const handleScroll = () => setScrolled(window.scrollY > 20);
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     return (
-        <div className="min-h-screen bg-[#0a0a0f] text-white font-sans">
-            {/* ===== HEADER ===== */}
-            <header className="fixed top-0 left-0 right-0 z-50 px-6 md:px-12 py-4 bg-gradient-to-b from-[#0a0a0f] via-[#0a0a0f]/95 to-transparent">
-                <div className="max-w-7xl mx-auto flex items-center justify-between">
-                    <div className="flex items-center gap-4 cursor-pointer" onClick={() => navigateTo('home')}>
-                        <img src="/white-logo.png" alt="Pustakam" className="w-10 h-10" />
-                        <div className="hidden md:block">
-                            <h1 className="text-xl font-bold tracking-tight">PUSTAKAM</h1>
-                            <p className="text-xs text-white/50 -mt-0.5">AI Book Engine</p>
-                        </div>
+        <div className="min-h-screen bg-[#050505] text-white selection:bg-orange-500/30 selection:text-orange-200">
+            {/* Minimalist Grid Background */}
+            <div className="fixed inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] pointer-events-none" />
+            <div className="fixed inset-0 bg-gradient-to-b from-orange-500/[0.02] to-transparent pointer-events-none" />
+
+            {/* Float Navigation */}
+            <header className={`fixed top-6 left-1/2 -translate-x-1/2 z-50 transition-all duration-500 ${scrolled ? 'w-[90%] md:w-[600px]' : 'w-[95%] md:w-[800px]'}`}>
+                <nav className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-full px-6 py-3 flex items-center justify-between shadow-2xl">
+                    <div className="flex items-center gap-3 cursor-pointer group" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+                        <img src="/white-logo.png" alt="P" className="w-5 h-5 opacity-80 group-hover:opacity-100 transition-opacity" />
+                        <span className="text-[11px] font-mono tracking-[0.3em] uppercase opacity-60 group-hover:opacity-100 transition-opacity hidden sm:block">Pustakam</span>
                     </div>
 
-                    <nav className="hidden lg:flex items-center gap-8 text-sm font-medium">
-                        {(['home', 'features', 'collection', 'pricing'] as const).map((section) => (
-                            <button
-                                key={section}
-                                onClick={() => navigateTo(section)}
-                                className={`hover:text-orange-400 transition-colors uppercase ${activeSection === section ? 'text-orange-400' : ''}`}
-                            >
-                                {section.toUpperCase()}
+                    <div className="hidden md:flex items-center gap-8">
+                        {['Features', 'Pricing', 'Collection'].map((item) => (
+                            <button key={item} className="text-[11px] font-mono tracking-widest uppercase opacity-40 hover:opacity-100 transition-opacity">
+                                {item}
                             </button>
                         ))}
-                    </nav>
-
-                    <div className="flex items-center gap-3">
-                        <button onClick={onLogin} className="hidden sm:block px-4 py-2 text-sm font-medium hover:text-orange-400 transition-colors">Login</button>
-                        <button onClick={onGetStarted} className="px-5 py-2.5 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg transition-colors text-sm">Get Started</button>
-                        <button onClick={() => setMenuOpen(true)} className="lg:hidden p-2 hover:bg-white/10 rounded-lg"><Menu size={24} /></button>
                     </div>
-                </div>
+
+                    <div className="flex items-center gap-4">
+                        <button onClick={onLogin} className="text-[11px] font-mono tracking-widest uppercase opacity-40 hover:opacity-100 transition-opacity hidden sm:block">Login</button>
+                        <button
+                            onClick={onGetStarted}
+                            className="bg-white text-black text-[10px] font-mono tracking-widest uppercase px-5 py-2 rounded-full hover:bg-orange-500 hover:text-white transition-all transform active:scale-95"
+                        >
+                            Start
+                        </button>
+                        <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden opacity-60 hover:opacity-100">
+                            {menuOpen ? <X size={18} /> : <Menu size={18} />}
+                        </button>
+                    </div>
+                </nav>
+
+                {/* Mobile Menu Dropdown */}
+                {menuOpen && (
+                    <div className="absolute top-full left-0 right-0 mt-4 bg-black/80 backdrop-blur-2xl border border-white/10 rounded-2xl p-6 md:hidden animate-fade-in-down">
+                        <nav className="flex flex-col gap-6">
+                            {['Features', 'Pricing', 'Collection', 'Login'].map((item) => (
+                                <button key={item} className="text-left text-lg font-medium opacity-60 hover:opacity-100 transition-opacity">
+                                    {item}
+                                </button>
+                            ))}
+                        </nav>
+                    </div>
+                )}
             </header>
 
-            {/* ===== MOBILE MENU ===== */}
-            {menuOpen && (
-                <div className="fixed inset-0 z-[100] bg-[#0a0a0f] flex flex-col p-6">
-                    <div className="flex items-center justify-between mb-16">
-                        <div className="flex items-center gap-4">
-                            <img src="/white-logo.png" alt="Pustakam" className="w-10 h-10" />
-                            <span className="text-xl font-bold">PUSTAKAM</span>
-                        </div>
-                        <button onClick={() => setMenuOpen(false)} className="p-2 hover:bg-white/10 rounded-lg"><X size={28} /></button>
-                    </div>
-                    <nav className="flex-1 flex flex-col justify-center gap-4">
-                        {(['home', 'features', 'collection', 'pricing'] as const).map((section) => (
-                            <button key={section} onClick={() => navigateTo(section)} className={`text-left text-4xl md:text-5xl font-bold hover:text-orange-400 transition-all hover:translate-x-2 uppercase ${activeSection === section ? 'text-orange-400' : ''}`}>
-                                {section}
-                            </button>
-                        ))}
-                    </nav>
-                    <div className="border border-orange-500/30 rounded-lg p-6 mt-8">
-                        <p className="text-sm font-semibold text-orange-400 mb-4">QUICK ACCESS</p>
-                        <div className="space-y-2 text-sm text-white/60">
-                            <p className="hover:text-white cursor-pointer" onClick={onGetStarted}>Create Your Book</p>
-                            <p className="hover:text-white cursor-pointer" onClick={onLogin}>Login to Account</p>
-                        </div>
-                    </div>
+            {/* Hero Section */}
+            <section className="relative pt-48 pb-32 px-6 flex flex-col items-center text-center">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 mb-12 animate-subtle-fade">
+                    <span className="w-1 h-1 rounded-full bg-orange-500 animate-pulse" />
+                    <span className="text-[10px] font-mono tracking-[0.2em] uppercase opacity-50">V2.0 is now live</span>
                 </div>
-            )}
 
-            {/* ===== HERO SECTION (REDUCED SIZE) ===== */}
-            <section className="pt-24 min-h-[70vh] flex items-center px-6 md:px-12 pb-8">
-                <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-10 items-center w-full">
-                    <div>
-                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-sm mb-5">
-                            <Star size={14} />
-                            <span>AI-Powered Book Generation</span>
+                <h1 className="text-[clamp(2.5rem,8vw,5.5rem)] font-medium leading-[0.95] tracking-[-0.04em] mb-12 animate-fade-in-up">
+                    Synthesize ideas into<br />
+                    <span className="text-orange-500 italic font-normal serif">Complete Knowledge.</span>
+                </h1>
+
+                <p className="max-w-xl text-lg md:text-xl text-white/40 leading-relaxed mb-12 animate-fade-in-up delay-100">
+                    The professional engine for AI-generated books. Bring your own intelligence, we provide the architecture.
+                </p>
+
+                <div className="flex flex-col sm:flex-row items-center gap-6 animate-fade-in-up delay-200">
+                    <button
+                        onClick={onGetStarted}
+                        className="group bg-white text-black px-10 py-4 rounded-full font-medium text-lg hover:bg-orange-500 hover:text-white transition-all flex items-center gap-3 shadow-[0_0_30px_-5px_rgba(255,255,255,0.2)]"
+                    >
+                        Create Your Book
+                        <MoveRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                    </button>
+                    <button className="text-white/40 hover:text-white text-lg font-medium transition-colors border-b border-transparent hover:border-white/20 pb-1">
+                        View Sample Library
+                    </button>
+                </div>
+
+                {/* Mockup Display */}
+                <div className="mt-32 w-full max-w-5xl mx-auto animate-subtle-fade delay-300">
+                    <BookGenerationMockup />
+                </div>
+            </section>
+
+            {/* Sparse Pricing */}
+            <section className="py-32 px-6">
+                <div className="max-w-4xl mx-auto">
+                    <div className="grid md:grid-cols-2 gap-12">
+                        <div className="p-8 rounded-3xl bg-white/[0.02] border border-white/5 flex flex-col items-start gap-6">
+                            <span className="text-[10px] font-mono tracking-widest uppercase opacity-40">Standard</span>
+                            <div className="text-4xl font-medium tracking-tight">Free</div>
+                            <p className="text-white/40 text-sm leading-relaxed">
+                                Experience the core engine. Perfect for academic research and personal projects.
+                            </p>
+                            <ul className="space-y-3">
+                                {['3 books total', 'All AI models', 'PDF export'].map(f => (
+                                    <li key={f} className="flex items-center gap-2 text-xs text-white/40">
+                                        <div className="w-1 h-1 rounded-full bg-orange-500" />
+                                        {f}
+                                    </li>
+                                ))}
+                            </ul>
+                            <button onClick={onGetStarted} className="w-full py-4 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-[11px] font-mono tracking-widest uppercase transition-all">Get Started</button>
                         </div>
-                        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-                            Transform Ideas Into
-                            <span className="block text-orange-400">Complete Books</span>
-                        </h1>
-                        <p className="text-lg text-gray-400 mb-6 max-w-lg">
-                            Generate comprehensive, well-structured books on any topic using AI. Bring your own API keys and create unlimited knowledge.
-                        </p>
-                        <div className="flex flex-wrap gap-4">
-                            <button onClick={onGetStarted} className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 font-semibold rounded-lg transition-colors flex items-center gap-2">
-                                Start Creating Free <ArrowRight size={18} />
-                            </button>
-                            <button onClick={() => navigateTo('features')} className="text-gray-400 hover:text-white px-6 py-3 font-medium transition-colors border border-white/10 rounded-lg hover:border-white/20">
-                                Learn More
-                            </button>
+
+                        <div className="p-8 rounded-3xl bg-orange-500/[0.03] border border-orange-500/20 flex flex-col items-start gap-6 relative overflow-hidden group">
+                            <div className="absolute top-4 right-4 bg-orange-500 text-black text-[9px] font-mono tracking-widest uppercase px-2 py-1 rounded-full">Popular</div>
+                            <span className="text-[10px] font-mono tracking-widest uppercase text-orange-400">Unlimited</span>
+                            <div className="flex items-baseline gap-1">
+                                <span className="text-4xl font-medium tracking-tight">₹149</span>
+                                <span className="text-sm opacity-40">/mo</span>
+                            </div>
+                            <p className="text-white/40 text-sm leading-relaxed">
+                                Remove all limits. Scale your knowledge production with priority engine access.
+                            </p>
+                            <ul className="space-y-3">
+                                {['Unlimited generation', 'Full source control', 'Priority support'].map(f => (
+                                    <li key={f} className="flex items-center gap-2 text-xs text-white/60">
+                                        <div className="w-1 h-1 rounded-full bg-orange-500" />
+                                        {f}
+                                    </li>
+                                ))}
+                            </ul>
+                            <button onClick={onGetStarted} className="w-full py-4 rounded-full bg-white text-black hover:bg-orange-500 hover:text-white text-[11px] font-mono tracking-widest uppercase transition-all">Subscribe</button>
                         </div>
-                        <div className="mt-10 flex items-center gap-6">
-                            <div><div className="text-xl font-bold">5+</div><div className="text-xs text-gray-500">AI Models</div></div>
-                            <div className="w-px h-8 bg-white/10" />
-                            <div><div className="text-xl font-bold">100%</div><div className="text-xs text-gray-500">Privacy</div></div>
-                            <div className="w-px h-8 bg-white/10" />
-                            <div><div className="text-xl font-bold">Free</div><div className="text-xs text-gray-500">To Start</div></div>
-                        </div>
-                    </div>
-                    <div className="hidden lg:block">
-                        <BookGenerationMockup />
                     </div>
                 </div>
             </section>
 
-            {/* ===== CONTENT SECTION ===== */}
+            {/* Collection Teaser */}
+            <section className="py-32 px-6 border-t border-white/5">
+                <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-end gap-12 mb-16">
+                    <div className="max-w-md">
+                        <span className="text-[10px] font-mono tracking-widest uppercase text-orange-400 mb-4 block">Archive</span>
+                        <h2 className="text-3xl font-medium tracking-tight mb-4 text-white">Public Library</h2>
+                        <p className="text-white/40 text-sm leading-relaxed">
+                            A curated selection of books synthesized by Pustakam. High fidelity, deep research.
+                        </p>
+                    </div>
+                    <button className="text-[11px] font-mono tracking-widest uppercase opacity-40 hover:opacity-100 transition-opacity flex items-center gap-2 mb-2 group">
+                        Explore Full Library
+                        <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                    </button>
+                </div>
 
-            {/* HOME - More Content */}
-            {activeSection === 'home' && (
-                <>
-                    {/* Stats Section */}
-                    <section className="py-16 px-6 md:px-12">
-                        <div className="max-w-5xl mx-auto">
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                                <div className="text-center p-6 rounded-2xl bg-white/[0.02]">
-                                    <Users className="mx-auto mb-3 text-orange-400" size={28} />
-                                    <div className="text-2xl font-bold">1000+</div>
-                                    <div className="text-sm text-gray-500">Active Users</div>
-                                </div>
-                                <div className="text-center p-6 rounded-2xl bg-white/[0.02]">
-                                    <BookOpen className="mx-auto mb-3 text-yellow-400" size={28} />
-                                    <div className="text-2xl font-bold">5000+</div>
-                                    <div className="text-sm text-gray-500">Books Generated</div>
-                                </div>
-                                <div className="text-center p-6 rounded-2xl bg-white/[0.02]">
-                                    <Clock className="mx-auto mb-3 text-amber-400" size={28} />
-                                    <div className="text-2xl font-bold">&lt;5 min</div>
-                                    <div className="text-sm text-gray-500">Avg Generation</div>
-                                </div>
-                                <div className="text-center p-6 rounded-2xl bg-white/[0.02]">
-                                    <Award className="mx-auto mb-3 text-red-400" size={28} />
-                                    <div className="text-2xl font-bold">4.9/5</div>
-                                    <div className="text-sm text-gray-500">User Rating</div>
-                                </div>
-                            </div>
+                <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {[
+                        { title: 'AI Ethics', color: 'bg-orange-500/[0.05]' },
+                        { title: 'Data Structures', color: 'bg-white/[0.03]' },
+                        { title: 'Linear Algebra', color: 'bg-white/[0.03]' },
+                        { title: 'Organic Chemistry', color: 'bg-white/[0.03]' }
+                    ].map((book, i) => (
+                        <div key={i} className={`aspect-[3/4] rounded-24 ${book.color} border border-white/5 p-6 flex flex-col justify-end hover:border-white/20 transition-all cursor-pointer group`}>
+                            <span className="text-[10px] font-mono tracking-widest uppercase opacity-20 mb-2">2026 Archive</span>
+                            <h3 className="font-medium text-white/80 group-hover:text-white transition-colors">{book.title}</h3>
                         </div>
-                    </section>
+                    ))}
+                </div>
+            </section>
 
-                    {/* How It Works */}
-                    <section className="py-16 px-6 md:px-12">
-                        <div className="max-w-4xl mx-auto">
-                            <h2 className="text-2xl md:text-3xl font-bold text-center mb-12">HOW IT WORKS</h2>
-                            <div className="grid md:grid-cols-3 gap-8">
-                                <div className="text-center">
-                                    <div className="w-12 h-12 mx-auto mb-4 bg-orange-500/20 rounded-xl flex items-center justify-center text-orange-400 font-bold text-xl">1</div>
-                                    <h3 className="font-semibold mb-2">Choose Your Topic</h3>
-                                    <p className="text-sm text-gray-500">Enter any topic or idea you want to explore in depth.</p>
-                                </div>
-                                <div className="text-center">
-                                    <div className="w-12 h-12 mx-auto mb-4 bg-yellow-500/20 rounded-xl flex items-center justify-center text-yellow-400 font-bold text-xl">2</div>
-                                    <h3 className="font-semibold mb-2">AI Generates</h3>
-                                    <p className="text-sm text-gray-500">Our AI creates structured chapters with comprehensive content.</p>
-                                </div>
-                                <div className="text-center">
-                                    <div className="w-12 h-12 mx-auto mb-4 bg-amber-500/20 rounded-xl flex items-center justify-center text-amber-400 font-bold text-xl">3</div>
-                                    <h3 className="font-semibold mb-2">Read & Export</h3>
-                                    <p className="text-sm text-gray-500">Read in-app or export as PDF/Markdown for offline access.</p>
-                                </div>
-                            </div>
+            {/* Sparse Footer */}
+            <footer className="py-24 px-6 border-t border-white/5">
+                <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
+                    <div className="flex flex-col items-center md:items-start gap-4">
+                        <div className="flex items-center gap-3">
+                            <img src="/white-logo.png" alt="Pustakam" className="w-6 h-6 opacity-80" />
+                            <span className="font-mono text-[12px] tracking-widest uppercase opacity-40">Pustakam Engine</span>
                         </div>
-                    </section>
+                        <p className="text-white/20 text-xs font-mono tracking-widest uppercase">© 2026 Crafted by Tanmay</p>
+                    </div>
 
-                    {/* CTA */}
-                    <section className="py-16 px-6 md:px-12">
-                        <div className="max-w-3xl mx-auto text-center">
-                            <BookMarked className="w-14 h-14 text-orange-400 mx-auto mb-5" />
-                            <h2 className="text-2xl md:text-3xl font-bold mb-4">Ready to Create Your First Book?</h2>
-                            <p className="text-gray-400 mb-6">Join creators using AI to generate comprehensive books on any topic.</p>
-                            <button onClick={onGetStarted} className="bg-white text-black px-7 py-3.5 font-semibold rounded-lg hover:bg-gray-200 transition-colors inline-flex items-center gap-2">
-                                Get Started Free <ArrowRight size={18} />
+                    <div className="flex gap-12">
+                        {['Twitter', 'GitHub', 'Discord'].map((social) => (
+                            <button key={social} className="text-[11px] font-mono tracking-widest uppercase opacity-30 hover:opacity-100 transition-opacity">
+                                {social}
                             </button>
-                        </div>
-                    </section>
-                </>
-            )}
-
-            {/* FEATURES */}
-            {activeSection === 'features' && (
-                <section className="py-16 px-6 md:px-12">
-                    <div className="max-w-6xl mx-auto">
-                        <div className="text-center mb-14">
-                            <h2 className="text-2xl md:text-3xl font-bold mb-4">WHY PUSTAKAM?</h2>
-                            <p className="text-gray-400 max-w-2xl mx-auto">Powerful features to help you generate, customize, and share your AI-created books.</p>
-                        </div>
-                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-                            {features.map((feature, i) => {
-                                const Icon = feature.icon;
-                                return (
-                                    <div key={i} className="p-5 rounded-2xl bg-white/[0.02] hover:bg-white/[0.04] transition-colors">
-                                        <div className={`w-11 h-11 rounded-xl bg-white/5 flex items-center justify-center mb-4 ${feature.color}`}><Icon size={22} /></div>
-                                        <h3 className="text-base font-semibold mb-2">{feature.title}</h3>
-                                        <p className="text-gray-500 text-sm leading-relaxed">{feature.description}</p>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                        <div className="text-center mt-14">
-                            <button onClick={onGetStarted} className="bg-orange-500 hover:bg-orange-600 text-white px-7 py-3.5 font-semibold rounded-lg inline-flex items-center gap-2">
-                                Start Creating <ArrowRight size={18} />
-                            </button>
-                        </div>
-                    </div>
-                </section>
-            )}
-
-            {/* COLLECTION */}
-            {activeSection === 'collection' && (
-                <section className="py-16 px-6 md:px-12">
-                    <div className="max-w-7xl mx-auto">
-                        <div className="flex items-center justify-between mb-10">
-                            <div>
-                                <h2 className="text-2xl md:text-3xl font-bold mb-2">OUR HIGHLIGHTS</h2>
-                                <p className="text-gray-500">Sample books generated by our AI engine • Click to view PDF</p>
-                            </div>
-                            <div className="hidden md:flex gap-2">
-                                <button onClick={() => scrollBooks('left')} className="p-3 border border-white/10 rounded-lg hover:bg-white/5"><ChevronLeft size={20} /></button>
-                                <button onClick={() => scrollBooks('right')} className="p-3 border border-white/10 rounded-lg hover:bg-white/5"><ChevronRight size={20} /></button>
-                            </div>
-                        </div>
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-5">
-                            {sampleBooks.map((book) => (
-                                <a key={book.id} href={book.pdf} target="_blank" rel="noopener noreferrer" className="group relative rounded-2xl overflow-hidden cursor-pointer transition-transform hover:scale-[1.02]" style={{ aspectRatio: '3/4' }}>
-                                    <div className="absolute inset-0" style={{ background: book.cover }} />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-100" />
-                                    <div className="absolute bottom-0 left-0 right-0 p-4">
-                                        <p className="text-xs text-white/50 mb-1">AI Generated • {book.year}</p>
-                                        <h3 className="font-semibold text-sm lg:text-base leading-tight">{book.title}</h3>
-                                    </div>
-                                </a>
-                            ))}
-                            <div onClick={onGetStarted} className="relative rounded-2xl overflow-hidden cursor-pointer border-2 border-dashed border-orange-500/30 hover:border-orange-500/50 flex items-center justify-center bg-orange-500/5 hover:bg-orange-500/10" style={{ aspectRatio: '3/4' }}>
-                                <div className="text-center p-4">
-                                    <Sparkles className="mx-auto mb-3 text-orange-400" size={28} />
-                                    <h3 className="font-semibold text-sm">Create Your Book</h3>
-                                    <p className="text-xs text-gray-500 mt-1">Generate with AI</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            )}
-
-            {/* PRICING */}
-            {activeSection === 'pricing' && (
-                <section className="py-16 px-6 md:px-12">
-                    <div className="max-w-5xl mx-auto">
-                        <div className="text-center mb-14">
-                            <h2 className="text-2xl md:text-3xl font-bold mb-4">SIMPLE PRICING</h2>
-                            <p className="text-gray-400">You bring your own API keys. We provide the platform. No hidden costs.</p>
-                        </div>
-                        <div className="grid md:grid-cols-3 gap-5">
-                            {pricingPlans.map((plan, i) => (
-                                <div key={i} className={`relative p-5 rounded-2xl ${plan.popular ? 'bg-orange-500/5 border border-orange-500/30' : 'bg-white/[0.02]'}`}>
-                                    {plan.popular && <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-orange-500 text-white text-xs font-semibold rounded-full">Most Popular</div>}
-                                    {plan.savings && <div className="absolute -top-3 right-4 px-3 py-1 bg-amber-500/10 text-amber-400 text-xs font-semibold rounded-full border border-amber-500/20">{plan.savings}</div>}
-                                    <div className="mb-5"><h3 className="text-lg font-bold mb-1">{plan.name}</h3><p className="text-sm text-gray-500">{plan.description}</p></div>
-                                    <div className="mb-5"><span className="text-3xl font-bold">{plan.price}</span>{plan.period && <span className="text-gray-500 text-sm">{plan.period}</span>}</div>
-                                    <ul className="space-y-2.5 mb-6">{plan.features.map((f, j) => <li key={j} className="flex items-center gap-2 text-sm"><Check size={16} className="text-amber-400" /><span className="text-gray-400">{f}</span></li>)}</ul>
-                                    <button onClick={plan.price === '₹0' ? onGetStarted : handleSubscribe} className={`w-full py-2.5 rounded-lg font-medium text-sm ${plan.popular ? 'bg-orange-500 hover:bg-orange-600 text-white' : 'bg-white/5 hover:bg-white/10 border border-white/10'}`}>{plan.price === '₹0' ? 'Get Started Free' : 'Subscribe'}</button>
-                                </div>
-                            ))}
-                        </div>
-                        <p className="text-center text-sm text-gray-500 mt-10">💡 All plans require your own API keys from Google, Mistral, Groq, or Cerebras (free tiers available)</p>
-                    </div>
-                </section>
-            )}
-
-            {/* ===== FOOTER ===== */}
-            <footer className="py-10 px-6 md:px-12 bg-[#0a0a0f]">
-                <div className="max-w-7xl mx-auto">
-                    <div className="grid md:grid-cols-4 gap-8">
-                        <div>
-                            <div className="flex items-center gap-3 mb-4">
-                                <img src="/white-logo.png" alt="Pustakam" className="w-8 h-8" />
-                                <span className="font-bold">PUSTAKAM</span>
-                            </div>
-                            <p className="text-sm text-gray-500">AI-powered book generation engine.</p>
-                        </div>
-                        <div>
-                            <h4 className="font-semibold text-sm mb-4">EXPLORE</h4>
-                            <div className="space-y-2 text-sm text-gray-500">
-                                <p className="hover:text-white cursor-pointer" onClick={onGetStarted}>Create Book</p>
-                                <p className="hover:text-white cursor-pointer" onClick={() => navigateTo('collection')}>Browse Library</p>
-                            </div>
-                        </div>
-                        <div>
-                            <h4 className="font-semibold text-sm mb-4">SUPPORT</h4>
-                            <div className="space-y-2 text-sm text-gray-500">
-                                <p className="hover:text-white cursor-pointer">Help Center</p>
-                                <p className="hover:text-white cursor-pointer">Contact</p>
-                            </div>
-                        </div>
-                        <div>
-                            <h4 className="font-semibold text-sm mb-4">STAY INFORMED</h4>
-                            <div className="flex flex-col gap-3">
-                                <input type="email" placeholder="your@email.com" className="bg-transparent border-b border-white/20 pb-2 text-sm outline-none focus:border-orange-400" />
-                                <button className="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded-lg text-sm">Subscribe</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="mt-10 pt-6 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-500">
-                        <p>© 2026 Pustakam. Created by Tanmay Kalbande</p>
-                        <div className="flex gap-6">
-                            <span className="hover:text-white cursor-pointer">Terms</span>
-                            <span className="hover:text-white cursor-pointer">Privacy</span>
-                        </div>
+                        ))}
                     </div>
                 </div>
             </footer>

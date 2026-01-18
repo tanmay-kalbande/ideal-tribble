@@ -48,9 +48,9 @@ export const Toast: React.FC<ToastProps> = ({ message, type, onClose, duration =
 
     return (
         <div
-            className={`fixed bottom-8 left-1/2 -translate-x-1/2 z-[150] px-4 py-3 rounded-xl border border-white/10 backdrop-blur-md shadow-2xl flex items-center gap-3 min-w-[300px] max-w-[90vw] transition-all duration-300 ${isExiting ? 'opacity-0 translate-y-4 scale-95' : 'opacity-100 translate-y-0 scale-100'
+            className={`fixed bottom-8 right-8 z-[150] px-4 py-3 rounded-xl border border-white/10 backdrop-blur-md shadow-2xl flex items-center gap-3 min-w-[300px] max-w-[90vw] transition-all duration-300 ${isExiting ? 'opacity-0 translate-x-4 scale-95' : 'opacity-100 translate-x-0 scale-100'
                 } ${getTypeStyles()}`}
-            style={{ animation: isExiting ? 'none' : 'toastIn 0.3s cubic-bezier(0.16, 1, 0.3, 1)' }}
+            style={{ animation: isExiting ? 'none' : 'toastIn 0.5s cubic-bezier(0.16, 1, 0.3, 1)' }}
         >
             <div className="shrink-0">{getIcon()}</div>
             <div className="flex-1 text-sm font-medium pr-2">{message}</div>
