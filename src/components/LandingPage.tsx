@@ -195,8 +195,10 @@ const LandingPage = ({ onLogin, onGetStarted }: LandingPageProps) => {
 
             {/* Centered Hero Section */}
             <main className="relative z-20 flex flex-col items-center justify-center min-h-[90vh] px-6 text-center">
-                <div className="mb-12 transition-all duration-1000 animate-subtle-glow">
-                    <h1 className="text-[clamp(3.5rem,10vw,7rem)] font-medium tracking-[-0.03em] leading-none mb-4 text-white">
+                <div className="mb-12 transition-all duration-1000">
+                    <h1 className="text-[clamp(4rem,12vw,9rem)] font-bold tracking-[-0.04em] leading-none text-white drop-shadow-[0_0_80px_rgba(255,255,255,0.5)]" style={{
+                        textShadow: '0 0 100px rgba(255,255,255,0.8), 0 0 50px rgba(147,197,253,0.6), 0 0 25px rgba(59,130,246,0.4)'
+                    }}>
                         Pustakam
                     </h1>
                 </div>
