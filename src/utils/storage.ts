@@ -88,6 +88,26 @@ export const storageUtils = {
     try {
       const key = getUserBooksKey(userId);
       const stored = localStorage.getItem(key);
+
+      // Migration: If user-specific key is empty and user is logged in,
+      // check if there are books in the old generic key and migrate them
+      if (!stored && userId) {
+        const oldBooks = localStorage.getItem(BOOKS_KEY);
+        if (oldBooks) {
+          // Migrate old books to user-specific key
+          localStorage.setItem(key, oldBooks);
+          // Clear old generic key to prevent duplicate loading
+          localStorage.removeItem(BOOKS_KEY);
+          console.log('Migrated books from generic key to user-specific key');
+          const books = JSON.parse(oldBooks);
+          return books.map((book: BookProject) => ({
+            ...book,
+            createdAt: new Date(book.createdAt),
+            updatedAt: new Date(book.updatedAt),
+          }));
+        }
+      }
+
       if (!stored) return [];
       const books = JSON.parse(stored);
       return books.map((book: BookProject) => ({
