@@ -2228,3 +2228,20 @@ article a:hover {
 html.light .header-with-fade::after {
   background: linear-gradient(to bottom, #ffffff, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.5), transparent);
 }
+@keyframes nebula-pulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 0.8; }
+}
+
+.animate-nebula-pulse {
+  animation: nebula-pulse 10s ease-in-out infinite;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fade-in 1.2s ease-out forwards;
+}
