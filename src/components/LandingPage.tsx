@@ -7,7 +7,7 @@ interface LandingPageProps {
     onSubscribe?: () => void;
 }
 
-// High-Fidelity Atmospheric Background using Canvas
+// Atmospheric Nebula Background using Canvas
 const NebulaBackground: React.FC = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -18,98 +18,115 @@ const NebulaBackground: React.FC = () => {
         if (!ctx) return;
 
         let animationFrameId: number;
-        let time = 0;
+        let clouds: Cloud[] = [];
+        let stars: Star[] = [];
 
-        const resize = () => {
+        interface Cloud {
+            x: number;
+            y: number;
+            radius: number;
+            color: string;
+            dx: number;
+            dy: number;
+            opacity: number;
+        }
+
+        interface Star {
+            x: number;
+            y: number;
+            radius: number;
+            alpha: number;
+            dx: number;
+            dy: number;
+        }
+
+        const init = () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-        };
+            clouds = [];
+            stars = [];
 
-        window.addEventListener('resize', resize);
-        resize();
-
-        // Grain/Dust Texture Generator
-        const createGrain = (width: number, height: number) => {
-            const grainCanvas = document.createElement('canvas');
-            grainCanvas.width = 256;
-            grainCanvas.height = 256;
-            const grainCtx = grainCanvas.getContext('2d')!;
-            const imageData = grainCtx.createImageData(256, 256);
-            for (let i = 0; i < imageData.data.length; i += 4) {
-                const val = Math.random() * 255;
-                imageData.data[i] = val;
-                imageData.data[i + 1] = val;
-                imageData.data[i + 2] = val;
-                imageData.data[i + 3] = 12; // Very faint dust
+            // Create large nebula clouds
+            for (let i = 0; i < 20; i++) { // Increased count for dense atmosphere
+                clouds.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    radius: Math.random() * 300 + 200, // Large glowing blobs
+                    color: i % 2 === 0 ? 'rgba(59, 130, 246)' : 'rgba(37, 99, 235)', // Blue-500 and Blue-600
+                    dx: (Math.random() - 0.5) * 0.2, // Very slow movement
+                    dy: (Math.random() - 0.5) * 0.2,
+                    opacity: Math.random() * 0.15 + 0.05 // Subtle opacity
+                });
             }
-            grainCtx.putImageData(imageData, 0, 0);
-            return grainCtx.createPattern(grainCanvas, 'repeat')!;
+
+            // Create dust/stars
+            for (let i = 0; i < 150; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    radius: Math.random() * 1.5,
+                    alpha: Math.random() * 0.5 + 0.2,
+                    dx: (Math.random() - 0.5) * 0.1,
+                    dy: (Math.random() - 0.5) * 0.1
+                });
+            }
         };
 
-        const grainPattern = createGrain(canvas.width, canvas.height);
-
-        const render = () => {
-            time += 0.002;
+        const animate = () => {
             ctx.fillStyle = '#050505';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // 1. Draw "Dust/Grain" static layer
-            ctx.fillStyle = grainPattern;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            // Draw Clouds (Nebula)
+            clouds.forEach(cloud => {
+                cloud.x += cloud.dx;
+                cloud.y += cloud.dy;
 
-            // 2. Multi-layered light streaks ("Wispy" effect)
-            ctx.globalCompositeOperation = 'screen';
+                // Wrap around screen
+                if (cloud.x - cloud.radius > canvas.width) cloud.x = -cloud.radius;
+                if (cloud.x + cloud.radius < 0) cloud.x = canvas.width + cloud.radius;
+                if (cloud.y - cloud.radius > canvas.height) cloud.y = -cloud.radius;
+                if (cloud.y + cloud.radius < 0) cloud.y = canvas.height + cloud.radius;
 
-            const drawStreak = (x: number, y: number, w: number, h: number, rot: number, color: string, opacity: number) => {
-                ctx.save();
-                ctx.translate(x, y);
-                ctx.rotate(rot);
-                const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, w);
-                grad.addColorStop(0, color);
-                grad.addColorStop(1, 'transparent');
-                ctx.fillStyle = grad;
-                ctx.globalAlpha = opacity;
-                ctx.scale(2.5, 0.4); // Stretches the radial gradient into a streak
-                ctx.beginPath();
-                ctx.arc(0, 0, w, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.restore();
-            };
+                const gradient = ctx.createRadialGradient(cloud.x, cloud.y, 0, cloud.x, cloud.y, cloud.radius);
+                gradient.addColorStop(0, cloud.color.replace(')', `, ${cloud.opacity})`));
+                gradient.addColorStop(1, 'transparent');
 
-            const centerX = canvas.width * 0.75;
-            const centerY = canvas.height * 0.45;
+                ctx.globalCompositeOperation = 'screen'; // Additive blending for "glow"
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            });
 
-            // Deep background glow
-            drawStreak(centerX, centerY, 800, 800, time * 0.1, 'rgba(30, 64, 175, 0.4)', 0.4);
-
-            // Dynamic wisps
-            for (let i = 0; i < 3; i++) {
-                const offset = i * 1.5;
-                const wx = centerX + Math.sin(time + offset) * 150;
-                const wy = centerY + Math.cos(time * 0.8 + offset) * 100;
-                const wWidth = 400 + Math.sin(time * 0.5 + offset) * 100;
-                drawStreak(wx, wy, wWidth, 300, (time + offset) * 0.2, 'rgba(59, 130, 246, 0.25)', 0.5);
-            }
-
-            // High intensity core wisp
-            const coreX = centerX + Math.sin(time * 1.2) * 50;
-            const coreY = centerY + Math.cos(time * 0.7) * 40;
-            drawStreak(coreX, coreY, 600, 200, -time * 0.15, 'rgba(147, 197, 253, 0.3)', 0.4);
-
-            ctx.globalAlpha = 1.0;
+            // Draw Dust/Stars
             ctx.globalCompositeOperation = 'source-over';
-            animationFrameId = requestAnimationFrame(render);
+            stars.forEach(star => {
+                star.x += star.dx;
+                star.y += star.dy;
+
+                if (star.x < 0) star.x = canvas.width;
+                if (star.x > canvas.width) star.x = 0;
+                if (star.y < 0) star.y = canvas.height;
+                if (star.y > canvas.height) star.y = 0;
+
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${star.alpha})`;
+                ctx.fill();
+            });
+
+            animationFrameId = requestAnimationFrame(animate);
         };
 
-        render();
+        window.addEventListener('resize', init);
+        init();
+        animate();
 
         return () => {
-            window.removeEventListener('resize', resize);
+            window.removeEventListener('resize', init);
             cancelAnimationFrame(animationFrameId);
         };
     }, []);
 
-    return <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none z-0 opacity-80" />;
+    return <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none z-0" />;
 };
 
 const LandingPage = ({ onLogin, onGetStarted }: LandingPageProps) => {
@@ -158,24 +175,23 @@ const LandingPage = ({ onLogin, onGetStarted }: LandingPageProps) => {
 
             {/* Centered Hero Section */}
             <main className="relative z-20 flex flex-col items-center justify-center min-h-[90vh] px-6 text-center">
-                <div className="mb-12 transition-all duration-1000">
-                    <h1 className="text-[clamp(3.5rem,12vw,9rem)] font-extralight tracking-[-0.05em] leading-[0.9] mb-4 text-white drop-shadow-[0_0_50px_rgba(59,130,246,0.2)]">
+                <div className="mb-12 transition-all duration-1000 animate-subtle-glow">
+                    <h1 className="text-[clamp(3.5rem,10vw,7rem)] font-medium tracking-[-0.03em] leading-none mb-4 text-white">
                         Pustakam
                     </h1>
                 </div>
 
-                <div className="flex flex-col items-center gap-10 mb-16 animate-fade-in">
+                <div className="flex flex-col items-center gap-8 mb-16 animate-fade-in">
                     <button
                         onClick={onGetStarted}
-                        className="group relative bg-white/5 backdrop-blur-3xl text-white border border-white/10 px-12 py-5 rounded-full text-xs font-bold tracking-[0.3em] uppercase overflow-hidden transition-all hover:border-white/30 active:scale-95"
+                        className="bg-white text-black px-10 py-4 rounded-full text-sm font-bold tracking-[0.2em] uppercase hover:bg-blue-500 hover:text-white transition-all transform hover:scale-105 active:scale-95 shadow-[0_0_30px_rgba(255,255,255,0.1)]"
                     >
-                        <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
-                        <span className="relative z-10 group-hover:text-black transition-colors duration-300">Initialize Engine</span>
+                        Initialize Engine
                     </button>
 
-                    <div className="max-w-xl text-white/20 text-xs md:text-sm leading-relaxed font-light tracking-[0.05em] px-4 uppercase">
-                        Synthesizing high-fidelity knowledge archives. <br className="hidden md:block" />
-                        Engineered for deep academic research.
+                    <div className="max-w-lg text-white/30 text-sm md:text-base leading-relaxed font-light tracking-wide px-4">
+                        Pustakam synthesizes high-fidelity knowledge archives from your prompts.
+                        Built for rapid exploration and deep academic research.
                     </div>
                 </div>
 
