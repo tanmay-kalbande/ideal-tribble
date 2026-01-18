@@ -1842,6 +1842,21 @@ export function BookView({
       return;
     }
     await onCreateBookRoadmap(session);
+
+    // Clear form after successful book creation
+    setFormData({
+      goal: '',
+      language: 'en',
+      targetAudience: '',
+      complexityLevel: 'intermediate',
+      reasoning: '',
+      preferences: {
+        includeExamples: true,
+        includePracticalExercises: false,
+        includeQuizzes: false,
+      },
+    });
+    setShowAdvanced(false);
   };
 
   const handleGenerateAllModules = async (book: BookProject, session: BookSession) => {
