@@ -1226,8 +1226,15 @@ const HomeView = ({
   localIsGenerating: boolean;
   onOpenSettings: () => void;
 }) => (
-  <div className={`flex-1 flex flex-col items-center px-6 pb-12 min-h-screen transition-all duration-500 ${showAdvanced ? 'justify-start pt-32 md:pt-48' : 'justify-center py-12'
-    }`} style={{ background: 'var(--color-bg)', fontFamily: 'Rubik, sans-serif' }}>
+  <div className="flex-1 flex flex-col items-center px-6 pb-12 min-h-screen" style={{ background: 'var(--color-bg)', fontFamily: 'Rubik, sans-serif' }}>
+    {/* Dynamic Spacer for smooth centering transition */}
+    <div
+      className="transition-all duration-700 ease-in-out overflow-hidden"
+      style={{
+        height: showAdvanced ? '0' : '15vh',
+        opacity: showAdvanced ? 0 : 1
+      }}
+    />
     <div className="w-full max-w-2xl mx-auto animate-subtle-fade">
       <div className="text-center mb-10">
         <img
