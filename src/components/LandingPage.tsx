@@ -7,7 +7,7 @@ interface LandingPageProps {
     onSubscribe?: () => void;
 }
 
-// Atmospheric Nebula Background using Canvas
+// High-Fidelity Atmospheric Background using Canvas
 const NebulaBackground: React.FC = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -28,33 +28,76 @@ const NebulaBackground: React.FC = () => {
         window.addEventListener('resize', resize);
         resize();
 
+        // Grain/Dust Texture Generator
+        const createGrain = (width: number, height: number) => {
+            const grainCanvas = document.createElement('canvas');
+            grainCanvas.width = 256;
+            grainCanvas.height = 256;
+            const grainCtx = grainCanvas.getContext('2d')!;
+            const imageData = grainCtx.createImageData(256, 256);
+            for (let i = 0; i < imageData.data.length; i += 4) {
+                const val = Math.random() * 255;
+                imageData.data[i] = val;
+                imageData.data[i + 1] = val;
+                imageData.data[i + 2] = val;
+                imageData.data[i + 3] = 12; // Very faint dust
+            }
+            grainCtx.putImageData(imageData, 0, 0);
+            return grainCtx.createPattern(grainCanvas, 'repeat')!;
+        };
+
+        const grainPattern = createGrain(canvas.width, canvas.height);
+
         const render = () => {
-            time += 0.005;
+            time += 0.002;
             ctx.fillStyle = '#050505';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            const centerX = canvas.width * 0.8;
-            const centerY = canvas.height * 0.4;
+            // 1. Draw "Dust/Grain" static layer
+            ctx.fillStyle = grainPattern;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Multiple overlapping glowing layers
-            const drawGlow = (x: number, y: number, radius: number, color: string, opacity: number) => {
-                const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
-                gradient.addColorStop(0, color);
-                gradient.addColorStop(1, 'transparent');
+            // 2. Multi-layered light streaks ("Wispy" effect)
+            ctx.globalCompositeOperation = 'screen';
+
+            const drawStreak = (x: number, y: number, w: number, h: number, rot: number, color: string, opacity: number) => {
+                ctx.save();
+                ctx.translate(x, y);
+                ctx.rotate(rot);
+                const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, w);
+                grad.addColorStop(0, color);
+                grad.addColorStop(1, 'transparent');
+                ctx.fillStyle = grad;
                 ctx.globalAlpha = opacity;
-                ctx.fillStyle = gradient;
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.scale(2.5, 0.4); // Stretches the radial gradient into a streak
+                ctx.beginPath();
+                ctx.arc(0, 0, w, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
             };
 
-            // Dynamic nebula movement
-            const modX = Math.sin(time * 0.5) * 100;
-            const modY = Math.cos(time * 0.3) * 50;
+            const centerX = canvas.width * 0.75;
+            const centerY = canvas.height * 0.45;
 
-            drawGlow(centerX + modX, centerY + modY, 800, 'rgba(30, 64, 175, 0.15)', 0.5); // Deep Blue
-            drawGlow(centerX - modX * 0.5, centerY + modY * 1.2, 600, 'rgba(59, 130, 246, 0.1)', 0.3); // Bright Blue
-            drawGlow(centerX + modX * 0.2, centerY - modY, 400, 'rgba(0, 0, 0, 0.8)', 1); // Internal mask for depth
+            // Deep background glow
+            drawStreak(centerX, centerY, 800, 800, time * 0.1, 'rgba(30, 64, 175, 0.4)', 0.4);
+
+            // Dynamic wisps
+            for (let i = 0; i < 3; i++) {
+                const offset = i * 1.5;
+                const wx = centerX + Math.sin(time + offset) * 150;
+                const wy = centerY + Math.cos(time * 0.8 + offset) * 100;
+                const wWidth = 400 + Math.sin(time * 0.5 + offset) * 100;
+                drawStreak(wx, wy, wWidth, 300, (time + offset) * 0.2, 'rgba(59, 130, 246, 0.25)', 0.5);
+            }
+
+            // High intensity core wisp
+            const coreX = centerX + Math.sin(time * 1.2) * 50;
+            const coreY = centerY + Math.cos(time * 0.7) * 40;
+            drawStreak(coreX, coreY, 600, 200, -time * 0.15, 'rgba(147, 197, 253, 0.3)', 0.4);
 
             ctx.globalAlpha = 1.0;
+            ctx.globalCompositeOperation = 'source-over';
             animationFrameId = requestAnimationFrame(render);
         };
 
@@ -66,7 +109,7 @@ const NebulaBackground: React.FC = () => {
         };
     }, []);
 
-    return <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none z-0" />;
+    return <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none z-0 opacity-80" />;
 };
 
 const LandingPage = ({ onLogin, onGetStarted }: LandingPageProps) => {
@@ -115,23 +158,24 @@ const LandingPage = ({ onLogin, onGetStarted }: LandingPageProps) => {
 
             {/* Centered Hero Section */}
             <main className="relative z-20 flex flex-col items-center justify-center min-h-[90vh] px-6 text-center">
-                <div className="mb-12 transition-all duration-1000 animate-subtle-glow">
-                    <h1 className="text-[clamp(3.5rem,10vw,7rem)] font-medium tracking-[-0.03em] leading-none mb-4 text-white">
+                <div className="mb-12 transition-all duration-1000">
+                    <h1 className="text-[clamp(3.5rem,12vw,9rem)] font-extralight tracking-[-0.05em] leading-[0.9] mb-4 text-white drop-shadow-[0_0_50px_rgba(59,130,246,0.2)]">
                         Pustakam
                     </h1>
                 </div>
 
-                <div className="flex flex-col items-center gap-8 mb-16 animate-fade-in">
+                <div className="flex flex-col items-center gap-10 mb-16 animate-fade-in">
                     <button
                         onClick={onGetStarted}
-                        className="bg-white text-black px-10 py-4 rounded-full text-sm font-bold tracking-[0.2em] uppercase hover:bg-blue-500 hover:text-white transition-all transform hover:scale-105 active:scale-95 shadow-[0_0_30px_rgba(255,255,255,0.1)]"
+                        className="group relative bg-white/5 backdrop-blur-3xl text-white border border-white/10 px-12 py-5 rounded-full text-xs font-bold tracking-[0.3em] uppercase overflow-hidden transition-all hover:border-white/30 active:scale-95"
                     >
-                        Initialize Engine
+                        <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
+                        <span className="relative z-10 group-hover:text-black transition-colors duration-300">Initialize Engine</span>
                     </button>
 
-                    <div className="max-w-lg text-white/30 text-sm md:text-base leading-relaxed font-light tracking-wide px-4">
-                        Pustakam synthesizes high-fidelity knowledge archives from your prompts.
-                        Built for rapid exploration and deep academic research.
+                    <div className="max-w-xl text-white/20 text-xs md:text-sm leading-relaxed font-light tracking-[0.05em] px-4 uppercase">
+                        Synthesizing high-fidelity knowledge archives. <br className="hidden md:block" />
+                        Engineered for deep academic research.
                     </div>
                 </div>
 
