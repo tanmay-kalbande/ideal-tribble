@@ -143,11 +143,13 @@ function App() {
   const hasMountedRef = React.useRef(false);
 
   useEffect(() => {
-    // Only save if we've completed initial mount, preventing overwriting loaded data
-    if (hasMountedRef.current) {
+    // Only save if:
+    // 1. Auth has finished loading (so we have the correct user ID)
+    // 2. We've completed initial mount (so we're not overwriting with empty array)
+    if (!isLoading && hasMountedRef.current) {
       storageUtils.saveBooks(books, user?.id);
     }
-  }, [books, user?.id]);
+  }, [books, user?.id, isLoading]);
 
   useEffect(() => { if (!currentBookId) setView('list'); }, [currentBookId]);
 
@@ -158,15 +160,20 @@ function App() {
     }
   }, [isAuthenticated, isLoading]);
 
-  // Load user-specific books when user changes
+  // Load user-specific books when auth finishes loading or user changes
   useEffect(() => {
+    // Wait for auth to finish loading before loading books
+    // This ensures we have the correct user ID
+    if (isLoading) return;
+
     const loadedBooks = storageUtils.getBooks(user?.id);
+    console.log(`Loaded ${loadedBooks.length} books for user: ${user?.id || 'anonymous'}`);
     setBooks(loadedBooks);
     // Reset current book selection when user changes
     setCurrentBookId(null);
     // Mark as mounted after first load completes
     hasMountedRef.current = true;
-  }, [user?.id]);
+  }, [user?.id, isLoading]);
 
 
   useEffect(() => {
