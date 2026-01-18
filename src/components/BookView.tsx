@@ -292,11 +292,11 @@ const AIWaveAnimation = () => {
   const [pixels, setPixels] = useState<Pixel[]>([]);
 
   useEffect(() => {
-    // App-themed colors: cyan, emerald, teal palette
+    // App-themed colors: orange, amber, gray palette (Grok vibe)
     const colors = [
-      'bg-cyan-500', 'bg-cyan-400', 'bg-emerald-500',
-      'bg-emerald-400', 'bg-teal-500', 'bg-teal-400',
-      'bg-cyan-300', 'bg-emerald-300',
+      'bg-orange-500', 'bg-orange-400', 'bg-amber-500',
+      'bg-amber-400', 'bg-orange-600', 'bg-amber-600',
+      'bg-gray-500', 'bg-gray-600',
     ];
 
     const generatePixels = () => {
@@ -1226,7 +1226,8 @@ const HomeView = ({
   localIsGenerating: boolean;
   onOpenSettings: () => void;
 }) => (
-  <div className="flex-1 flex flex-col items-center justify-start px-6 pt-32 md:pt-48 pb-12 min-h-screen" style={{ background: 'var(--color-bg)', fontFamily: 'Rubik, sans-serif' }}>
+  <div className={`flex-1 flex flex-col items-center px-6 pb-12 min-h-screen transition-all duration-500 ${showAdvanced ? 'justify-start pt-32 md:pt-48' : 'justify-center py-12'
+    }`} style={{ background: 'var(--color-bg)', fontFamily: 'Rubik, sans-serif' }}>
     <div className="w-full max-w-2xl mx-auto animate-subtle-fade">
       <div className="text-center mb-10">
         <img
