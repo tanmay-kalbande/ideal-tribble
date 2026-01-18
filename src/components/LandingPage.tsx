@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MoveRight, ArrowUp } from 'lucide-react';
 
 interface LandingPageProps {
@@ -7,131 +7,42 @@ interface LandingPageProps {
     onSubscribe?: () => void;
 }
 
-// Atmospheric Nebula Background using Canvas
-const NebulaBackground: React.FC = () => {
-    const canvasRef = useRef<HTMLCanvasElement>(null);
-
-    useEffect(() => {
-        const canvas = canvasRef.current;
-        if (!canvas) return;
-        const ctx = canvas.getContext('2d');
-        if (!ctx) return;
-
-        let animationFrameId: number;
-        let clouds: Cloud[] = [];
-        let stars: Star[] = [];
-
-        interface Cloud {
-            x: number;
-            y: number;
-            radius: number;
-            color: string;
-            dx: number;
-            dy: number;
-            opacity: number;
-        }
-
-        interface Star {
-            x: number;
-            y: number;
-            radius: number;
-            alpha: number;
-            dx: number;
-            dy: number;
-        }
-
-        const init = () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            clouds = [];
-            stars = [];
-
-            // Create massive, volumetric ambient clouds (x.ai style)
-            // Focused more on the right side and center
-            for (let i = 0; i < 15; i++) {
-                clouds.push({
-                    x: Math.random() * canvas.width * 1.2 - canvas.width * 0.1, // Wider spread
-                    y: Math.random() * canvas.height,
-                    radius: Math.random() * 400 + 300, // Massive soft clouds
-                    color: i % 3 === 0 ? 'rgba(56, 189, 248)' : (i % 2 === 0 ? 'rgba(59, 130, 246)' : 'rgba(30, 58, 138)'), // Sky-400, Blue-500, Blue-900
-                    dx: (Math.random() - 0.5) * 0.05, // Extremely slow drift
-                    dy: (Math.random() - 0.5) * 0.05,
-                    opacity: Math.random() * 0.1 + 0.05 // Very faint
-                });
-            }
-
-            // Create sharp particle dust
-            for (let i = 0; i < 200; i++) {
-                stars.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    radius: Math.random() * 1.2,
-                    alpha: Math.random() * 0.6 + 0.1,
-                    dx: (Math.random() - 0.5) * 0.2, // Faster than clouds
-                    dy: (Math.random() - 0.5) * 0.2
-                });
-            }
-        };
-
-        const animate = () => {
-            // Clear with deep space black (preserving no trail for full redraw)
-            ctx.fillStyle = '#000000'; // Pure black like x.ai
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            // Draw Clouds (Nebula) - Additive blending for volumetric feel
-            ctx.globalCompositeOperation = 'screen';
-            clouds.forEach(cloud => {
-                cloud.x += cloud.dx;
-                cloud.y += cloud.dy;
-
-                // Soft wrap
-                if (cloud.x - cloud.radius > canvas.width) cloud.x = -cloud.radius;
-                if (cloud.x + cloud.radius < 0) cloud.x = canvas.width + cloud.radius;
-                if (cloud.y - cloud.radius > canvas.height) cloud.y = -cloud.radius;
-                if (cloud.y + cloud.radius < 0) cloud.y = canvas.height + cloud.radius;
-
-                const gradient = ctx.createRadialGradient(cloud.x, cloud.y, 0, cloud.x, cloud.y, cloud.radius);
-                // Core is brighter, fades to transparent
-                gradient.addColorStop(0, cloud.color.replace(')', `, ${cloud.opacity * 1.5})`));
-                gradient.addColorStop(0.5, cloud.color.replace(')', `, ${cloud.opacity * 0.5})`));
-                gradient.addColorStop(1, 'transparent');
-
-                ctx.fillStyle = gradient;
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-            });
-
-            // Draw Dust/Stars - Normal blending (on top)
-            ctx.globalCompositeOperation = 'source-over';
-            stars.forEach(star => {
-                star.x += star.dx;
-                star.y += star.dy;
-
-                if (star.x < 0) star.x = canvas.width;
-                if (star.x > canvas.width) star.x = 0;
-                if (star.y < 0) star.y = canvas.height;
-                if (star.y > canvas.height) star.y = 0;
-
-                const flicker = Math.random() * 0.1 - 0.05;
-                ctx.beginPath();
-                ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(255, 255, 255, ${Math.max(0, Math.min(1, star.alpha + flicker))})`;
-                ctx.fill();
-            });
-
-            animationFrameId = requestAnimationFrame(animate);
-        };
-
-        window.addEventListener('resize', init);
-        init();
-        animate();
-
-        return () => {
-            window.removeEventListener('resize', init);
-            cancelAnimationFrame(animationFrameId);
-        };
-    }, []);
-
-    return <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none z-0" />;
+// Grok-Style Dramatic Gradient Background
+const GrokBackground: React.FC = () => {
+    return (
+        <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+            {/* Deep space gradient base */}
+            <div className="absolute inset-0 bg-gradient-to-b from-[#000814] via-[#001220] to-[#000000]" />
+            
+            {/* Dramatic center glow - the key Grok effect */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%]">
+                <div className="absolute inset-0 bg-gradient-radial from-[#1e3a8a]/30 via-[#1e40af]/20 to-transparent blur-3xl animate-nebula-pulse" />
+                <div className="absolute inset-0 bg-gradient-radial from-[#3b82f6]/20 via-[#2563eb]/10 to-transparent blur-2xl animate-nebula-pulse" style={{ animationDelay: '2s' }} />
+            </div>
+            
+            {/* Bright white/blue core glow behind text */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                <div className="w-[600px] h-[300px] bg-gradient-radial from-white/40 via-blue-400/30 to-transparent blur-3xl" />
+            </div>
+            
+            {/* Subtle particle field */}
+            <div className="absolute inset-0 opacity-30">
+                {[...Array(50)].map((_, i) => (
+                    <div
+                        key={i}
+                        className="absolute w-1 h-1 bg-white rounded-full"
+                        style={{
+                            left: `${Math.random() * 100}%`,
+                            top: `${Math.random() * 100}%`,
+                            opacity: Math.random() * 0.5,
+                            animation: `twinkle ${3 + Math.random() * 4}s ease-in-out infinite`,
+                            animationDelay: `${Math.random() * 3}s`
+                        }}
+                    />
+                ))}
+            </div>
+        </div>
+    );
 };
 
 const LandingPage = ({ onLogin, onGetStarted }: LandingPageProps) => {
@@ -146,7 +57,7 @@ const LandingPage = ({ onLogin, onGetStarted }: LandingPageProps) => {
 
     return (
         <div className="min-h-screen bg-[#050505] text-white selection:bg-blue-500/30 selection:text-blue-200 overflow-x-hidden font-sans">
-            <NebulaBackground />
+            <GrokBackground />
 
             {/* Minimalist Noise Overlay */}
             <div className="fixed inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.02] pointer-events-none z-10" />
@@ -181,8 +92,10 @@ const LandingPage = ({ onLogin, onGetStarted }: LandingPageProps) => {
 
             {/* Centered Hero Section */}
             <main className="relative z-20 flex flex-col items-center justify-center min-h-[90vh] px-6 text-center">
-                <div className="mb-12 transition-all duration-1000 animate-subtle-glow">
-                    <h1 className="text-[clamp(3.5rem,10vw,7rem)] font-medium tracking-[-0.03em] leading-none mb-4 text-white">
+                <div className="mb-12 transition-all duration-1000">
+                    <h1 className="text-[clamp(4rem,12vw,9rem)] font-bold tracking-[-0.04em] leading-none text-white drop-shadow-[0_0_80px_rgba(255,255,255,0.5)]" style={{
+                        textShadow: '0 0 100px rgba(255,255,255,0.8), 0 0 50px rgba(147,197,253,0.6), 0 0 25px rgba(59,130,246,0.4)'
+                    }}>
                         Pustakam
                     </h1>
                 </div>
