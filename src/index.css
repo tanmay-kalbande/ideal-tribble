@@ -2245,3 +2245,59 @@ html.light .header-with-fade::after {
 .animate-fade-in {
   animation: fade-in 1.2s ease-out forwards;
 }
+
+
+
+    /* Add these animations and utilities to your existing index.css */
+
+/* Grok-style background animations */
+@keyframes nebula-pulse {
+  0%, 100% { 
+    opacity: 0.5; 
+  }
+  50% { 
+    opacity: 0.8; 
+  }
+}
+
+.animate-nebula-pulse {
+  animation: nebula-pulse 10s ease-in-out infinite;
+}
+
+@keyframes twinkle {
+  0%, 100% { 
+    opacity: 0.2; 
+  }
+  50% { 
+    opacity: 0.8; 
+  }
+}
+
+@keyframes fade-in {
+  from { 
+    opacity: 0; 
+    transform: translateY(10px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 1.2s ease-out forwards;
+}
+
+/* Radial gradient utility */
+.bg-gradient-radial {
+  background: radial-gradient(circle, var(--tw-gradient-stops));
+}
+
+/* If you need to override the default text-shadow */
+.glow-text {
+  text-shadow: 
+    0 0 100px rgba(255,255,255,0.8), 
+    0 0 50px rgba(147,197,253,0.6), 
+    0 0 25px rgba(59,130,246,0.4);
+  filter: drop-shadow(0 0 80px rgba(255,255,255,0.5));
+}
