@@ -36,7 +36,7 @@ interface GenerationStatus {
 }
 
 function App() {
-  const [books, setBooks] = useState<BookProject[]>(() => storageUtils.getBooks());
+  const [books, setBooks] = useState<BookProject[]>([]);
   const [settings, setSettings] = useState<APISettings>(() => storageUtils.getSettings());
   const [currentBookId, setCurrentBookId] = useState<string | null>(null);
   const [view, setView] = useState<AppView>('list');
@@ -139,7 +139,7 @@ function App() {
     });
   }, [settings]);
 
-  useEffect(() => { storageUtils.saveBooks(books); }, [books]);
+  useEffect(() => { storageUtils.saveBooks(books, user?.id); }, [books, user?.id]);
 
   useEffect(() => { if (!currentBookId) setView('list'); }, [currentBookId]);
 
@@ -149,6 +149,14 @@ function App() {
       setIsAuthTransitioning(false);
     }
   }, [isAuthenticated, isLoading]);
+
+  // Load user-specific books when user changes
+  useEffect(() => {
+    const loadedBooks = storageUtils.getBooks(user?.id);
+    setBooks(loadedBooks);
+    // Reset current book selection when user changes
+    setCurrentBookId(null);
+  }, [user?.id]);
 
   useEffect(() => {
     const handleOnline = () => { setIsOnline(true); setShowOfflineMessage(false); };

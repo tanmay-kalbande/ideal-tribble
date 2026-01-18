@@ -4,6 +4,14 @@ import { APISettings, BookProject, ModelID } from '../types';
 const SETTINGS_KEY = 'pustakam-settings';
 const BOOKS_KEY = 'pustakam-books';
 
+// Get user-scoped books key
+const getUserBooksKey = (userId?: string | null): string => {
+  if (userId) {
+    return `pustakam-books-${userId}`;
+  }
+  return BOOKS_KEY;
+};
+
 const defaultSettings: APISettings = {
   googleApiKey: '',
   mistralApiKey: '',
@@ -76,9 +84,10 @@ export const storageUtils = {
     }
   },
 
-  getBooks(): BookProject[] {
+  getBooks(userId?: string | null): BookProject[] {
     try {
-      const stored = localStorage.getItem(BOOKS_KEY);
+      const key = getUserBooksKey(userId);
+      const stored = localStorage.getItem(key);
       if (!stored) return [];
       const books = JSON.parse(stored);
       return books.map((book: BookProject) => ({
@@ -92,21 +101,24 @@ export const storageUtils = {
     }
   },
 
-  saveBooks(books: BookProject[]): void {
+  saveBooks(books: BookProject[], userId?: string | null): void {
     try {
-      localStorage.setItem(BOOKS_KEY, JSON.stringify(books));
+      const key = getUserBooksKey(userId);
+      localStorage.setItem(key, JSON.stringify(books));
     } catch (error) {
       console.error('Error saving books:', error);
       // Silently fail - books are also saved in state
     }
   },
 
-  clearBooks(): void {
-    localStorage.removeItem(BOOKS_KEY);
+  clearBooks(userId?: string | null): void {
+    const key = getUserBooksKey(userId);
+    localStorage.removeItem(key);
   },
 
-  clearAll(): void {
+  clearAll(userId?: string | null): void {
     localStorage.removeItem(SETTINGS_KEY);
-    localStorage.removeItem(BOOKS_KEY);
+    const key = getUserBooksKey(userId);
+    localStorage.removeItem(key);
   },
 };

@@ -37,7 +37,7 @@ interface ImportPreview {
 
 export function SettingsModal({ isOpen, onClose, settings, onSaveSettings, theme, onToggleTheme, showAlertDialog }: SettingsModalProps) {
   const [localSettings, setLocalSettings] = React.useState<APISettings>(settings);
-  const { profile, isAuthenticated } = useAuth();
+  const { profile, isAuthenticated, user } = useAuth();
   const [activeTab, setActiveTab] = React.useState<ActiveTab>('keys');
   const [visibleApis, setVisibleApis] = React.useState<Record<string, boolean>>({});
   const [importPreview, setImportPreview] = React.useState<ImportPreview | null>(null);
@@ -55,7 +55,7 @@ export function SettingsModal({ isOpen, onClose, settings, onSaveSettings, theme
 
   const handleExportData = () => {
     const data = {
-      books: storageUtils.getBooks(),
+      books: storageUtils.getBooks(user?.id),
       settings: storageUtils.getSettings(),
       exportDate: new Date().toISOString(),
       version: '1.0.0'
@@ -77,7 +77,7 @@ export function SettingsModal({ isOpen, onClose, settings, onSaveSettings, theme
     reader.onload = (e) => {
       try {
         const importData = JSON.parse(e.target?.result as string);
-        const existingBooks = storageUtils.getBooks();
+        const existingBooks = storageUtils.getBooks(user?.id);
         const existingSettings = storageUtils.getSettings();
 
         const duplicateBooks = importData.books ?
@@ -115,13 +115,13 @@ export function SettingsModal({ isOpen, onClose, settings, onSaveSettings, theme
 
     try {
       if (mode === 'replace') {
-        storageUtils.saveBooks(importPreview.books);
+        storageUtils.saveBooks(importPreview.books, user?.id);
         if (importPreview.settings) {
           setLocalSettings(importPreview.settings);
           storageUtils.saveSettings(importPreview.settings);
         }
       } else {
-        const existingBooks = storageUtils.getBooks();
+        const existingBooks = storageUtils.getBooks(user?.id);
         const existingSettings = storageUtils.getSettings();
 
         const mergedBooks = [...existingBooks];
@@ -131,7 +131,7 @@ export function SettingsModal({ isOpen, onClose, settings, onSaveSettings, theme
             mergedBooks.push(importBook);
           }
         });
-        storageUtils.saveBooks(mergedBooks);
+        storageUtils.saveBooks(mergedBooks, user?.id);
 
         const mergedSettings = { ...importPreview.settings };
         Object.keys(existingSettings).forEach(key => {
@@ -195,11 +195,11 @@ export function SettingsModal({ isOpen, onClose, settings, onSaveSettings, theme
     <button
       onClick={() => setActiveTab(id)}
       className={`group flex items-center gap-3 px-4 py-2.5 text-sm font-semibold transition-all rounded-lg w-full ${activeTab === id
-        ? 'bg-gray-900 text-white dark:bg-white/10 dark:text-white shadow-sm'
-        : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/[0.03]'
+        ? 'bg-orange-500 text-white shadow-sm'
+        : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)]'
         }`}
     >
-      <Icon size={18} className={`transition-colors ${activeTab === id ? 'text-white' : 'text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white'}`} />
+      <Icon size={18} className={`transition-colors ${activeTab === id ? 'text-white' : 'text-[var(--color-text-secondary)] group-hover:text-[var(--color-text-primary)]'}`} />
       {label}
     </button>
   );
@@ -254,7 +254,7 @@ export function SettingsModal({ isOpen, onClose, settings, onSaveSettings, theme
 
           <div className="flex flex-1 overflow-hidden">
             {/* Sidebar Navigation */}
-            <div className="w-52 border-r border-gray-100 dark:border-white/[0.08] p-3 space-y-1 bg-gray-50/50 dark:bg-[#121212]">
+            <div className="w-52 flex-shrink-0 border-r border-[var(--color-border)] p-3 space-y-1 bg-[var(--color-sidebar)]">
               <TabButton id="appearance" label="Appearance" Icon={Sun} />
               <TabButton id="keys" label="API Keys" Icon={Shield} />
               <TabButton id="subscription" label="Subscription" Icon={CreditCard} />
@@ -262,11 +262,11 @@ export function SettingsModal({ isOpen, onClose, settings, onSaveSettings, theme
               <TabButton id="about" label="Platform" Icon={HelpCircle} />
             </div>
 
-            {/* Content Area */}
-            <div className="flex-1 overflow-y-auto bg-white dark:bg-transparent p-8 scroll-smooth text-[var(--color-text-primary)]">
+            {/* Content Area - Fixed width to prevent resizing */}
+            <div className="w-[480px] flex-shrink-0 overflow-y-auto bg-[var(--color-card)] p-8 scroll-smooth text-[var(--color-text-primary)] min-h-[400px]">
               {/* Appearance Tab */}
               {activeTab === 'appearance' && (
-                <div className="max-w-md animate-fade-in space-y-8">
+                <div className="animate-fade-in space-y-8">
                   <header>
                     <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">Appearance</h3>
                     <p className="text-sm text-gray-500 dark:text-gray-400">Customize how Pustakam looks for you.</p>
@@ -302,7 +302,7 @@ export function SettingsModal({ isOpen, onClose, settings, onSaveSettings, theme
               )}
               {/* API Keys Tab */}
               {activeTab === 'keys' && (
-                <div className="max-w-md animate-fade-in space-y-8">
+                <div className="animate-fade-in space-y-8">
                   <header>
                     <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">External Connections</h3>
                     <p className="text-sm text-gray-500 dark:text-gray-400">Configure your LLM provider credentials.</p>
@@ -360,7 +360,7 @@ export function SettingsModal({ isOpen, onClose, settings, onSaveSettings, theme
 
               {/* Subscription Tab */}
               {activeTab === 'subscription' && (
-                <div className="max-w-md animate-fade-in space-y-8">
+                <div className="animate-fade-in space-y-8">
                   <header>
                     <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">Subscription & Credits</h3>
                     <p className="text-sm text-gray-500 dark:text-gray-400">Manage your plan and view credit balance.</p>
@@ -468,7 +468,7 @@ export function SettingsModal({ isOpen, onClose, settings, onSaveSettings, theme
 
               {/* Data Tab */}
               {activeTab === 'data' && (
-                <div className="max-w-md animate-fade-in space-y-8">
+                <div className="animate-fade-in space-y-8">
                   <header>
                     <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">Knowledge Management</h3>
                     <p className="text-sm text-gray-500 dark:text-gray-400">Control your local library and archives.</p>
@@ -526,7 +526,7 @@ export function SettingsModal({ isOpen, onClose, settings, onSaveSettings, theme
 
               {/* Platform Tab */}
               {activeTab === 'about' && (
-                <div className="max-w-md animate-fade-in space-y-10">
+                <div className="animate-fade-in space-y-10">
                   <div className="flex items-start gap-6">
                     <div className="w-16 h-16 rounded-xl bg-gray-100 dark:bg-white/5 flex items-center justify-center border border-gray-200 dark:border-white/10 shrink-0">
                       <img src="/white-logo.png" alt="Logo" className="w-10 h-10 drop-shadow-sm dark:invert-0 invert" />
