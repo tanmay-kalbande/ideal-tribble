@@ -283,71 +283,75 @@ const StatusLoader = () => (
 );
 
 const AIWaveAnimation = () => {
-  return (
-    <div className="flex items-center justify-center w-full h-12 relative">
-      {/* Pulsing glow circles */}
-      <div className="absolute inset-0 flex items-center justify-center">
-        {/* Outer ring */}
-        <div
-          className="absolute rounded-full bg-cyan-500/20 blur-sm"
-          style={{
-            width: '80px',
-            height: '80px',
-            animation: 'pulse-outer 2s ease-in-out infinite',
-          }}
-        />
-        {/* Middle ring */}
-        <div
-          className="absolute rounded-full bg-cyan-400/30 blur-sm"
-          style={{
-            width: '50px',
-            height: '50px',
-            animation: 'pulse-middle 2s ease-in-out infinite 0.3s',
-          }}
-        />
-        {/* Inner core */}
-        <div
-          className="absolute rounded-full bg-emerald-400/50"
-          style={{
-            width: '20px',
-            height: '20px',
-            animation: 'pulse-core 2s ease-in-out infinite 0.6s',
-          }}
-        />
-      </div>
+  const containerRef = useRef<HTMLDivElement>(null);
+  interface Pixel {
+    id: number;
+    color: string;
+    opacity: string;
+  }
+  const [pixels, setPixels] = useState<Pixel[]>([]);
 
-      <style>{`
-        @keyframes pulse-outer {
-          0%, 100% {
-            transform: scale(0.8);
-            opacity: 0.2;
-          }
-          50% {
-            transform: scale(1.2);
-            opacity: 0.4;
-          }
+  useEffect(() => {
+    // App-themed colors: cyan, emerald, teal palette
+    const colors = [
+      'bg-cyan-500', 'bg-cyan-400', 'bg-emerald-500',
+      'bg-emerald-400', 'bg-teal-500', 'bg-teal-400',
+      'bg-cyan-300', 'bg-emerald-300',
+    ];
+
+    const generatePixels = () => {
+      if (containerRef.current) {
+        const pixelSize = 10;
+        const gap = 4;
+        const pixelSpace = pixelSize + gap;
+        const containerWidth = containerRef.current.offsetWidth;
+        const containerHeight = containerRef.current.offsetHeight;
+
+        const numCols = Math.floor(containerWidth / pixelSpace);
+        const numRows = Math.floor(containerHeight / pixelSpace);
+        const totalPixels = numCols * numRows;
+
+        if (totalPixels > 0) {
+          const newPixels = Array(totalPixels)
+            .fill(0)
+            .map((_, i) => ({
+              id: i,
+              color: colors[Math.floor(Math.random() * colors.length)],
+              opacity: Math.random() > 0.4 ? 'opacity-100' : 'opacity-40',
+            }));
+          setPixels(newPixels);
         }
-        @keyframes pulse-middle {
-          0%, 100% {
-            transform: scale(0.9);
-            opacity: 0.3;
-          }
-          50% {
-            transform: scale(1.1);
-            opacity: 0.6;
-          }
-        }
-        @keyframes pulse-core {
-          0%, 100% {
-            transform: scale(1);
-            opacity: 0.5;
-          }
-          50% {
-            transform: scale(1.3);
-            opacity: 1;
-          }
-        }
-      `}</style>
+      }
+    };
+
+    const observer = new ResizeObserver(() => {
+      generatePixels();
+    });
+
+    const currentContainer = containerRef.current;
+    if (currentContainer) {
+      observer.observe(currentContainer);
+    }
+
+    const interval = setInterval(generatePixels, 200);
+
+    return () => {
+      clearInterval(interval);
+      observer.disconnect();
+    };
+  }, []);
+
+  return (
+    <div
+      ref={containerRef}
+      className="flex flex-wrap content-start gap-1 w-full h-8 md:h-6 overflow-hidden rounded-lg"
+    >
+      {pixels.map((p) => (
+        <div
+          key={p.id}
+          className={`w-2.5 h-2.5 rounded-sm ${p.color} ${p.opacity} transition-all duration-150`}
+        />
+      ))}
     </div>
   );
 };
