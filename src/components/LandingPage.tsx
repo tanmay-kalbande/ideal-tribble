@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MoveRight, ArrowUp } from 'lucide-react';
+import { MoveRight } from 'lucide-react';
 
 interface LandingPageProps {
     onLogin: () => void;
@@ -71,7 +71,6 @@ const NebulaBackground: React.FC = () => {
 
 const LandingPage = ({ onLogin, onGetStarted }: LandingPageProps) => {
     const [scrolled, setScrolled] = useState(false);
-    const [inputText, setInputText] = useState('');
 
     useEffect(() => {
         const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -122,29 +121,18 @@ const LandingPage = ({ onLogin, onGetStarted }: LandingPageProps) => {
                     </h1>
                 </div>
 
-                <div className="w-full max-w-2xl relative group mb-12">
-                    <div className="absolute -inset-1 bg-blue-500/10 blur-xl rounded-2xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-700" />
-                    <div className="relative bg-[#0d0d0d]/80 backdrop-blur-2xl border border-white/10 rounded-2xl p-4 flex items-center gap-4 transition-all group-focus-within:border-white/20 shadow-2xl">
-                        <div className="flex-1 flex flex-col items-start px-2">
-                            <textarea
-                                value={inputText}
-                                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setInputText(e.target.value)}
-                                placeholder="What do you want to learn?"
-                                className="w-full bg-transparent border-none focus:ring-0 text-lg md:text-xl placeholder-white/20 resize-none h-12 py-2"
-                            />
-                        </div>
-                        <button
-                            onClick={onGetStarted}
-                            className={`p-3 rounded-xl transition-all ${inputText.trim() ? 'bg-white text-black' : 'bg-white/5 text-white/20 cursor-not-allowed'}`}
-                        >
-                            <ArrowUp size={24} />
-                        </button>
-                    </div>
-                </div>
+                <div className="flex flex-col items-center gap-8 mb-16 animate-fade-in">
+                    <button
+                        onClick={onGetStarted}
+                        className="bg-white text-black px-10 py-4 rounded-full text-sm font-bold tracking-[0.2em] uppercase hover:bg-blue-500 hover:text-white transition-all transform hover:scale-105 active:scale-95 shadow-[0_0_30px_rgba(255,255,255,0.1)]"
+                    >
+                        Initialize Engine
+                    </button>
 
-                <div className="max-w-lg text-white/30 text-sm md:text-base leading-relaxed font-light tracking-wide px-4">
-                    Pustakam synthesizes high-fidelity knowledge archives from your prompts.
-                    Built for rapid exploration and deep academic research.
+                    <div className="max-w-lg text-white/30 text-sm md:text-base leading-relaxed font-light tracking-wide px-4">
+                        Pustakam synthesizes high-fidelity knowledge archives from your prompts.
+                        Built for rapid exploration and deep academic research.
+                    </div>
                 </div>
 
                 {/* Subtle Scroll Indicator */}
