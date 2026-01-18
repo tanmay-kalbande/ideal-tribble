@@ -344,7 +344,7 @@ const AIWaveAnimation = () => {
   return (
     <div
       ref={containerRef}
-      className="flex flex-wrap content-start gap-1 w-full h-8 md:h-6 overflow-hidden rounded-lg"
+      className="flex flex-wrap content-start gap-1 w-full h-10 pl-1 overflow-hidden rounded-lg"
     >
       {pixels.map((p) => (
         <div
